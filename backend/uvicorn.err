@@ -1,0 +1,179 @@
+INFO:     Will watch for changes in these directories: ['C:\\Users\\shruthi\\OneDrive\\Desktop\\Dristhi\\backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [32716] using WatchFiles
+INFO:     Started server process [26424]
+INFO:     Waiting for application startup.
+2025-09-19 04:22:15.290 | INFO     | app.main:lifespan:23 - \U0001f680 Starting Dristhi backend...
+C:\Users\shruthi\OneDrive\Desktop\Dristhi\backend\app\services\ai_service.py:9: LangChainDeprecationWarning: Importing LLMs from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:
+
+`from langchain_community.llms import Ollama`.
+
+To install langchain-community run `pip install -U langchain-community`.
+  from langchain.llms import Ollama
+WARNING:  WatchFiles detected changes in 'tools\test_gemini_invoke.py'. Reloading...
+2025-09-19 04:22:26.912 | INFO     | app.services.memory_service:_init_embedding_model:36 - \u2705 Embedding model loaded: sentence-transformers/all-MiniLM-L6-v2
+2025-09-19 04:22:26.915 | INFO     | app.services.memory_service:_init_faiss_index:50 - \u2705 FAISS index loaded from ./data/faiss_index
+2025-09-19 04:22:26.915 | INFO     | app.main:lifespan:43 - \u2139\ufe0f AI service initialization scheduled in background
+2025-09-19 04:22:26.916 | INFO     | app.main:lifespan:47 - \u2705 AI service objects created (initialization deferred)
+2025-09-19 04:22:26.916 | INFO     | app.main:lifespan:52 - \u2705 Dristhi backend started successfully
+INFO:     Application startup complete.
+ERROR:    Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2032.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2032.0_x64__qbz5n2kfra8p0\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2032.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2032.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 701, in lifespan
+    await receive()
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2032.0_x64__qbz5n2kfra8p0\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-09-19 04:22:30.371 | INFO     | app.services.ai_service:_init_llm:57 - \u2705 API LLM connected successfully with model: openai/gpt-3.5-turbo
+WARNING:  WatchFiles detected changes in 'tools\test_gemini_invoke.py'. Reloading...
+Process SpawnProcess-2:
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2032.0_x64__qbz5n2kfra8p0\Lib\multiprocessing\process.py", line 313, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2032.0_x64__qbz5n2kfra8p0\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\_subprocess.py", line 73, in subprocess_started
+    sys.stdin = os.fdopen(stdin_fileno)  # pragma: full coverage
+                ~~~~~~~~~^^^^^^^^^^^^^^
+  File "<frozen os>", line 1069, in fdopen
+  File "<frozen codecs>", line 312, in __init__
+KeyboardInterrupt
+INFO:     Started server process [27888]
+INFO:     Waiting for application startup.
+2025-09-19 04:22:50.767 | INFO     | app.main:lifespan:23 - \U0001f680 Starting Dristhi backend...
+C:\Users\shruthi\OneDrive\Desktop\Dristhi\backend\app\services\ai_service.py:9: LangChainDeprecationWarning: Importing LLMs from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:
+
+`from langchain_community.llms import Ollama`.
+
+To install langchain-community run `pip install -U langchain-community`.
+  from langchain.llms import Ollama
+2025-09-19 04:22:59.890 | INFO     | app.services.memory_service:_init_embedding_model:36 - \u2705 Embedding model loaded: sentence-transformers/all-MiniLM-L6-v2
+2025-09-19 04:22:59.892 | INFO     | app.services.memory_service:_init_faiss_index:50 - \u2705 FAISS index loaded from ./data/faiss_index
+2025-09-19 04:22:59.893 | INFO     | app.main:lifespan:43 - \u2139\ufe0f AI service initialization scheduled in background
+2025-09-19 04:22:59.893 | INFO     | app.main:lifespan:47 - \u2705 AI service objects created (initialization deferred)
+2025-09-19 04:22:59.893 | INFO     | app.main:lifespan:52 - \u2705 Dristhi backend started successfully
+INFO:     Application startup complete.
+2025-09-19 04:23:02.284 | INFO     | app.services.ai_service:_init_llm:57 - \u2705 API LLM connected successfully with model: openai/gpt-3.5-turbo
+WARNING:  WatchFiles detected changes in 'app\services\ai_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-09-19 04:23:16.381 | INFO     | app.main:lifespan:57 - \U0001f6d1 Shutting down Dristhi backend...
+2025-09-19 04:23:16.382 | INFO     | app.services.ai_service:cleanup:440 - AI service cleanup completed
+2025-09-19 04:23:16.382 | INFO     | app.main:lifespan:63 - \u2705 AI services cleaned up
+2025-09-19 04:23:16.382 | INFO     | app.main:lifespan:67 - \u2705 Dristhi backend shutdown complete
+INFO:     Application shutdown complete.
+INFO:     Finished server process [27888]
+INFO:     Started server process [26004]
+INFO:     Waiting for application startup.
+2025-09-19 04:23:33.536 | INFO     | app.main:lifespan:23 - \U0001f680 Starting Dristhi backend...
+C:\Users\shruthi\OneDrive\Desktop\Dristhi\backend\app\services\ai_service.py:9: LangChainDeprecationWarning: Importing LLMs from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:
+
+`from langchain_community.llms import Ollama`.
+
+To install langchain-community run `pip install -U langchain-community`.
+  from langchain.llms import Ollama
+2025-09-19 04:23:43.718 | INFO     | app.services.memory_service:_init_embedding_model:36 - \u2705 Embedding model loaded: sentence-transformers/all-MiniLM-L6-v2
+2025-09-19 04:23:43.725 | INFO     | app.services.memory_service:_init_faiss_index:50 - \u2705 FAISS index loaded from ./data/faiss_index
+2025-09-19 04:23:43.726 | INFO     | app.main:lifespan:43 - \u2139\ufe0f AI service initialization scheduled in background
+2025-09-19 04:23:43.726 | INFO     | app.main:lifespan:47 - \u2705 AI service objects created (initialization deferred)
+2025-09-19 04:23:43.726 | INFO     | app.main:lifespan:52 - \u2705 Dristhi backend started successfully
+INFO:     Application startup complete.
+2025-09-19 04:23:46.891 | INFO     | app.services.ai_service:_init_llm:57 - \u2705 API LLM connected successfully with model: openai/gpt-3.5-turbo
+WARNING:  WatchFiles detected changes in 'app\services\ai_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-09-19 04:24:02.793 | INFO     | app.main:lifespan:57 - \U0001f6d1 Shutting down Dristhi backend...
+2025-09-19 04:24:02.794 | INFO     | app.services.ai_service:cleanup:450 - AI service cleanup completed
+2025-09-19 04:24:02.795 | INFO     | app.main:lifespan:63 - \u2705 AI services cleaned up
+2025-09-19 04:24:02.795 | INFO     | app.main:lifespan:67 - \u2705 Dristhi backend shutdown complete
+INFO:     Application shutdown complete.
+INFO:     Finished server process [26004]
+WARNING:  WatchFiles detected changes in 'app\services\ai_service.py'. Reloading...
+INFO:     Started server process [32292]
+INFO:     Waiting for application startup.
+2025-09-19 04:24:23.818 | INFO     | app.main:lifespan:23 - \U0001f680 Starting Dristhi backend...
+C:\Users\shruthi\OneDrive\Desktop\Dristhi\backend\app\services\ai_service.py:9: LangChainDeprecationWarning: Importing LLMs from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:
+
+`from langchain_community.llms import Ollama`.
+
+To install langchain-community run `pip install -U langchain-community`.
+  from langchain.llms import Ollama
+2025-09-19 04:24:34.243 | INFO     | app.services.memory_service:_init_embedding_model:36 - \u2705 Embedding model loaded: sentence-transformers/all-MiniLM-L6-v2
+2025-09-19 04:24:34.249 | INFO     | app.services.memory_service:_init_faiss_index:50 - \u2705 FAISS index loaded from ./data/faiss_index
+2025-09-19 04:24:34.250 | INFO     | app.main:lifespan:43 - \u2139\ufe0f AI service initialization scheduled in background
+2025-09-19 04:24:34.250 | INFO     | app.main:lifespan:47 - \u2705 AI service objects created (initialization deferred)
+2025-09-19 04:24:34.251 | INFO     | app.main:lifespan:52 - \u2705 Dristhi backend started successfully
+INFO:     Application startup complete.
+ERROR:    Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2032.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2032.0_x64__qbz5n2kfra8p0\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2032.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2032.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 701, in lifespan
+    await receive()
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2032.0_x64__qbz5n2kfra8p0\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+2025-09-19 04:24:37.613 | INFO     | app.services.ai_service:_init_llm:57 - \u2705 API LLM connected successfully with model: openai/gpt-3.5-turbo
+WARNING:  WatchFiles detected changes in 'tools\test_gemini_invoke.py'. Reloading...
+Process SpawnProcess-6:
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2032.0_x64__qbz5n2kfra8p0\Lib\multiprocessing\process.py", line 313, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2032.0_x64__qbz5n2kfra8p0\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\_subprocess.py", line 73, in subprocess_started
+    sys.stdin = os.fdopen(stdin_fileno)  # pragma: full coverage
+                ~~~~~~~~~^^^^^^^^^^^^^^
+  File "<frozen os>", line 1069, in fdopen
+  File "<frozen codecs>", line 312, in __init__
+KeyboardInterrupt

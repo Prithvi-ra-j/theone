@@ -139,15 +139,24 @@ def setup_database():
         # Start database services
         print("🚀 Starting database services...")
         subprocess.run(["docker-compose", "-f", "infra/docker-compose.yml", "up", "-d", "postgres", "redis"], check=True)
-        
+
         # Wait for database to be ready
-        print("⏳ Waiting for database to be ready...")
+        print("⏳ Waiting for database to become healthy (up to 60s)...")
         import time
-        time.sleep(10)
-        
+        for i in range(30):
+            # Use the container name from docker-compose.yml
+            result = subprocess.run(["docker", "inspect", "--format", "{{.State.Health.Status}}", "dristhi-postgres"], capture_output=True, text=True)
+            if "healthy" in result.stdout:
+                print("✅ Database is healthy!")
+                break
+            time.sleep(2)
+        else:
+            print("❌ Timed out waiting for the database to become healthy. Please check Docker logs.")
+            return False
+
         # Run migrations
         print("🔄 Running database migrations...")
-        subprocess.run(["alembic", "upgrade", "head"], cwd="backend", check=True)
+        subprocess.run([sys.executable, "-m", "alembic", "upgrade", "head"], cwd="backend", check=True)
         
         print("✅ Database setup completed")
     except subprocess.CalledProcessError as e:

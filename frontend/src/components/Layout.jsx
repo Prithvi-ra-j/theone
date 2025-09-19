@@ -11,19 +11,40 @@ import {
   LogOut,
   Menu,
   X,
-  Sparkles
+  Sparkles,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ui/ThemeToggle';
-import AnimatedNav from './ui/AnimatedNav';
 
-const Layout = ({ children }) => {
+import { Outlet } from 'react-router-dom';
+
+const Layout = () => {
   const { user, logout } = useAuth();
   const { theme, isDark } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [isLarge, setIsLarge] = React.useState(false);
+  const [collapsed, setCollapsed] = React.useState(false);
+
+  // Track large screens so the sidebar stays open on desktop
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const handler = (e) => setIsLarge(e.matches);
+    // Set initial
+    setIsLarge(mq.matches);
+    // Add listener (support modern and legacy APIs)
+    if (mq.addEventListener) mq.addEventListener('change', handler);
+    else mq.addListener(handler);
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener('change', handler);
+      else mq.removeListener(handler);
+    };
+  }, []);
 
   const navigation = [
     { path: '/dashboard', label: 'Dashboard', icon: Home },
@@ -64,6 +85,15 @@ const Layout = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+      {/* Dev-only debug badge to verify state and hot reloads */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-4 right-4 z-60 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100 rounded-md shadow-md px-3 py-2 opacity-90">
+          <div className="font-semibold">Layout debug</div>
+          <div className="text-xs">isLarge: {isLarge ? 'true' : 'false'}</div>
+          <div className="text-xs">collapsed: {collapsed ? 'true' : 'false'}</div>
+          <div className="text-xs">sidebarOpen: {sidebarOpen ? 'true' : 'false'}</div>
+        </div>
+      )}
       {/* Mobile sidebar overlay */}
       <motion.div
         className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
@@ -74,11 +104,17 @@ const Layout = ({ children }) => {
       />
 
       {/* Sidebar */}
+      {
+        /* Keep sidebar visible on large screens by combining the media query state with sidebarOpen */
+      }
       <motion.aside
-        className="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform lg:translate-x-0 lg:static lg:inset-0"
+          // Sidebar is fixed on large screens so it stays pinned to the left
+          className={`z-50 ${collapsed ? 'w-20' : 'w-64'} bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform lg:fixed lg:top-0 lg:left-0 lg:h-full lg:inset-y-0`}
+          role="navigation"
+          aria-label="Main navigation"
         variants={sidebarVariants}
-        initial="closed"
-        animate={sidebarOpen ? "open" : "closed"}
+        initial={sidebarOpen || isLarge ? 'open' : 'closed'}
+        animate={sidebarOpen || isLarge ? 'open' : 'closed'}
       >
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700">
           <motion.div
@@ -90,22 +126,47 @@ const Layout = ({ children }) => {
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">D</span>
             </div>
-            <span className="text-xl font-bold text-gray-900 dark:text-white">Dristhi</span>
+            {/* Show title only when not collapsed */}
+            {!collapsed && <span className="text-xl font-bold text-gray-900 dark:text-white">Dristhi</span>}
           </motion.div>
           
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center space-x-2">
+            {/* Collapse toggle visible on large screens */}
+            <button
+              onClick={() => setCollapsed((s) => !s)}
+              className="hidden lg:inline-flex p-2 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+            </button>
+
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        <nav className="mt-8 px-6">
-          <AnimatedNav items={navigation} className="space-y-2" />
+        <nav className={`mt-8 ${collapsed ? 'px-2' : 'px-6'}`} aria-label="Primary">
+          <ul className={collapsed ? 'space-y-2 text-sm' : 'space-y-2'}>
+            {navigation.map((item) => (
+              <li key={item.path}>
+                <Link
+                  to={item.path}
+                  className={`flex items-center space-x-3 w-full p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${location.pathname === item.path ? 'bg-gray-100 dark:bg-gray-700 font-semibold' : ''}`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <item.icon className="w-5 h-5" />
+                  {!collapsed && <span className="text-sm">{item.label}</span>}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </nav>
 
-        <div className="absolute bottom-6 left-6 right-6">
+    <div className="absolute bottom-6 left-6 right-6">
           <div className="flex items-center justify-between mb-4">
             <ThemeToggle />
             <button
@@ -135,8 +196,8 @@ const Layout = ({ children }) => {
         </div>
       </motion.aside>
 
-      {/* Main content */}
-      <div className="lg:pl-64">
+  {/* Main content */}
+  <div className={`${collapsed ? 'lg:pl-20' : 'lg:pl-64'}`}>
         {/* Top bar */}
         <motion.header
           className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 lg:hidden"
@@ -153,7 +214,6 @@ const Layout = ({ children }) => {
             </button>
             
             <div className="flex items-center space-x-4">
-              <ThemeToggle />
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">D</span>
               </div>
@@ -162,8 +222,8 @@ const Layout = ({ children }) => {
         </motion.header>
 
         {/* Page content */}
-        <main className="min-h-screen">
-          {children}
+        <main className="min-h-screen p-4 md:p-6 max-w-7xl mx-auto">
+          <Outlet />
         </main>
       </div>
     </div>

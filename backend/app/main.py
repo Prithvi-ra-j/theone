@@ -29,10 +29,22 @@ async def lifespan(app: FastAPI):
             from app.services.memory_service import MemoryService
             
             global ai_service, memory_service
+            # Create service objects but do not block on network calls. Schedule
+            # the potentially slow initialization to run in the background so
+            # the app can start serving requests immediately.
             ai_service = AIService()
             memory_service = MemoryService()
-            
-            logger.info("✅ AI services initialized successfully")
+
+            # Schedule async initialization of the AI service in the event loop.
+            try:
+                import asyncio
+
+                asyncio.create_task(ai_service.initialize())
+                logger.info("ℹ️ AI service initialization scheduled in background")
+            except Exception:
+                logger.warning("⚠️ Could not schedule AI service initialization")
+
+            logger.info("✅ AI service objects created (initialization deferred)")
         except Exception as e:
             logger.warning(f"⚠️ AI services initialization failed: {e}")
             logger.info("AI features will be disabled")
@@ -116,9 +128,31 @@ app.include_router(auth.router, prefix=settings.API_V1_STR, tags=["authenticatio
 app.include_router(career.router, prefix=settings.API_V1_STR, tags=["career"])
 app.include_router(habits.router, prefix=settings.API_V1_STR, tags=["habits"])
 app.include_router(finance.router, prefix=settings.API_V1_STR, tags=["finance"])
+app.include_router(__import__("app.routers.ai", fromlist=["router"]).router, prefix=settings.API_V1_STR, tags=["ai"])
 app.include_router(mood.router, prefix=settings.API_V1_STR, tags=["mood"])
 app.include_router(gamification.router, prefix=settings.API_V1_STR, tags=["gamification"])
 app.include_router(memory.router, prefix=settings.API_V1_STR, tags=["memory"])
+# Optional mock endpoints for frontend development
+if settings.ENABLE_MOCK_ENDPOINTS:
+    try:
+        from app.routers.mocks_core import router as mocks_router
+
+        app.include_router(mocks_router, prefix=settings.API_V1_STR, tags=["mocks"])
+    except Exception as e:
+        # Don't block startup if mock router fails to import
+        logger.warning(f"Failed to include mock endpoints: {e}")
+
+# Compatibility router (development only): placed after real routers so it
+# only handles requests that would otherwise 404. Returns 501 with details.
+if settings.ENABLE_COMPATIBILITY_STUBS:
+    try:
+        from app.routers.compatibility import router as compatibility_router
+
+        app.include_router(compatibility_router, prefix=settings.API_V1_STR, tags=["compat"])
+    except Exception:
+        # Avoid breaking startup if the compatibility module cannot be imported
+        # (e.g., in production where you might remove it).
+        pass
 
 
 if __name__ == "__main__":

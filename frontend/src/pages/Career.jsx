@@ -17,13 +17,13 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { careerAPI } from '../api';
 import { toast } from 'react-hot-toast';
-import TaskCard from '../components/ui/TaskCard';
-import ProgressBar from '../components/ui/ProgressBar';
-import Modal from '../components/ui/Modal';
-import Button from '../components/ui/Button';
-import Input from '../components/ui/Input';
-import Textarea from '../components/ui/Textarea';
-import Select from '../components/ui/Select';
+import TaskCard from '../components/ui/TaskCard.jsx';
+import ProgressBar from '../components/ui/ProgressBar.jsx';
+import Modal from '../components/ui/Modal.jsx';
+import Button from '../components/ui/Button.jsx';
+import Input from '../components/ui/Input.jsx';
+import Textarea from '../components/ui/Textarea.jsx';
+import Select from '../components/ui/Select.jsx';
 
 const Career = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

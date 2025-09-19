@@ -5,7 +5,10 @@
 
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
+// Ensure the base URL always points to the API v1 prefix.
+const rawBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const normalizedBase = rawBase.replace(/\/+$/, ''); // remove trailing slash
+const API_BASE_URL = normalizedBase.endsWith('/api/v1') ? normalizedBase : `${normalizedBase}/api/v1`;
 
 // Create axios instance with base configuration
 const apiClient = axios.create({

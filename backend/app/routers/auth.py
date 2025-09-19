@@ -17,7 +17,7 @@ from app.schemas.user import (
 from app.utils.jwt import create_access_token, create_refresh_token, verify_token
 from app.utils.security import hash_password, verify_password
 
-router = APIRouter()
+router = APIRouter(prefix="/auth")
 security = HTTPBearer()
 
 

@@ -12,16 +12,609 @@ import {
   Eye,
   EyeOff,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  AlertTriangle
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { authAPI } from '../api';
 import { toast } from 'react-hot-toast';
-import Button from '../components/ui/Button';
-import Input from '../components/ui/Input';
-import Textarea from '../components/ui/Textarea';
-import Select from '../components/ui/Select';
-import { useAuth } from '../hooks/useAuth';
+import Button from '../components/ui/Button.jsx';
+import Input from '../components/ui/Input.jsx';
+import Textarea from '../components/ui/Textarea.jsx';
+import Select from '../components/ui/Select.jsx';
+import Checkbox from '../components/ui/Checkbox.jsx';
+import { useAuth } from '../contexts/AuthContext';
+import { profileSchema, passwordSchema, preferencesSchema } from '../schemas/profileSchemas';
+
+// Tab Components
+const ProfileTab = ({ profileData, isEditing, onChange, onSubmit, isLoading }) => {
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    try {
+      profileSchema.parse(profileData);
+      setErrors({});
+      return true;
+    } catch (error) {
+      const formattedErrors = {};
+      error.errors.forEach(err => {
+        formattedErrors[err.path[0]] = err.message;
+      });
+      setErrors(formattedErrors);
+      return false;
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      onSubmit(e);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Full Name
+          </label>
+          <Input
+            type="text"
+            name="name"
+            value={profileData.name}
+            onChange={onChange}
+            disabled={!isEditing}
+            placeholder="Your full name"
+          />
+          {errors.name && (
+            <p className="text-red-500 text-sm mt-1 flex items-center">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              {errors.name}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Email Address
+          </label>
+          <Input
+            type="email"
+            name="email"
+            value={profileData.email}
+            onChange={onChange}
+            disabled={!isEditing}
+            placeholder="Your email address"
+          />
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-1 flex items-center">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              {errors.email}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Bio
+          </label>
+          <Textarea
+            name="bio"
+            value={profileData.bio}
+            onChange={onChange}
+            disabled={!isEditing}
+            placeholder="Tell us about yourself"
+            rows={4}
+          />
+          {errors.bio && (
+            <p className="text-red-500 text-sm mt-1 flex items-center">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              {errors.bio}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Location
+          </label>
+          <Input
+            type="text"
+            name="location"
+            value={profileData.location}
+            onChange={onChange}
+            disabled={!isEditing}
+            placeholder="Your location"
+          />
+          {errors.location && (
+            <p className="text-red-500 text-sm mt-1 flex items-center">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              {errors.location}
+            </p>
+          )}
+        </div>
+
+        {isEditing && (
+          <div className="flex justify-end space-x-3 pt-4">
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? 'Saving...' : 'Save Profile'}
+            </Button>
+          </div>
+        )}
+      </form>
+    </div>
+  );
+};
+
+const PreferencesTab = ({ preferences, onChange, onSubmit, isLoading }) => {
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    try {
+      preferencesSchema.parse(preferences);
+      setErrors({});
+      return true;
+    } catch (error) {
+      const formattedErrors = {};
+      error.errors.forEach(err => {
+        formattedErrors[err.path[0]] = err.message;
+      });
+      setErrors(formattedErrors);
+      return false;
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      onSubmit(e);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Theme
+          </label>
+          <Select
+            name="theme"
+            value={preferences.theme}
+            onChange={onChange}
+          >
+            <option value="system">System Default</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </Select>
+          {errors.theme && (
+            <p className="text-red-500 text-sm mt-1 flex items-center">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              {errors.theme}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Language
+          </label>
+          <Select
+            name="language"
+            value={preferences.language}
+            onChange={onChange}
+          >
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+            <option value="hi">Hindi</option>
+          </Select>
+          {errors.language && (
+            <p className="text-red-500 text-sm mt-1 flex items-center">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              {errors.language}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Timezone
+          </label>
+          <Select
+            name="timezone"
+            value={preferences.timezone}
+            onChange={onChange}
+          >
+            <option value="UTC">UTC</option>
+            <option value="Asia/Kolkata">India (IST)</option>
+            <option value="America/New_York">Eastern Time</option>
+            <option value="America/Los_Angeles">Pacific Time</option>
+            <option value="Europe/London">London (GMT)</option>
+          </Select>
+          {errors.timezone && (
+            <p className="text-red-500 text-sm mt-1 flex items-center">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              {errors.timezone}
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-4">
+          <h4 className="font-medium text-gray-900">Notifications</h4>
+          
+          <Checkbox
+            name="daily_tips_enabled"
+            checked={preferences.daily_tips_enabled}
+            onChange={onChange}
+            label="Daily Tips"
+            description="Receive daily motivational tips and reminders"
+          />
+          {errors.daily_tips_enabled && (
+            <p className="text-red-500 text-sm mt-1 flex items-center">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              {errors.daily_tips_enabled}
+            </p>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Notification Style
+            </label>
+            <Select
+              name="notification_style"
+              value={preferences.notification_style}
+              onChange={onChange}
+            >
+              <option value="gentle">Gentle</option>
+              <option value="moderate">Moderate</option>
+              <option value="aggressive">Aggressive</option>
+            </Select>
+            {errors.notification_style && (
+              <p className="text-red-500 text-sm mt-1 flex items-center">
+                <AlertTriangle className="w-3 h-3 mr-1" />
+                {errors.notification_style}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Career Roadmap Preference
+          </label>
+          <Select
+            name="hybrid_roadmap_choice"
+            value={preferences.hybrid_roadmap_choice}
+            onChange={onChange}
+          >
+            <option value="both">Show Both Traditional & AI-Powered</option>
+            <option value="traditional">Traditional Only</option>
+            <option value="ai">AI-Powered Only</option>
+          </Select>
+          {errors.hybrid_roadmap_choice && (
+            <p className="text-red-500 text-sm mt-1 flex items-center">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              {errors.hybrid_roadmap_choice}
+            </p>
+          )}
+        </div>
+
+        <div className="flex justify-end space-x-3 pt-4">
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? 'Saving...' : 'Save Preferences'}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+const SecurityTab = ({ 
+  passwordData, 
+  onChange, 
+  onSubmit, 
+  isLoading,
+  showPassword,
+  setShowPassword,
+  showNewPassword,
+  setShowNewPassword,
+  showConfirmPassword,
+  setShowConfirmPassword
+}) => {
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    try {
+      passwordSchema.parse({
+        current_password: passwordData.current_password,
+        new_password: passwordData.new_password,
+        confirm_password: passwordData.confirm_password
+      });
+      setErrors({});
+      return true;
+    } catch (error) {
+      const formattedErrors = {};
+      error.errors.forEach(err => {
+        formattedErrors[err.path[0]] = err.message;
+      });
+      setErrors(formattedErrors);
+      return false;
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      onSubmit(e);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Current Password
+          </label>
+          <div className="relative">
+            <Input
+              type={showPassword ? "text" : "password"}
+              name="current_password"
+              value={passwordData.current_password}
+              onChange={onChange}
+              placeholder="Enter your current password"
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <EyeOff className="h-5 w-5 text-gray-400" />
+              ) : (
+                <Eye className="h-5 w-5 text-gray-400" />
+              )}
+            </button>
+          </div>
+          {errors.current_password && (
+            <p className="text-red-500 text-sm mt-1 flex items-center">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              {errors.current_password}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            New Password
+          </label>
+          <div className="relative">
+            <Input
+              type={showNewPassword ? "text" : "password"}
+              name="new_password"
+              value={passwordData.new_password}
+              onChange={onChange}
+              placeholder="Enter your new password"
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+            >
+              {showNewPassword ? (
+                <EyeOff className="h-5 w-5 text-gray-400" />
+              ) : (
+                <Eye className="h-5 w-5 text-gray-400" />
+              )}
+            </button>
+          </div>
+          {errors.new_password && (
+            <p className="text-red-500 text-sm mt-1 flex items-center">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              {errors.new_password}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Confirm New Password
+          </label>
+          <div className="relative">
+            <Input
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirm_password"
+              value={passwordData.confirm_password}
+              onChange={onChange}
+              placeholder="Confirm your new password"
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? (
+                <EyeOff className="h-5 w-5 text-gray-400" />
+              ) : (
+                <Eye className="h-5 w-5 text-gray-400" />
+              )}
+            </button>
+          </div>
+          {errors.confirm_password && (
+            <p className="text-red-500 text-sm mt-1 flex items-center">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              {errors.confirm_password}
+            </p>
+          )}
+        </div>
+
+        <div className="flex justify-end space-x-3 pt-4">
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? 'Updating...' : 'Update Password'}
+          </Button>
+        </div>
+
+        <div className="mt-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <h4 className="font-medium text-gray-900 mb-2">Security Recommendations</h4>
+          <ul className="space-y-2 text-sm text-gray-600">
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+              <span>Use a strong, unique password that you don't use elsewhere</span>
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+              <span>Include a mix of letters, numbers, and special characters</span>
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+              <span>Consider using a password manager for better security</span>
+            </li>
+          </ul>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+// This component is used in the tab content section but may trigger a false positive linter warning
+// It's rendered when activeTab === 'notifications'
+const NotificationsTab = () => {
+  const [emailNotifications, setEmailNotifications] = useState({
+    weeklyReports: true,
+    goalReminders: true,
+    aiInsights: true
+  });
+
+  const [pushNotifications, setPushNotifications] = useState({
+    habitReminders: true,
+    achievementCelebrations: true,
+    motivationalMessages: true
+  });
+
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleEmailChange = (e) => {
+    const { name, checked } = e.target;
+    setEmailNotifications(prev => ({
+      ...prev,
+      [name]: checked
+    }));
+  };
+
+  const handlePushChange = (e) => {
+    const { name, checked } = e.target;
+    setPushNotifications(prev => ({
+      ...prev,
+      [name]: checked
+    }));
+  };
+
+  const validateForm = () => {
+    // For notifications, we're just ensuring at least one notification type is enabled
+    const hasEmailEnabled = Object.values(emailNotifications).some(value => value === true);
+    const hasPushEnabled = Object.values(pushNotifications).some(value => value === true);
+    
+    const newErrors = {};
+    
+    if (!hasEmailEnabled && !hasPushEnabled) {
+      newErrors.general = "Please enable at least one notification type";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      setIsLoading(true);
+      // Simulate API call
+      setTimeout(() => {
+        setIsLoading(false);
+        toast.success('Notification settings saved!');
+      }, 500);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-gray-900">Notification Preferences</h3>
+      
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {errors.general && (
+          <p className="text-red-500 text-sm flex items-center bg-red-50 p-3 rounded">
+            <AlertTriangle className="w-4 h-4 mr-2" />
+            {errors.general}
+          </p>
+        )}
+        
+        <div className="border rounded-lg p-4">
+          <h4 className="font-medium text-gray-900 mb-3">Email Notifications</h4>
+          <div className="space-y-3">
+            <Checkbox
+              name="weeklyReports"
+              checked={emailNotifications.weeklyReports}
+              onChange={handleEmailChange}
+              label="Weekly Progress Reports"
+              description="Get a summary of your weekly achievements"
+            />
+            <Checkbox
+              name="goalReminders"
+              checked={emailNotifications.goalReminders}
+              onChange={handleEmailChange}
+              label="Goal Reminders"
+              description="Reminders about upcoming deadlines"
+            />
+            <Checkbox
+              name="aiInsights"
+              checked={emailNotifications.aiInsights}
+              onChange={handleEmailChange}
+              label="AI Insights"
+              description="Personalized recommendations and insights"
+            />
+          </div>
+        </div>
+
+        <div className="border rounded-lg p-4">
+          <h4 className="font-medium text-gray-900 mb-3">Push Notifications</h4>
+          <div className="space-y-3">
+            <Checkbox
+              name="habitReminders"
+              checked={pushNotifications.habitReminders}
+              onChange={handlePushChange}
+              label="Habit Reminders"
+              description="Daily reminders for your habits"
+            />
+            <Checkbox
+              name="achievementCelebrations"
+              checked={pushNotifications.achievementCelebrations}
+              onChange={handlePushChange}
+              label="Achievement Celebrations"
+              description="Celebrate when you reach milestones"
+            />
+            <Checkbox
+              name="motivationalMessages"
+              checked={pushNotifications.motivationalMessages}
+              onChange={handlePushChange}
+              label="Motivational Messages"
+              description="Daily motivational content"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? 'Saving...' : 'Save Notification Settings'}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+};
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('profile');
@@ -49,8 +642,7 @@ const Profile = () => {
       setIsEditing(false);
     },
     onError: (error) => {
-      toast.error('Failed to update profile');
-      console.error('Error updating profile:', error);
+      toast.error(error.message || 'Failed to update profile');
     },
   });
 
@@ -58,7 +650,6 @@ const Profile = () => {
     mutationFn: authAPI.changePassword,
     onSuccess: () => {
       toast.success('Password changed successfully!');
-      // Reset password fields
       setPasswordData({
         current_password: '',
         new_password: '',
@@ -66,18 +657,16 @@ const Profile = () => {
       });
     },
     onError: (error) => {
-      toast.error('Failed to change password');
-      console.error('Error changing password:', error);
+      toast.error(error.message || 'Failed to change password');
     },
   });
 
+  // State for form data
   const [profileData, setProfileData] = useState({
-    name: userProfile?.name || '',
-    email: userProfile?.email || '',
-    bio: userProfile?.bio || '',
-    location: userProfile?.location || '',
-    website: userProfile?.website || '',
-    phone: userProfile?.phone || '',
+    name: '',
+    email: '',
+    bio: '',
+    location: ''
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -87,32 +676,61 @@ const Profile = () => {
   });
 
   const [preferences, setPreferences] = useState({
-    daily_tips_enabled: userProfile?.preferences?.daily_tips_enabled ?? true,
-    notification_style: userProfile?.preferences?.notification_style ?? 'gentle',
-    hybrid_roadmap_choice: userProfile?.preferences?.hybrid_roadmap_choice ?? 'both',
-    theme: userProfile?.preferences?.theme ?? 'light',
-    language: userProfile?.preferences?.language ?? 'en',
-    timezone: userProfile?.preferences?.timezone ?? 'UTC',
+    theme: 'system',
+    language: 'en',
+    timezone: 'UTC',
+    daily_tips_enabled: true,
+    notification_style: 'moderate',
+    hybrid_roadmap_choice: 'both'
   });
 
+  // Update form data when user profile is loaded
+  React.useEffect(() => {
+    if (userProfile) {
+      setProfileData({
+        name: userProfile.name || '',
+        email: userProfile.email || '',
+        bio: userProfile.bio || '',
+        location: userProfile.location || ''
+      });
+
+      setPreferences({
+        theme: userProfile.preferences?.theme || 'system',
+        language: userProfile.preferences?.language || 'en',
+        timezone: userProfile.preferences?.timezone || 'UTC',
+        daily_tips_enabled: userProfile.preferences?.daily_tips_enabled ?? true,
+        notification_style: userProfile.preferences?.notification_style || 'moderate',
+        hybrid_roadmap_choice: userProfile.preferences?.hybrid_roadmap_choice || 'both'
+      });
+    }
+  }, [userProfile]);
+
+  // Form change handlers
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
-    setProfileData(prev => ({ ...prev, [name]: value }));
+    setProfileData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
-    setPasswordData(prev => ({ ...prev, [name]: value }));
+    setPasswordData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handlePreferenceChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setPreferences(prev => ({ 
-      ...prev, 
-      [name]: type === 'checkbox' ? checked : value 
+    setPreferences(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
+  // Submit handlers
   const handleProfileSubmit = (e) => {
     e.preventDefault();
     updateProfileMutation.mutate(profileData);
@@ -120,18 +738,7 @@ const Profile = () => {
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
-    if (passwordData.new_password !== passwordData.confirm_password) {
-      toast.error('New passwords do not match');
-      return;
-    }
-    if (passwordData.new_password.length < 8) {
-      toast.error('New password must be at least 8 characters long');
-      return;
-    }
-    changePasswordMutation.mutate({
-      current_password: passwordData.current_password,
-      new_password: passwordData.new_password
-    });
+    changePasswordMutation.mutate(passwordData);
   };
 
   const handlePreferencesSubmit = (e) => {
@@ -175,32 +782,18 @@ const Profile = () => {
             <div className="flex items-center space-x-6">
               <div className="relative">
                 <div className="w-24 h-24 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                  {userProfile?.name?.charAt(0)?.toUpperCase() || 'U'}
+                  {profileData.name ? profileData.name.charAt(0).toUpperCase() : 'U'}
                 </div>
-                <button className="absolute bottom-0 right-0 p-2 bg-white rounded-full border-2 border-gray-200 hover:border-primary-300 transition-colors">
-                  <Camera className="w-4 h-4 text-gray-600" />
-                </button>
+                {isEditing && (
+                  <button className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md border border-gray-200">
+                    <Camera className="w-4 h-4 text-gray-600" />
+                  </button>
+                )}
               </div>
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-gray-900">{userProfile?.name || 'User'}</h2>
-                <p className="text-gray-600">{userProfile?.email}</p>
-                {userProfile?.bio && (
-                  <p className="text-gray-500 mt-2">{userProfile.bio}</p>
-                )}
-                <div className="flex items-center space-x-4 mt-3 text-sm text-gray-500">
-                  {userProfile?.location && (
-                    <span className="flex items-center space-x-1">
-                      <span>📍</span>
-                      <span>{userProfile.location}</span>
-                    </span>
-                  )}
-                  {userProfile?.website && (
-                    <span className="flex items-center space-x-1">
-                      <span>🌐</span>
-                      <span>{userProfile.website}</span>
-                    </span>
-                  )}
-                </div>
+                <h2 className="text-xl font-bold text-gray-900">{profileData.name || 'User'}</h2>
+                <p className="text-gray-500">{profileData.email || 'user@example.com'}</p>
+                <p className="text-gray-500 mt-1">{profileData.location || 'No location set'}</p>
               </div>
               <div className="flex space-x-3">
                 <Button
@@ -294,432 +887,5 @@ const Profile = () => {
     </div>
   );
 };
-
-// Tab Components
-const ProfileTab = ({ profileData, isEditing, onChange, onSubmit, isLoading }) => (
-  <div className="space-y-6">
-    <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
-    
-    <form onSubmit={onSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Full Name
-          </label>
-          <Input
-            name="name"
-            value={profileData.name}
-            onChange={onChange}
-            disabled={!isEditing}
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Email
-          </label>
-          <Input
-            type="email"
-            name="email"
-            value={profileData.email}
-            onChange={onChange}
-            disabled={!isEditing}
-            required
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Bio
-        </label>
-        <Textarea
-          name="bio"
-          value={profileData.bio}
-          onChange={onChange}
-          disabled={!isEditing}
-          rows={3}
-          placeholder="Tell us a bit about yourself..."
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Location
-          </label>
-          <Input
-            name="location"
-            value={profileData.location}
-            onChange={onChange}
-            disabled={!isEditing}
-            placeholder="City, Country"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Website
-          </label>
-          <Input
-            name="website"
-            value={profileData.website}
-            onChange={onChange}
-            disabled={!isEditing}
-            placeholder="https://example.com"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Phone Number
-        </label>
-        <Input
-          name="phone"
-          value={profileData.phone}
-          onChange={onChange}
-          disabled={!isEditing}
-          placeholder="+1 (555) 123-4567"
-        />
-      </div>
-
-      {isEditing && (
-        <div className="flex justify-end space-x-3 pt-4">
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Saving...' : 'Save Changes'}
-          </Button>
-        </div>
-      )}
-    </form>
-  </div>
-);
-
-const PreferencesTab = ({ preferences, onChange, onSubmit, isLoading }) => (
-  <div className="space-y-6">
-    <h3 className="text-lg font-semibold text-gray-900">App Preferences</h3>
-    
-    <form onSubmit={onSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Theme
-          </label>
-          <Select
-            name="theme"
-            value={preferences.theme}
-            onChange={onChange}
-          >
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-            <option value="auto">Auto (System)</option>
-          </Select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Language
-          </label>
-          <Select
-            name="language"
-            value={preferences.language}
-            onChange={onChange}
-          >
-            <option value="en">English</option>
-            <option value="hi">Hindi</option>
-            <option value="ta">Tamil</option>
-            <option value="te">Telugu</option>
-            <option value="bn">Bengali</option>
-          </Select>
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Timezone
-        </label>
-        <Select
-          name="timezone"
-          value={preferences.timezone}
-          onChange={onChange}
-        >
-          <option value="UTC">UTC</option>
-          <option value="Asia/Kolkata">India (IST)</option>
-          <option value="America/New_York">Eastern Time</option>
-          <option value="America/Los_Angeles">Pacific Time</option>
-          <option value="Europe/London">London (GMT)</option>
-        </Select>
-      </div>
-
-      <div className="space-y-4">
-        <h4 className="font-medium text-gray-900">Notifications</h4>
-        
-        <div className="flex items-center justify-between">
-          <div>
-            <label className="text-sm font-medium text-gray-700">Daily Tips</label>
-            <p className="text-sm text-gray-500">Receive daily motivational tips and reminders</p>
-          </div>
-          <input
-            type="checkbox"
-            name="daily_tips_enabled"
-            checked={preferences.daily_tips_enabled}
-            onChange={onChange}
-            className="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Notification Style
-          </label>
-          <Select
-            name="notification_style"
-            value={preferences.notification_style}
-            onChange={onChange}
-          >
-            <option value="gentle">Gentle</option>
-            <option value="moderate">Moderate</option>
-            <option value="aggressive">Aggressive</option>
-          </Select>
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Career Roadmap Preference
-        </label>
-        <Select
-          name="hybrid_roadmap_choice"
-          value={preferences.hybrid_roadmap_choice}
-          onChange={onChange}
-        >
-          <option value="both">Show Both Traditional & AI-Powered</option>
-          <option value="traditional">Traditional Only</option>
-          <option value="ai">AI-Powered Only</option>
-        </Select>
-      </div>
-
-      <div className="flex justify-end space-x-3 pt-4">
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'Saving...' : 'Save Preferences'}
-        </Button>
-      </div>
-    </form>
-  </div>
-);
-
-const SecurityTab = ({ 
-  passwordData, 
-  onChange, 
-  onSubmit, 
-  isLoading,
-  showPassword,
-  setShowPassword,
-  showNewPassword,
-  setShowNewPassword,
-  showConfirmPassword,
-  setShowConfirmPassword
-}) => (
-  <div className="space-y-6">
-    <h3 className="text-lg font-semibold text-gray-900">Security Settings</h3>
-    
-    <form onSubmit={onSubmit} className="space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Current Password
-        </label>
-        <div className="relative">
-          <Input
-            type={showPassword ? 'text' : 'password'}
-            name="current_password"
-            value={passwordData.current_password}
-            onChange={onChange}
-            required
-            placeholder="Enter your current password"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-          >
-            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-          </button>
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          New Password
-        </label>
-        <div className="relative">
-          <Input
-            type={showNewPassword ? 'text' : 'password'}
-            name="new_password"
-            value={passwordData.new_password}
-            onChange={onChange}
-            required
-            placeholder="Enter your new password"
-          />
-          <button
-            type="button"
-            onClick={() => setShowNewPassword(!showNewPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-          >
-            {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-          </button>
-        </div>
-        <p className="text-sm text-gray-500 mt-1">
-          Password must be at least 8 characters long
-        </p>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Confirm New Password
-        </label>
-        <div className="relative">
-          <Input
-            type={showConfirmPassword ? 'text' : 'password'}
-            name="confirm_password"
-            value={passwordData.confirm_password}
-            onChange={onChange}
-            required
-            placeholder="Confirm your new password"
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-          >
-            {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-          </button>
-        </div>
-      </div>
-
-      <div className="flex justify-end space-x-3 pt-4">
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'Changing...' : 'Change Password'}
-        </Button>
-      </div>
-    </form>
-
-    <div className="border-t pt-6">
-      <h4 className="font-medium text-gray-900 mb-4">Security Recommendations</h4>
-      <div className="space-y-3">
-        <div className="flex items-start space-x-3">
-          <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium text-gray-900">Use a strong password</p>
-            <p className="text-sm text-gray-500">Include uppercase, lowercase, numbers, and special characters</p>
-          </div>
-        </div>
-        <div className="flex items-start space-x-3">
-          <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium text-gray-900">Enable two-factor authentication</p>
-            <p className="text-sm text-gray-500">Add an extra layer of security to your account</p>
-          </div>
-        </div>
-        <div className="flex items-start space-x-3">
-          <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium text-gray-900">Regular password updates</p>
-            <p className="text-sm text-gray-500">Change your password every 3-6 months</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const NotificationsTab = () => (
-  <div className="space-y-6">
-    <h3 className="text-lg font-semibold text-gray-900">Notification Preferences</h3>
-    
-    <div className="space-y-6">
-      <div className="border rounded-lg p-4">
-        <h4 className="font-medium text-gray-900 mb-3">Email Notifications</h4>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-sm font-medium text-gray-700">Weekly Progress Reports</label>
-              <p className="text-sm text-gray-500">Get a summary of your weekly achievements</p>
-            </div>
-            <input
-              type="checkbox"
-              defaultChecked
-              className="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-sm font-medium text-gray-700">Goal Reminders</label>
-              <p className="text-sm text-gray-500">Reminders about upcoming deadlines</p>
-            </div>
-            <input
-              type="checkbox"
-              defaultChecked
-              className="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-sm font-medium text-gray-700">AI Insights</label>
-              <p className="text-sm text-gray-500">Personalized recommendations and insights</p>
-            </div>
-            <input
-              type="checkbox"
-              defaultChecked
-              className="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="border rounded-lg p-4">
-        <h4 className="font-medium text-gray-900 mb-3">Push Notifications</h4>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-sm font-medium text-gray-700">Habit Reminders</label>
-              <p className="text-sm text-gray-500">Daily reminders for your habits</p>
-            </div>
-            <input
-              type="checkbox"
-              defaultChecked
-              className="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-sm font-medium text-gray-700">Achievement Celebrations</label>
-              <p className="text-sm text-gray-500">Celebrate when you reach milestones</p>
-            </div>
-            <input
-              type="checkbox"
-              defaultChecked
-              className="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-sm font-medium text-gray-700">Motivational Messages</label>
-              <p className="text-sm text-gray-500">Daily motivational content</p>
-            </div>
-            <input
-              type="checkbox"
-              defaultChecked
-              className="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-end">
-        <Button>
-          Save Notification Settings
-        </Button>
-      </div>
-    </div>
-  </div>
-);
 
 export default Profile;

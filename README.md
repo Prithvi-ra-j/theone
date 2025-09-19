@@ -1,4 +1,130 @@
-🎯 Dristhi - AI-Powered Career & Life Improvement Platform
+# Dristhi
+
+AI-powered career & life improvement platform focused on helping students build skills, manage habits, track finances, and improve wellbeing.
+
+This README is a concise, actionable developer-first guide to run and contribute to the project locally.
+
+---
+
+## Quick overview
+- Frontend: React + Vite + Tailwind
+- Backend: FastAPI (Python)
+- DB: PostgreSQL
+- Cache: Redis
+- AI: Ollama (local LLMs) + LangChain integrations
+- Orchestration: Docker Compose
+
+---
+
+## Prerequisites
+- Node.js 18+ and npm/yarn
+- Python 3.11+
+- Docker & Docker Compose (v2+)
+- Git
+
+---
+
+## Quickstart (Docker)
+1. Copy env files
+
+```powershell
+cp backend/env.example backend/.env
+cp frontend/.env.example frontend/.env
+```
+
+2. Start services
+
+```powershell
+# From repo root
+docker-compose -f infra/docker-compose.yml up --build -d
+```
+
+3. Visit
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API docs: http://localhost:8000/docs
+
+---
+
+## Development (local, without Docker)
+
+### Backend
+```powershell
+cd backend
+python -m venv .venv
+.\.venv\Scripts\activate    # Windows PowerShell
+pip install -r requirements.txt
+# configure backend/.env
+alembic upgrade head
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### Frontend
+```powershell
+cd frontend
+npm install
+# create frontend/.env (see frontend/.env.example)
+npm run dev
+```
+
+---
+
+## Environment variables
+- Backend: `backend/.env` (copy from `backend/env.example`). Key entries:
+  - DATABASE_URL
+  - REDIS_URL
+  - SECRET_KEY
+  - JWT_ALGORITHM
+  - ACCESS_TOKEN_EXPIRE_MINUTES
+- Frontend: `frontend/.env` (copy from `frontend/.env.example`). Key entries:
+  - VITE_API_BASE_URL (e.g. http://localhost:8000)
+  - VITE_APP_NAME
+
+---
+
+## Useful commands (Makefile)
+- `make setup` — initial setup (build images, create volumes)
+- `make dev` — run services in development
+- `make dev-backend`, `make dev-frontend` — run single services
+- `make migrate` — run DB migrations
+- `make seed` — seed sample data
+- `make db-reset` — reset DB
+
+---
+
+## API endpoint checklist
+If you want to validate endpoints quickly, there is a helper script:
+
+```powershell
+python .\tools\check_endpoints.py --verbose --force-get
+```
+
+It reads frontend `src/api/config.js` and tests each declared path against the backend base (default http://localhost:8000/api/v1). Use `--base` to override, `--token` to test auth-protected endpoints.
+
+---
+
+## Contributing
+- Fork → feature branch → PR
+- Write tests and follow linters
+- Backend: Black / isort / flake8 / mypy
+- Frontend: ESLint / Prettier
+
+---
+
+## Troubleshooting
+- If frontend cannot reach backend, ensure `VITE_API_BASE_URL` points to the running backend and that CORS is enabled in FastAPI.
+- If Docker containers fail, check ports (8000/3000/5432/6379) or run `docker-compose ps` and `docker-compose logs`.
+
+---
+
+## License
+MIT
+
+---
+
+If you'd like, I can also:
+- Add a short `DEVELOPMENT.md` with step-by-step common tasks (run tests, add migrations, run frontend tests)
+- Add CI workflow templates for GitHub Actions that run linting and tests🎯 Dristhi - AI-Powered Career & Life Improvement Platform
 Empowering Indian students with personalized AI-driven career guidance, habit tracking, financial wisdom, and life optimization.
 
 License: MIT
@@ -20,7 +146,7 @@ Dristhi is a comprehensive, open-source platform designed specifically for India
 📱 Modern Web App - Responsive React frontend with beautiful UI
 🔒 Enterprise Security - JWT authentication, rate limiting, and data encryption
 🏗️ Architecture
-text
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │    Backend      │    │ Infrastructure  │
 │   (React)       │◄──►│   (FastAPI)     │◄──►│   (Docker)      │
@@ -31,6 +157,7 @@ text
 │ • Finance Mgmt  │    │ • Memory Store  │    │ • Monitoring    │
 │ • Mood Tracking │    │ • Background    │    │ • CI/CD         │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
+```
 🚀 Quick Start
 Prerequisites
 Docker & Docker Compose (v2.0+)

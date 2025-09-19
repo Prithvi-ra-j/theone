@@ -24,7 +24,6 @@ import ProgressBar from '../components/ui/ProgressBar';
 import TaskCard from '../components/ui/TaskCard';
 import { formatCurrency } from '../utils/formatters';
 import { useTheme } from '../contexts/ThemeContext';
-import ThemeToggle from '../components/ui/ThemeToggle';
 import AnimatedCard from '../components/ui/AnimatedCard';
 import PageTransition from '../components/ui/PageTransition';
 import AnimatedSpinner from '../components/ui/AnimatedSpinner';
@@ -36,27 +35,27 @@ const Dashboard = () => {
   // Fetch dashboard data
   const { data: careerData, isLoading: careerLoading } = useQuery({
     queryKey: ['career-dashboard'],
-    queryFn: careerAPI.getCareerDashboard,
+    queryFn: () => careerAPI.getCareerDashboard(),
   });
 
   const { data: habitsData, isLoading: habitsLoading } = useQuery({
     queryKey: ['habits-dashboard'],
-    queryFn: habitsAPI.getHabitsDashboard,
+    queryFn: () => habitsAPI.getHabitsDashboard(),
   });
 
   const { data: financeData, isLoading: financeLoading } = useQuery({
     queryKey: ['finance-dashboard'],
-    queryFn: financeAPI.getFinanceDashboard,
+    queryFn: () => financeAPI.getFinanceDashboard(),
   });
 
   const { data: moodData, isLoading: moodLoading } = useQuery({
     queryKey: ['mood-dashboard'],
-    queryFn: moodAPI.getMoodDashboard,
+    queryFn: () => moodAPI.getMoodDashboard(),
   });
 
   const { data: userStats, isLoading: statsLoading } = useQuery({
     queryKey: ['user-stats'],
-    queryFn: gamificationAPI.getUserStats,
+    queryFn: () => gamificationAPI.getUserStats(),
   });
 
   const isLoading = careerLoading || habitsLoading || financeLoading || moodLoading || statsLoading;
@@ -142,13 +141,7 @@ const Dashboard = () => {
                 Dashboard
               </motion.h1>
               
-              <motion.div
-                initial={{ x: 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <ThemeToggle />
-              </motion.div>
+              {/* Theme toggle moved to the left sidebar for a single global control */}
             </div>
           </div>
         </motion.div>
@@ -281,8 +274,19 @@ const Dashboard = () => {
                     className="flex flex-col items-center"
                     variants={itemVariants}
                   >
-                    <div className={`w-12 h-12 rounded-full bg-${stat.color}-100 dark:bg-${stat.color}-900 flex items-center justify-center mb-4`}>
-                      <stat.icon className={`w-6 h-6 text-${stat.color}-600 dark:text-${stat.color}-400`} />
+                    {/* Fixed color classes to use hardcoded values instead of template literals */}
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${
+                      stat.color === 'blue' ? 'bg-blue-100 dark:bg-blue-900' :
+                      stat.color === 'green' ? 'bg-green-100 dark:bg-green-900' :
+                      stat.color === 'purple' ? 'bg-purple-100 dark:bg-purple-900' :
+                      'bg-pink-100 dark:bg-pink-900'
+                    }`}>
+                      <stat.icon className={`w-6 h-6 ${
+                        stat.color === 'blue' ? 'text-blue-600 dark:text-blue-400' :
+                        stat.color === 'green' ? 'text-green-600 dark:text-green-400' :
+                        stat.color === 'purple' ? 'text-purple-600 dark:text-purple-400' :
+                        'text-pink-600 dark:text-pink-400'
+                      }`} />
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                       {stat.title}
@@ -321,7 +325,7 @@ const Dashboard = () => {
                       transition={{ duration: 0.3, delay: 0.7 + index * 0.1 }}
                       whileHover={{ scale: 1.02, x: 5 }}
                     >
-                      <activity.icon className={`w-5 h-5 text-${activity.color}-500`} />
+                      <activity.icon className={`w-5 h-5 ${activity.color === 'green' ? 'text-green-500' : activity.color === 'blue' ? 'text-blue-500' : activity.color === 'purple' ? 'text-purple-500' : 'text-pink-500'}`} />
                       <div className="flex-1">
                         <p className="text-sm font-medium text-gray-900 dark:text-white">
                           {activity.text}

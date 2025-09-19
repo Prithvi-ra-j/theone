@@ -1,4 +1,4 @@
-"""AI service for Ollama integration with LangChain."""
+"""AI service for LLM integration with LangChain."""
 
 import json
 import asyncio
@@ -7,6 +7,7 @@ from datetime import datetime
 
 import httpx
 from langchain.llms import Ollama
+from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain.schema import HumanMessage, SystemMessage
@@ -16,37 +17,81 @@ from app.core.config import settings
 
 
 class AIService:
-    """AI service for Ollama integration."""
+    """AI service for LLM integration."""
     
     def __init__(self):
         """Initialize AI service."""
-        self.ollama_base_url = settings.OLLAMA_BASE_URL
-        self.model_name = settings.OLLAMA_MODEL
         self.llm = None
         self.is_available = False
-        
-        # Initialize Ollama connection
-        self._init_ollama()
+        self.model_name = None
+        # Defer heavy initialization to an explicit async initialize() call
+        # to avoid blocking the main thread during startup.
     
-    def _init_ollama(self) -> None:
-        """Initialize Ollama connection."""
+    def _init_llm(self) -> None:
+        """Initialize LLM connection."""
         try:
-            # Test Ollama connection
-            with httpx.Client(timeout=5.0) as client:
-                response = client.get(f"{self.ollama_base_url}/api/tags")
-                if response.status_code == 200:
+            if settings.LLM_PROVIDER == "ollama":
+                # Test Ollama connection
+                with httpx.Client(timeout=5.0) as client:
+                    response = client.get(f"{settings.OLLAMA_BASE_URL}/api/tags")
+                    if response.status_code == 200:
+                        self.is_available = True
+                        self.llm = Ollama(
+                            base_url=settings.OLLAMA_BASE_URL,
+                            model=settings.OLLAMA_MODEL,
+                            temperature=0.7
+                        )
+                        self.model_name = settings.OLLAMA_MODEL
+                        logger.info(f"✅ Ollama connected successfully with model: {self.model_name}")
+                    else:
+                        logger.warning(f"⚠️ Ollama connection failed: {response.status_code}")
+            elif settings.LLM_PROVIDER == "api":
+                self.llm = ChatOpenAI(
+                    api_key=settings.API_LLM_API_KEY,
+                    base_url=settings.API_LLM_BASE_URL,
+                    model=settings.API_LLM_MODEL,
+                    temperature=0.7
+                )
+                self.model_name = settings.API_LLM_MODEL
+                self.is_available = True
+                logger.info(f"✅ API LLM connected successfully with model: {self.model_name}")
+            elif settings.LLM_PROVIDER == "gemini":
+                # If a Gemini API key is provided, consider the gemini provider available.
+                # Optionally do a lightweight health check to validate the base URL.
+                if settings.GEMINI_API_KEY:
+                    try:
+                        with httpx.Client(timeout=5.0) as client:
+                            # A simple GET to the base URL to verify reachability (some Gemini
+                            # deployments may not expose a root GET; ignore non-200 results).
+                            _ = client.get(settings.GEMINI_BASE_URL)
+                    except Exception:
+                        # Non-fatal: we still mark provider available if key exists.
+                        logger.debug("Gemini base URL health check failed; continuing because key exists")
+
                     self.is_available = True
-                    self.llm = Ollama(
-                        base_url=self.ollama_base_url,
-                        model=self.model_name,
-                        temperature=0.7
-                    )
-                    logger.info(f"✅ Ollama connected successfully with model: {self.model_name}")
+                    self.model_name = settings.GEMINI_MODEL
+                    logger.info(f"✅ Gemini configured (model={self.model_name}); will use REST API")
                 else:
-                    logger.warning(f"⚠️ Ollama connection failed: {response.status_code}")
+                    logger.warning("Gemini provider selected but GEMINI_API_KEY is not set")
+                    self.is_available = False
+            else:
+                logger.error(f"❌ Invalid LLM_PROVIDER: {settings.LLM_PROVIDER}")
+                self.is_available = False
+
         except Exception as e:
-            logger.error(f"❌ Ollama connection error: {e}")
+            logger.error(f"❌ LLM connection error: {e}")
             self.is_available = False
+
+    async def initialize(self) -> None:
+        """Asynchronously run _init_llm in a thread to avoid blocking.
+
+        Call this from an async startup handler (e.g., the FastAPI lifespan)
+        so LLM initialization runs in the background.
+        """
+        try:
+            await asyncio.to_thread(self._init_llm)
+        except Exception as e:
+            logger.error(f"❌ Error during async initialize: {e}")
     
     async def career_advisor(
         self,
@@ -302,6 +347,99 @@ class AIService:
         except Exception as e:
             logger.error(f"Error in personalized insight: {e}")
             return self._fallback_response("personalized_insight")
+
+    async def conversation(self, messages: List[Dict[str, str]]) -> Dict[str, Any]:
+        """Run a conversation using the configured LLM provider.
+
+        messages: list of {role: 'user'|'system'|'assistant', 'content': '...'}
+        """
+        if not self.is_available:
+            return {"error": "LLM unavailable", "fallback": True}
+
+        # If provider is gemini, call Google Generative Language API
+        if settings.LLM_PROVIDER == "gemini":
+            try:
+                import httpx
+
+                prompt = "\n".join([m.get("content", "") for m in messages if m.get("role") in ("user", "system")])
+
+                # Candidate endpoint patterns to try (order matters)
+                candidates = [
+                    f"{settings.GEMINI_BASE_URL}/{settings.GEMINI_MODEL}:generateText",
+                    f"{settings.GEMINI_BASE_URL}/{settings.GEMINI_MODEL}:generate",
+                    f"{settings.GEMINI_BASE_URL}/models/{settings.GEMINI_MODEL}:generateText",
+                    f"{settings.GEMINI_BASE_URL}/models/{settings.GEMINI_MODEL}:generate",
+                    f"{settings.GEMINI_BASE_URL}/models:generate",
+                    f"{settings.GEMINI_BASE_URL}/models:generateText",
+                ]
+
+                headers = {}
+                # Prefer API key as `key` query param (common for simple REST setups),
+                # but also allow passing as Authorization header in case the endpoint expects it.
+                params = {"key": settings.GEMINI_API_KEY} if settings.GEMINI_API_KEY else None
+
+                async with httpx.AsyncClient(timeout=30.0) as client:
+                    last_error = None
+                    for url in candidates:
+                        try:
+                            # Choose payload shape depending on endpoint style
+                            if url.endswith(":generate") or url.endswith(":generateText"):
+                                payload = {"prompt": {"text": prompt}}
+                            else:
+                                # models:generate style expects model + prompt
+                                payload = {"model": settings.GEMINI_MODEL, "prompt": {"text": prompt}}
+
+                            r = await client.post(url, json=payload, params=params, headers=headers)
+                            # If unauthorized or not found, try the next candidate
+                            if r.status_code == 404:
+                                last_error = f"404 for {url}"
+                                continue
+                            r.raise_for_status()
+                            data = r.json()
+
+                            # Try to extract text from several possible shapes
+                            text = ""
+                            # 1) candidates -> output/content
+                            if isinstance(data.get("candidates"), list) and data.get("candidates"):
+                                cand = data["candidates"][0]
+                                text = cand.get("output") or cand.get("content", {}).get("text") or ""
+                            # 2) output -> text
+                            if not text and isinstance(data.get("output"), dict):
+                                text = data.get("output", {}).get("text", "")
+                            # 3) direct string
+                            if not text and isinstance(data, str):
+                                text = data
+
+                            return {"response": text, "raw": data, "used_url": url}
+
+                        except httpx.HTTPStatusError as he:
+                            last_error = str(he)
+                            continue
+                        except Exception as e:
+                            last_error = str(e)
+                            continue
+
+                    # If all candidates failed, return the last error encountered
+                    return {"error": last_error or "unknown_error"}
+            except Exception as e:
+                logger.error(f"Error calling Gemini API: {e}")
+                return {"error": str(e)}
+
+        # Otherwise, try using existing LLM chain (sync wrapper)
+        try:
+            chain_prompt = "\n".join([m.get("content", "") for m in messages])
+            if self.llm is None:
+                return {"error": "llm_not_configured"}
+            # Run chain synchronously in a thread for compatibility
+            from langchain.chains import LLMChain
+
+            prompt = PromptTemplate(input_variables=["text"], template="{text}")
+            chain = LLMChain(llm=self.llm, prompt=prompt)
+            result = await asyncio.to_thread(chain.run, text=chain_prompt)
+            return {"response": result}
+        except Exception as e:
+            logger.error(f"Error running conversation chain: {e}")
+            return {"error": str(e)}
     
     def _fallback_response(self, service_type: str) -> Dict[str, Any]:
         """Provide fallback responses when AI is unavailable."""
@@ -354,7 +492,7 @@ class AIService:
         """Get AI service status."""
         return {
             "available": self.is_available,
+            "provider": settings.LLM_PROVIDER,
             "model": self.model_name,
-            "base_url": self.ollama_base_url,
             "last_check": datetime.utcnow().isoformat()
         }

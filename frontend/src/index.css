@@ -133,12 +133,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
 }
 
 .animate-pulse-slow {
@@ -150,32 +146,19 @@
 }
 
 @keyframes bounce-gentle {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
 .animate-shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
 
 @keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 /* Loading spinner */
@@ -193,14 +176,8 @@
 }
 
 @keyframes confetti-fall {
-  0% {
-    transform: translateY(-100vh) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100vh) rotate(720deg);
-    opacity: 0;
-  }
+  0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
 /* Theme transition utilities */
@@ -218,12 +195,8 @@
 }
 
 @keyframes float-dark {
-  0%, 100% {
-    transform: translateY(0px) scale(1);
-  }
-  50% {
-    transform: translateY(-10px) scale(1.02);
-  }
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-10px) scale(1.02); }
 }
 
 /* Glass morphism effect */
@@ -236,56 +209,11 @@
 }
 
 /* Hover effects */
-.hover-lift {
-  @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-xl;
-}
-
-.hover-glow {
-  @apply transition-all duration-300 hover:shadow-glow;
-}
-
-.hover-scale {
-  @apply transition-all duration-300 hover:scale-105;
-}
+.hover-lift { @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-xl; }
+.hover-glow { @apply transition-all duration-300 hover:shadow-glow; }
+.hover-scale { @apply transition-all duration-300 hover:scale-105; }
 
 /* Focus states */
 .focus-ring {
   @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800;
-}
-
-/* Dark mode text colors */
-.dark .text-gray-900 {
-  @apply text-gray-100;
-}
-
-.dark .text-gray-800 {
-  @apply text-gray-200;
-}
-
-.dark .text-gray-700 {
-  @apply text-gray-300;
-}
-
-.dark .text-gray-600 {
-  @apply text-gray-400;
-}
-
-.dark .text-gray-500 {
-  @apply text-gray-500;
-}
-
-.dark .text-gray-400 {
-  @apply text-gray-600;
-}
-
-.dark .text-gray-300 {
-  @apply text-gray-700;
-}
-
-.dark .text-gray-200 {
-  @apply text-gray-800;
-}
-
-.dark .text-gray-100 {
-  @apply text-gray-900;
 }

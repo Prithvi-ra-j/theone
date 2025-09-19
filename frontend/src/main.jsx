@@ -1,12 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
+import { AuthProvider } from "./contexts/AuthContext";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'react-hot-toast'
 
-import App from './App.jsx'
+
 import { ThemeProvider } from './contexts/ThemeContext'
 import './index.css'
+
+// Dynamically import App component
+const App = React.lazy(() => import('./App.jsx'))
 
 // Create a client
 const queryClient = new QueryClient({
@@ -23,7 +27,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <ThemeProvider>
-          <App />
+          <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="spinner w-8 h-8"></div></div>}>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </React.Suspense>
           <Toaster
             position="top-right"
             toastOptions={{
