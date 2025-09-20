@@ -40,20 +40,69 @@ const Habits = () => {
   const queryClient = useQueryClient();
 
   // Fetch habits data
-  const { data: habitsData, isLoading } = useQuery({
+  const { data: habitsData, isLoading: habitsLoading, isError: habitsError, error: habitsErrObj } = useQuery({
     queryKey: ['habits-dashboard'],
     queryFn: habitsAPI.getHabitsDashboard,
   });
 
-  const { data: tasks, isLoading: tasksLoading } = useQuery({
+  const { data: tasks, isLoading: tasksLoading, isError: tasksError, error: tasksErrObj } = useQuery({
     queryKey: ['tasks'],
     queryFn: habitsAPI.getTasks,
   });
 
-  const { data: events, isLoading: eventsLoading } = useQuery({
+  const { data: events, isLoading: eventsLoading, isError: eventsError, error: eventsErrObj } = useQuery({
     queryKey: ['events'],
     queryFn: habitsAPI.getEvents,
   });
+
+  // Timeout logic
+  const [timedOut, setTimedOut] = React.useState(false);
+  React.useEffect(() => {
+    if (!(habitsLoading || tasksLoading || eventsLoading)) return;
+    const timeout = setTimeout(() => setTimedOut(true), 30000);
+    return () => clearTimeout(timeout);
+  }, [habitsLoading, tasksLoading, eventsLoading]);
+
+  // Error logging and error UI
+  if (habitsError || tasksError || eventsError) {
+    console.error('Habits page load error:', {
+      habits: habitsErrObj,
+      tasks: tasksErrObj,
+      events: eventsErrObj,
+    });
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-red-50 dark:bg-red-900">
+        <div>
+          <h2 className="text-xl font-bold text-red-700 dark:text-red-300">Error loading habits data</h2>
+          <pre className="text-xs text-red-600 dark:text-red-200">
+            {JSON.stringify({
+              habits: habitsErrObj?.message,
+              tasks: tasksErrObj?.message,
+              events: eventsErrObj?.message,
+            }, null, 2)}
+          </pre>
+        </div>
+      </div>
+    );
+  }
+  if (timedOut) {
+    console.error('Habits page load timeout: Data did not load within 30 seconds');
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-yellow-50 dark:bg-yellow-900">
+        <div>
+          <h2 className="text-xl font-bold text-yellow-700 dark:text-yellow-300">Timeout: Habits data did not load within 30 seconds</h2>
+          <p className="text-xs text-yellow-600 dark:text-yellow-200">Please check your network or backend server.</p>
+        </div>
+      </div>
+    );
+  }
+  if (habitsLoading || tasksLoading || eventsLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
+      </div>
+    );
+  }
 
   // Mutations
   const createHabitMutation = useMutation({

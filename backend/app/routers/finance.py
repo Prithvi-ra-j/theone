@@ -130,7 +130,7 @@ async def get_budgets(
             "name": budget.name,
             "amount": float(budget.amount),
             "category": budget.category,
-            "period": budget.period,
+            "period": budget.period_type,
             "start_date": budget.start_date,
             "end_date": budget.end_date
         }
@@ -172,7 +172,7 @@ async def get_income(
     """Get all income records for the current user."""
     income_records = db.query(Income).filter(
         Income.user_id == current_user.id
-    ).order_by(Income.date.desc()).all()
+    ).order_by(Income.date_received.desc()).all()
     
     return [
         {
@@ -180,7 +180,7 @@ async def get_income(
             "amount": float(income.amount),
             "source": income.source,
             "description": income.description,
-            "date": income.date,
+            "date_received": income.date_received,
             "is_recurring": income.is_recurring,
             "recurring_frequency": income.recurring_frequency
         }
@@ -227,10 +227,13 @@ async def get_financial_goals(
     return [
         {
             "id": goal.id,
-            "name": goal.name,
+            "title": goal.title,
+            "description": goal.description,
+            "goal_type": goal.goal_type,
             "target_amount": float(goal.target_amount),
             "current_amount": float(goal.current_amount),
-            "progress_percentage": (float(goal.current_amount) / float(goal.target_amount)) * 100,
+            "progress_percentage": goal.progress_percentage,
+            "remaining_amount": goal.remaining_amount,
             "target_date": goal.target_date,
             "priority": goal.priority,
             "status": goal.status
@@ -289,8 +292,8 @@ async def get_finance_dashboard(
     # Get monthly income
     monthly_income = db.query(func.sum(Income.amount)).filter(
         Income.user_id == current_user.id,
-        func.extract('month', Income.date) == current_month,
-        func.extract('year', Income.date) == current_year
+        func.extract('month', Income.date_received) == current_month,
+        func.extract('year', Income.date_received) == current_year
     ).scalar() or 0
     
     # Get expenses by category

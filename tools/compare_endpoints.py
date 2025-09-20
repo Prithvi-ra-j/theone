@@ -11,6 +11,9 @@ import re
 import json
 import sys
 from urllib.parse import urljoin
+import os
+import tempfile
+import traceback
 
 try:
     import requests
@@ -92,9 +95,36 @@ def main():
         'present': [p for p, _ in present],
         'missing': [p for p, _ in missing],
     }
-    with open('tools/endpoint_compare_report.json', 'w', encoding='utf-8') as out:
-        json.dump(report, out, indent=2)
-    print('\nWrote tools/endpoint_compare_report.json')
+    report_path = 'tools/endpoint_compare_report.json'
+    try:
+        # ensure target directory exists
+        report_dir = os.path.dirname(report_path) or '.'
+        os.makedirs(report_dir, exist_ok=True)
+
+        # atomic write: write to a temp file then replace
+        fd, tmp_path = tempfile.mkstemp(prefix='tmp_endpoint_report_', dir=report_dir, text=True)
+        try:
+            with os.fdopen(fd, 'w', encoding='utf-8') as tmpf:
+                json.dump(report, tmpf, indent=2)
+                tmpf.flush()
+                try:
+                    os.fsync(tmpf.fileno())
+                except Exception:
+                    # fsync may not be available on all systems; ignore if it fails
+                    pass
+            os.replace(tmp_path, report_path)
+        finally:
+            # if tmp_path still exists (on error), try to remove it
+            try:
+                if os.path.exists(tmp_path):
+                    os.remove(tmp_path)
+            except Exception:
+                pass
+
+        print(f'\nWrote {report_path}')
+    except Exception as e:
+        print(f'Failed to write report to {report_path}: {e}')
+        traceback.print_exc()
 
 
 if __name__ == '__main__':

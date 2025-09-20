@@ -15,6 +15,8 @@ from app.schemas.career import (
     CareerDashboard, SkillRecommendation
 )
 from app.routers.auth import get_current_user
+from app.core.config import settings
+from sqlalchemy.exc import IntegrityError
 
 router = APIRouter()
 
@@ -27,29 +29,102 @@ async def create_career_goal(
     db: Session = Depends(get_db)
 ) -> Any:
     """Create a new career goal."""
+    # Ensure required DB fields have defaults in case the client omits them.
+    goal_payload = goal_data.dict()
+    if goal_payload.get("category") is None:
+        goal_payload["category"] = "general"
+
+    # Ensure we don't pass 'category' twice when expanding payload
+    category_val = goal_payload.get("category") or "general"
+    # Remove category from the payload so **goal_payload won't also provide it
+    goal_payload.pop("category", None)
+
+    # Explicitly pass category to ensure SQL INSERT receives a non-NULL value
     db_goal = CareerGoal(
-        **goal_data.dict(),
-        user_id=current_user.id
+        **goal_payload,
+        user_id=current_user.id,
+        category=category_val,
     )
+    # Helpful debug log during development
+    from loguru import logger
+    logger.debug("Creating CareerGoal for user %s with payload: %s", current_user.id, goal_payload)
+
+    # Defensive: ensure DB-required fields are present on the ORM object before commit.
+    if getattr(db_goal, "category", None) is None:
+        db_goal.category = "general"
+
+    # Diagnostics: log DB URL, payload, and ORM state just before persisting so
+    # we can trace why a NULL might be inserted into the category column.
+    logger.info("Using DATABASE_URL: %s", getattr(settings, "DATABASE_URL", "<unset>"))
+    logger.info("CareerGoal payload before add: %s", goal_payload)
+    logger.info("db_goal.category before add: %s", getattr(db_goal, "category", None))
+
+    # Also query information_schema for the runtime nullability of the column
+    # to verify the database schema from the same DB connection.
+    try:
+        info = db.execute(
+            "SELECT is_nullable FROM information_schema.columns WHERE table_name='careergoal' AND column_name='category';"
+        ).fetchone()
+        logger.debug("information_schema.category.is_nullable = %s", info)
+    except Exception as _e:
+        logger.debug("Could not query information_schema: %s", _e)
+
     db.add(db_goal)
-    db.commit()
-    db.refresh(db_goal)
-    return db_goal
+    try:
+        db.commit()
+        db.refresh(db_goal)
+    except IntegrityError as exc:
+        # Log and raise a clear HTTP error with helpful debugging info.
+        logger.error("IntegrityError while creating CareerGoal: %s", exc)
+        # Attempt to include the DB column nullability in the error if we have it
+        try:
+            info = db.execute(
+                "SELECT is_nullable FROM information_schema.columns WHERE table_name='careergoal' AND column_name='category';"
+            ).fetchone()
+        except Exception:
+            info = None
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "error": "IntegrityError",
+                "message": str(exc.orig) if getattr(exc, "orig", None) else str(exc),
+                "db_url": str(getattr(settings, "DATABASE_URL", "<unset>")),
+                "payload": goal_payload,
+                "db_goal_category": getattr(db_goal, "category", None),
+                "information_schema_category": info,
+            },
+        )
+    except Exception as exc:  # pragma: no cover - unexpected runtime error
+        logger.exception("Unexpected error creating CareerGoal: %s", exc)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "error": "UnexpectedError",
+                "message": str(exc),
+                "db_url": str(getattr(settings, "DATABASE_URL", "<unset>")),
+                "payload": goal_payload,
+            },
+        )
+
+    # Validate and return a Pydantic model instance while the DB session
+    # is still active to avoid FastAPI response validation errors that can
+    # occur when returned ORM objects are partially unloaded.
+    return CareerGoalRead.model_validate(db_goal)
 
 
 @router.get("/goals", response_model=List[CareerGoalRead])
 async def get_career_goals(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    status_filter: str = "all"
+    status_filter: str = "all",
+    limit: int = 20,
+    offset: int = 0
 ) -> Any:
     """Get all career goals for the current user."""
     query = db.query(CareerGoal).filter(CareerGoal.user_id == current_user.id)
-    
     if status_filter != "all":
         query = query.filter(CareerGoal.status == status_filter)
-    
-    goals = query.order_by(CareerGoal.created_at.desc()).all()
+    goals = query.order_by(CareerGoal.created_at.desc()).offset(offset).limit(limit).all()
     return goals
 
 
@@ -148,15 +223,15 @@ async def create_skill(
 async def get_skills(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    category: str = None
+    category: str = None,
+    limit: int = 20,
+    offset: int = 0
 ) -> Any:
     """Get all skills for the current user."""
     query = db.query(Skill).filter(Skill.user_id == current_user.id)
-    
     if category:
         query = query.filter(Skill.category == category)
-    
-    skills = query.order_by(Skill.name).all()
+    skills = query.order_by(Skill.name).offset(offset).limit(limit).all()
     return skills
 
 
@@ -267,15 +342,15 @@ async def create_learning_path(
 async def get_learning_paths(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    status: str = None
+    status: str = None,
+    limit: int = 20,
+    offset: int = 0
 ) -> Any:
     """Get all learning paths for the current user."""
     query = db.query(LearningPath).filter(LearningPath.user_id == current_user.id)
-    
     if status:
         query = query.filter(LearningPath.status == status)
-    
-    paths = query.order_by(LearningPath.created_at.desc()).all()
+    paths = query.order_by(LearningPath.created_at.desc()).offset(offset).limit(limit).all()
     return paths
 
 

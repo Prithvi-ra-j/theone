@@ -31,32 +31,79 @@ import AnimatedSpinner from '../components/ui/AnimatedSpinner';
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const { theme, isDark } = useTheme();
+  const [timedOut, setTimedOut] = useState(false);
 
   // Fetch dashboard data
-  const { data: careerData, isLoading: careerLoading } = useQuery({
+  const { data: careerData, isLoading: careerLoading, isError: careerError, error: careerErrObj } = useQuery({
     queryKey: ['career-dashboard'],
     queryFn: () => careerAPI.getCareerDashboard(),
   });
 
-  const { data: habitsData, isLoading: habitsLoading } = useQuery({
+  const { data: habitsData, isLoading: habitsLoading, isError: habitsError, error: habitsErrObj } = useQuery({
     queryKey: ['habits-dashboard'],
     queryFn: () => habitsAPI.getHabitsDashboard(),
   });
 
-  const { data: financeData, isLoading: financeLoading } = useQuery({
+  const { data: financeData, isLoading: financeLoading, isError: financeError, error: financeErrObj } = useQuery({
     queryKey: ['finance-dashboard'],
     queryFn: () => financeAPI.getFinanceDashboard(),
   });
 
-  const { data: moodData, isLoading: moodLoading } = useQuery({
+  const { data: moodData, isLoading: moodLoading, isError: moodError, error: moodErrObj } = useQuery({
     queryKey: ['mood-dashboard'],
     queryFn: () => moodAPI.getMoodDashboard(),
   });
 
-  const { data: userStats, isLoading: statsLoading } = useQuery({
+  const { data: userStats, isLoading: statsLoading, isError: statsError, error: statsErrObj } = useQuery({
     queryKey: ['user-stats'],
     queryFn: () => gamificationAPI.getUserStats(),
   });
+
+  // Timeout logic (after all useQuery hooks)
+  useEffect(() => {
+    if (!(careerLoading || habitsLoading || financeLoading || moodLoading || statsLoading)) return;
+    const timeout = setTimeout(() => setTimedOut(true), 30000);
+    return () => clearTimeout(timeout);
+  }, [careerLoading, habitsLoading, financeLoading, moodLoading, statsLoading]);
+
+  // Prepare UI elements based on conditions
+  let dashboardContent;
+  
+  if (timedOut) {
+    console.error('Dashboard page load timeout: Data did not load within 30 seconds');
+    dashboardContent = (
+      <div className="flex items-center justify-center min-h-screen bg-yellow-50 dark:bg-yellow-900">
+        <div>
+          <h2 className="text-xl font-bold text-yellow-700 dark:text-yellow-300">Timeout: Dashboard data did not load within 30 seconds</h2>
+          <p className="text-xs text-yellow-600 dark:text-yellow-200">Please check your network or backend server.</p>
+        </div>
+      </div>
+    );
+  } else if (careerError || habitsError || financeError || moodError || statsError) {
+    console.error('Dashboard load error:', {
+      career: careerErrObj,
+      habits: habitsErrObj,
+      finance: financeErrObj,
+      mood: moodErrObj,
+      stats: statsErrObj,
+    });
+    dashboardContent = (
+      <div className="flex items-center justify-center min-h-screen bg-red-50 dark:bg-red-900">
+        <div>
+          <h2 className="text-xl font-bold text-red-700 dark:text-red-300">Error loading dashboard data</h2>
+          <pre className="text-xs text-red-600 dark:text-red-200">
+            {JSON.stringify({
+              career: careerErrObj?.message,
+              habits: habitsErrObj?.message,
+              finance: financeErrObj?.message,
+              mood: moodErrObj?.message,
+              stats: statsErrObj?.message,
+            }, null, 2)}
+          </pre>
+        </div>
+      </div>
+    );
+  }
 
   const isLoading = careerLoading || habitsLoading || financeLoading || moodLoading || statsLoading;
 
@@ -79,8 +126,9 @@ const Dashboard = () => {
     return Math.round((careerProgress + habitsProgress + financeProgress) / 3);
   }, [careerData, habitsData, financeData, moodData]);
 
-  if (isLoading) {
-    return (
+  // Set loading content if still loading
+  if (isLoading && !dashboardContent) {
+    dashboardContent = (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
         <AnimatedSpinner size="xl" />
       </div>
@@ -120,6 +168,12 @@ const Dashboard = () => {
     }
   };
 
+  // If we have dashboardContent (error or loading states), return it
+  if (dashboardContent) {
+    return dashboardContent;
+  }
+  
+  // Otherwise, render the main dashboard
   return (
     <PageTransition>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">

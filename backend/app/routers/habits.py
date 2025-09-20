@@ -114,6 +114,7 @@ async def complete_habit(
 
 # Tasks
 @router.post("/tasks", response_model=dict, status_code=status.HTTP_201_CREATED)
+@router.post("/habits/tasks", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def create_task(
     title: str,
     description: str = None,
@@ -141,6 +142,7 @@ async def create_task(
 
 
 @router.get("/tasks", response_model=List[dict])
+@router.get("/habits/tasks", response_model=List[dict])
 async def get_tasks(
     status: str = None,
     current_user: User = Depends(get_current_user),
@@ -169,6 +171,7 @@ async def get_tasks(
 
 
 @router.put("/tasks/{task_id}/status")
+@router.put("/habits/tasks/{task_id}/status")
 async def update_task_status(
     task_id: int,
     new_status: str,
@@ -198,11 +201,12 @@ async def update_task_status(
 
 # Calendar Events
 @router.post("/events", response_model=dict, status_code=status.HTTP_201_CREATED)
+@router.post("/habits/events", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def create_event(
     title: str,
     description: str = None,
-    start_time: str = None,
-    end_time: str = None,
+    start_datetime: str = None,
+    end_datetime: str = None,
     location: str = None,
     is_all_day: bool = False,
     reminder_minutes: int = 15,
@@ -214,11 +218,11 @@ async def create_event(
         user_id=current_user.id,
         title=title,
         description=description,
-        start_time=start_time,
-        end_time=end_time,
+        start_datetime=start_datetime,
+        end_datetime=end_datetime,
         location=location,
-        is_all_day=is_all_day,
-        reminder_minutes=reminder_minutes
+        all_day=is_all_day,
+        reminder_time=reminder_minutes
     )
     db.add(db_event)
     db.commit()
@@ -227,6 +231,7 @@ async def create_event(
 
 
 @router.get("/events", response_model=List[dict])
+@router.get("/habits/events", response_model=List[dict])
 async def get_events(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -234,17 +239,17 @@ async def get_events(
     """Get all calendar events for the current user."""
     events = db.query(CalendarEvent).filter(
         CalendarEvent.user_id == current_user.id
-    ).order_by(CalendarEvent.start_time).all()
+    ).order_by(CalendarEvent.start_datetime).all()
     
     return [
         {
             "id": event.id,
             "title": event.title,
             "description": event.description,
-            "start_time": event.start_time,
-            "end_time": event.end_time,
+            "start_datetime": event.start_datetime,
+            "end_datetime": event.end_datetime,
             "location": event.location,
-            "is_all_day": event.is_all_day
+            "all_day": event.all_day
         }
         for event in events
     ]
@@ -279,8 +284,8 @@ async def get_habits_dashboard(
     # Get upcoming events
     upcoming_events = db.query(CalendarEvent).filter(
         CalendarEvent.user_id == current_user.id,
-        CalendarEvent.start_time >= datetime.utcnow()
-    ).order_by(CalendarEvent.start_time).limit(5).all()
+        CalendarEvent.start_datetime >= datetime.utcnow()
+    ).order_by(CalendarEvent.start_datetime).limit(5).all()
     
     return {
         "total_habits": len(habits),
@@ -289,7 +294,7 @@ async def get_habits_dashboard(
         "upcoming_events": [
             {
                 "title": event.title,
-                "start_time": event.start_time,
+                "start_datetime": event.start_datetime,
                 "location": event.location
             }
             for event in upcoming_events

@@ -53,7 +53,8 @@ class Settings(BaseSettings):
     LLM_PROVIDER: str = "ollama"  # or "api"
     # Development helpers
     # When True, will enable mock endpoints for frontend development.
-    ENABLE_MOCK_ENDPOINTS: bool = True
+    # Default to False so real routes are used unless developer explicitly enables mocks
+    ENABLE_MOCK_ENDPOINTS: bool = False
     # When True, include a final compatibility catch-all that returns 501 for
     # unimplemented endpoints. Keep this off in production by default.
     ENABLE_COMPATIBILITY_STUBS: bool = False

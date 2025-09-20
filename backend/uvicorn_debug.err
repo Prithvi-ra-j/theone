@@ -1,0 +1,1482 @@
+INFO:     Started server process [16708]
+INFO:     Waiting for application startup.
+2025-09-20 01:46:26.507 | INFO     | app.main:lifespan:23 - \U0001f680 Starting Dristhi backend...
+C:\Users\shruthi\OneDrive\Desktop\Dristhi\backend\app\services\ai_service.py:9: LangChainDeprecationWarning: Importing LLMs from langchain is deprecated. Importing from langchain will no longer be supported as of langchain==0.2.0. Please import from langchain-community instead:
+
+`from langchain_community.llms import Ollama`.
+
+To install langchain-community run `pip install -U langchain-community`.
+  from langchain.llms import Ollama
+2025-09-20 01:46:34.526 | INFO     | app.services.memory_service:_init_embedding_model:36 - \u2705 Embedding model loaded: sentence-transformers/all-MiniLM-L6-v2
+2025-09-20 01:46:34.530 | INFO     | app.services.memory_service:_init_faiss_index:50 - \u2705 FAISS index loaded from ./data/faiss_index
+2025-09-20 01:46:34.531 | INFO     | app.main:lifespan:43 - \u2139\ufe0f AI service initialization scheduled in background
+2025-09-20 01:46:34.531 | INFO     | app.main:lifespan:47 - \u2705 AI service objects created (initialization deferred)
+2025-09-20 01:46:34.531 | INFO     | app.main:lifespan:52 - \u2705 Dristhi backend started successfully
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2025-09-20 01:46:36.156 | INFO     | app.services.ai_service:_init_llm:57 - \u2705 API LLM connected successfully with model: openai/gpt-3.5-turbo
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-09-20 01:48:56.421 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 01:48:56.432 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 01:48:56.434 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 01:48:56.464 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 01:48:56.464 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 01:48:56.465 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 01:48:56.472 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 01:48:56.473 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 01:48:56.493 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: (psycopg2.errors.NotNullViolation) null value in column "category" of relation "careergoal" violates not-null constraint
+DETAIL:  Failing row contains (1, 1, Test Goal from script, Testing API, null, 2025-12-31 00:00:00, medium, active, 0, 2025-09-19 20:18:56.480439, 2025-09-19 20:18:56.480448, null).
+
+[SQL: INSERT INTO careergoal (user_id, title, description, category, target_date, priority, status, progress_percentage, created_at, updated_at, completed_at) VALUES (%(user_id)s, %(title)s, %(description)s, %(category)s, %(target_date)s, %(priority)s, %(status)s, %(progress_percentage)s, %(created_at)s, %(updated_at)s, %(completed_at)s) RETURNING careergoal.id]
+[parameters: {'user_id': 1, 'title': 'Test Goal from script', 'description': 'Testing API', 'category': None, 'target_date': datetime.datetime(2025, 12, 31, 0, 0), 'priority': 'medium', 'status': 'active', 'progress_percentage': 0.0, 'created_at': datetime.datetime(2025, 9, 19, 20, 18, 56, 480439), 'updated_at': datetime.datetime(2025, 9, 19, 20, 18, 56, 480448), 'completed_at': None}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.NotNullViolation: null value in column "category" of relation "careergoal" violates not-null constraint
+DETAIL:  Failing row contains (1, 1, Test Goal from script, Testing API, null, 2025-12-31 00:00:00, medium, active, 0, 2025-09-19 20:18:56.480439, 2025-09-19 20:18:56.480448, null).
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 302, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 213, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\OneDrive\Desktop\Dristhi\backend\app\routers\career.py", line 35, in create_career_goal
+    db.commit()
+    ~~~~~~~~~^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 2, in commit
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 1313, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, in _prepare_impl
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 1288, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4345, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4480, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4441, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.NotNullViolation) null value in column "category" of relation "careergoal" violates not-null constraint
+DETAIL:  Failing row contains (1, 1, Test Goal from script, Testing API, null, 2025-12-31 00:00:00, medium, active, 0, 2025-09-19 20:18:56.480439, 2025-09-19 20:18:56.480448, null).
+
+[SQL: INSERT INTO careergoal (user_id, title, description, category, target_date, priority, status, progress_percentage, created_at, updated_at, completed_at) VALUES (%(user_id)s, %(title)s, %(description)s, %(category)s, %(target_date)s, %(priority)s, %(status)s, %(progress_percentage)s, %(created_at)s, %(updated_at)s, %(completed_at)s) RETURNING careergoal.id]
+[parameters: {'user_id': 1, 'title': 'Test Goal from script', 'description': 'Testing API', 'category': None, 'target_date': datetime.datetime(2025, 12, 31, 0, 0), 'priority': 'medium', 'status': 'active', 'progress_percentage': 0.0, 'created_at': datetime.datetime(2025, 9, 19, 20, 18, 56, 480439), 'updated_at': datetime.datetime(2025, 9, 19, 20, 18, 56, 480448), 'completed_at': None}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-09-20 01:50:38.078 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 01:50:38.080 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 01:50:38.082 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 01:50:38.083 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 01:50:38.083 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 01:50:38.084 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 01:50:38.089 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 01:50:38.089 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 01:50:38.093 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: (psycopg2.errors.NotNullViolation) null value in column "category" of relation "careergoal" violates not-null constraint
+DETAIL:  Failing row contains (2, 1, Test Goal from script, Testing API, null, 2025-12-31 00:00:00, medium, active, 0, 2025-09-19 20:20:38.09215, 2025-09-19 20:20:38.092154, null).
+
+[SQL: INSERT INTO careergoal (user_id, title, description, category, target_date, priority, status, progress_percentage, created_at, updated_at, completed_at) VALUES (%(user_id)s, %(title)s, %(description)s, %(category)s, %(target_date)s, %(priority)s, %(status)s, %(progress_percentage)s, %(created_at)s, %(updated_at)s, %(completed_at)s) RETURNING careergoal.id]
+[parameters: {'user_id': 1, 'title': 'Test Goal from script', 'description': 'Testing API', 'category': None, 'target_date': datetime.datetime(2025, 12, 31, 0, 0), 'priority': 'medium', 'status': 'active', 'progress_percentage': 0.0, 'created_at': datetime.datetime(2025, 9, 19, 20, 20, 38, 92150), 'updated_at': datetime.datetime(2025, 9, 19, 20, 20, 38, 92154), 'completed_at': None}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.NotNullViolation: null value in column "category" of relation "careergoal" violates not-null constraint
+DETAIL:  Failing row contains (2, 1, Test Goal from script, Testing API, null, 2025-12-31 00:00:00, medium, active, 0, 2025-09-19 20:20:38.09215, 2025-09-19 20:20:38.092154, null).
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 302, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 213, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\OneDrive\Desktop\Dristhi\backend\app\routers\career.py", line 35, in create_career_goal
+    db_goal = CareerGoal(
+    ^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 2, in commit
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 1313, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, in _prepare_impl
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 1288, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4345, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4480, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4441, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.NotNullViolation) null value in column "category" of relation "careergoal" violates not-null constraint
+DETAIL:  Failing row contains (2, 1, Test Goal from script, Testing API, null, 2025-12-31 00:00:00, medium, active, 0, 2025-09-19 20:20:38.09215, 2025-09-19 20:20:38.092154, null).
+
+[SQL: INSERT INTO careergoal (user_id, title, description, category, target_date, priority, status, progress_percentage, created_at, updated_at, completed_at) VALUES (%(user_id)s, %(title)s, %(description)s, %(category)s, %(target_date)s, %(priority)s, %(status)s, %(progress_percentage)s, %(created_at)s, %(updated_at)s, %(completed_at)s) RETURNING careergoal.id]
+[parameters: {'user_id': 1, 'title': 'Test Goal from script', 'description': 'Testing API', 'category': None, 'target_date': datetime.datetime(2025, 12, 31, 0, 0), 'priority': 'medium', 'status': 'active', 'progress_percentage': 0.0, 'created_at': datetime.datetime(2025, 9, 19, 20, 20, 38, 92150), 'updated_at': datetime.datetime(2025, 9, 19, 20, 20, 38, 92154), 'completed_at': None}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-09-20 01:55:17.349 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 01:55:17.353 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 01:55:17.355 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 01:55:17.355 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 01:55:17.355 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 01:55:17.356 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 01:55:17.362 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 01:55:17.362 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 01:55:17.366 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: (psycopg2.errors.NotNullViolation) null value in column "category" of relation "careergoal" violates not-null constraint
+DETAIL:  Failing row contains (3, 1, Test Goal from script, Testing API, null, 2025-12-31 00:00:00, medium, active, 0, 2025-09-19 20:25:17.364785, 2025-09-19 20:25:17.364789, null).
+
+[SQL: INSERT INTO careergoal (user_id, title, description, category, target_date, priority, status, progress_percentage, created_at, updated_at, completed_at) VALUES (%(user_id)s, %(title)s, %(description)s, %(category)s, %(target_date)s, %(priority)s, %(status)s, %(progress_percentage)s, %(created_at)s, %(updated_at)s, %(completed_at)s) RETURNING careergoal.id]
+[parameters: {'user_id': 1, 'title': 'Test Goal from script', 'description': 'Testing API', 'category': None, 'target_date': datetime.datetime(2025, 12, 31, 0, 0), 'priority': 'medium', 'status': 'active', 'progress_percentage': 0.0, 'created_at': datetime.datetime(2025, 9, 19, 20, 25, 17, 364785), 'updated_at': datetime.datetime(2025, 9, 19, 20, 25, 17, 364789), 'completed_at': None}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.NotNullViolation: null value in column "category" of relation "careergoal" violates not-null constraint
+DETAIL:  Failing row contains (3, 1, Test Goal from script, Testing API, null, 2025-12-31 00:00:00, medium, active, 0, 2025-09-19 20:25:17.364785, 2025-09-19 20:25:17.364789, null).
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 302, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 213, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\OneDrive\Desktop\Dristhi\backend\app\routers\career.py", line 35, in create_career_goal
+    db_goal = CareerGoal(
+    ^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 2, in commit
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 1313, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, in _prepare_impl
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 1288, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4345, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4480, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4441, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.NotNullViolation) null value in column "category" of relation "careergoal" violates not-null constraint
+DETAIL:  Failing row contains (3, 1, Test Goal from script, Testing API, null, 2025-12-31 00:00:00, medium, active, 0, 2025-09-19 20:25:17.364785, 2025-09-19 20:25:17.364789, null).
+
+[SQL: INSERT INTO careergoal (user_id, title, description, category, target_date, priority, status, progress_percentage, created_at, updated_at, completed_at) VALUES (%(user_id)s, %(title)s, %(description)s, %(category)s, %(target_date)s, %(priority)s, %(status)s, %(progress_percentage)s, %(created_at)s, %(updated_at)s, %(completed_at)s) RETURNING careergoal.id]
+[parameters: {'user_id': 1, 'title': 'Test Goal from script', 'description': 'Testing API', 'category': None, 'target_date': datetime.datetime(2025, 12, 31, 0, 0), 'priority': 'medium', 'status': 'active', 'progress_percentage': 0.0, 'created_at': datetime.datetime(2025, 9, 19, 20, 25, 17, 364785), 'updated_at': datetime.datetime(2025, 9, 19, 20, 25, 17, 364789), 'completed_at': None}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-09-20 01:56:24.867 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 01:56:24.869 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 01:56:24.872 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 01:56:24.873 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 01:56:24.873 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 01:56:24.874 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 01:56:24.881 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 01:56:24.882 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 01:56:24.887 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: (psycopg2.errors.NotNullViolation) null value in column "category" of relation "careergoal" violates not-null constraint
+DETAIL:  Failing row contains (4, 1, Test Goal from script, Testing API, null, 2025-12-31 00:00:00, medium, active, 0, 2025-09-19 20:26:24.885993, 2025-09-19 20:26:24.886008, null).
+
+[SQL: INSERT INTO careergoal (user_id, title, description, category, target_date, priority, status, progress_percentage, created_at, updated_at, completed_at) VALUES (%(user_id)s, %(title)s, %(description)s, %(category)s, %(target_date)s, %(priority)s, %(status)s, %(progress_percentage)s, %(created_at)s, %(updated_at)s, %(completed_at)s) RETURNING careergoal.id]
+[parameters: {'user_id': 1, 'title': 'Test Goal from script', 'description': 'Testing API', 'category': None, 'target_date': datetime.datetime(2025, 12, 31, 0, 0), 'priority': 'medium', 'status': 'active', 'progress_percentage': 0.0, 'created_at': datetime.datetime(2025, 9, 19, 20, 26, 24, 885993), 'updated_at': datetime.datetime(2025, 9, 19, 20, 26, 24, 886008), 'completed_at': None}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.NotNullViolation: null value in column "category" of relation "careergoal" violates not-null constraint
+DETAIL:  Failing row contains (4, 1, Test Goal from script, Testing API, null, 2025-12-31 00:00:00, medium, active, 0, 2025-09-19 20:26:24.885993, 2025-09-19 20:26:24.886008, null).
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 302, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 213, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\OneDrive\Desktop\Dristhi\backend\app\routers\career.py", line 35, in create_career_goal
+    db_goal = CareerGoal(
+    ^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 2, in commit
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 1313, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, in _prepare_impl
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 1288, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4345, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4480, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4441, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.NotNullViolation) null value in column "category" of relation "careergoal" violates not-null constraint
+DETAIL:  Failing row contains (4, 1, Test Goal from script, Testing API, null, 2025-12-31 00:00:00, medium, active, 0, 2025-09-19 20:26:24.885993, 2025-09-19 20:26:24.886008, null).
+
+[SQL: INSERT INTO careergoal (user_id, title, description, category, target_date, priority, status, progress_percentage, created_at, updated_at, completed_at) VALUES (%(user_id)s, %(title)s, %(description)s, %(category)s, %(target_date)s, %(priority)s, %(status)s, %(progress_percentage)s, %(created_at)s, %(updated_at)s, %(completed_at)s) RETURNING careergoal.id]
+[parameters: {'user_id': 1, 'title': 'Test Goal from script', 'description': 'Testing API', 'category': None, 'target_date': datetime.datetime(2025, 12, 31, 0, 0), 'priority': 'medium', 'status': 'active', 'progress_percentage': 0.0, 'created_at': datetime.datetime(2025, 9, 19, 20, 26, 24, 885993), 'updated_at': datetime.datetime(2025, 9, 19, 20, 26, 24, 886008), 'completed_at': None}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-09-20 02:03:27.220 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 02:03:27.233 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 02:03:27.236 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 02:03:27.249 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 02:03:27.250 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 02:03:27.250 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 02:03:27.261 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 02:03:27.262 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 02:03:27.389 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=5, title='Test Goal from script', status='active')>}
+
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    self.disconnected = False
+                 ^^^^^^^^^^^^
+    self.keep_alive = keep_alive
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    self.waiting_for_100_continue = expect_100_continue
+    ^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    # Determine if the incoming request was http or https based on
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    def format_line(
+            ^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    request = Request(scope)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    if message["type"] == "http.response.start":
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    if match == Match.FULL:
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    else:
+        ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    return f"{class_name}(path={path!r}, name={name!r}, methods={methods!r})"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    # assert asyncio.iscoroutinefunction(func), "WebSocket endpoints must be async"
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    """
+    
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 328, in app
+    
+    
+    ...<9 lines>...
+            dependency_overrides_provider: Optional[Any] = None,
+            ^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 177, in serialize_response
+            exclude_none=exclude_none,
+        )
+    else:
+fastapi.exceptions.ResponseValidationError: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=5, title='Test Goal from script', status='active')>}
+
+2025-09-20 02:06:33.617 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 02:06:33.620 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 02:06:33.622 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 02:06:33.623 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 02:06:33.623 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 02:06:33.624 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 02:06:33.631 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 02:06:33.632 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 02:06:33.638 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=6, title='Test Goal from script', status='active')>}
+
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    self.disconnected = False
+                 ^^^^^^^^^^^^
+    self.keep_alive = keep_alive
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    self.waiting_for_100_continue = expect_100_continue
+    ^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    # Determine if the incoming request was http or https based on
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    def format_line(
+            ^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    request = Request(scope)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    if message["type"] == "http.response.start":
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    if match == Match.FULL:
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    else:
+        ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    return f"{class_name}(path={path!r}, name={name!r}, methods={methods!r})"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    # assert asyncio.iscoroutinefunction(func), "WebSocket endpoints must be async"
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    """
+    
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 328, in app
+    
+    
+    ...<9 lines>...
+            dependency_overrides_provider: Optional[Any] = None,
+            ^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 177, in serialize_response
+            exclude_none=exclude_none,
+        )
+    else:
+fastapi.exceptions.ResponseValidationError: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=6, title='Test Goal from script', status='active')>}
+
+2025-09-20 02:08:43.256 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 02:08:43.266 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 02:08:43.268 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 02:08:43.268 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 02:08:43.269 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 02:08:43.269 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 02:08:43.275 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 02:08:43.276 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 02:08:43.282 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=7, title='Test Goal from script', status='active')>}
+
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    self.disconnected = False
+                 ^^^^^^^^^^^^
+    self.keep_alive = keep_alive
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    self.waiting_for_100_continue = expect_100_continue
+    ^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    # Determine if the incoming request was http or https based on
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    def format_line(
+            ^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    request = Request(scope)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    if message["type"] == "http.response.start":
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    if match == Match.FULL:
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    else:
+        ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    return f"{class_name}(path={path!r}, name={name!r}, methods={methods!r})"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    # assert asyncio.iscoroutinefunction(func), "WebSocket endpoints must be async"
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    """
+    
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 328, in app
+    
+    
+    ...<9 lines>...
+            dependency_overrides_provider: Optional[Any] = None,
+            ^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 177, in serialize_response
+            exclude_none=exclude_none,
+        )
+    else:
+fastapi.exceptions.ResponseValidationError: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=7, title='Test Goal from script', status='active')>}
+
+2025-09-20 02:38:39.072 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 02:38:39.086 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 02:38:39.090 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 02:38:39.101 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 02:38:39.102 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 02:38:39.102 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 02:38:39.111 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 02:38:39.113 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 02:38:39.126 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=8, title='Test Goal from script', status='active')>}
+
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    self.disconnected = False
+                 ^^^^^^^^^^^^
+    self.keep_alive = keep_alive
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    self.waiting_for_100_continue = expect_100_continue
+    ^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    # Determine if the incoming request was http or https based on
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    def format_line(
+            ^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    request = Request(scope)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    if message["type"] == "http.response.start":
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    if match == Match.FULL:
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    else:
+        ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    return f"{class_name}(path={path!r}, name={name!r}, methods={methods!r})"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    # assert asyncio.iscoroutinefunction(func), "WebSocket endpoints must be async"
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    """
+    
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 328, in app
+    
+    
+    ...<9 lines>...
+            dependency_overrides_provider: Optional[Any] = None,
+            ^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 177, in serialize_response
+            exclude_none=exclude_none,
+        )
+    else:
+fastapi.exceptions.ResponseValidationError: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=8, title='Test Goal from script', status='active')>}
+
+2025-09-20 02:39:10.082 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 02:39:10.085 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 02:39:10.086 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 02:39:10.087 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 02:39:10.088 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 02:39:10.089 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 02:39:10.096 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 02:39:10.097 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 02:39:10.104 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=9, title='Test Goal from script', status='active')>}
+
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    self.disconnected = False
+                 ^^^^^^^^^^^^
+    self.keep_alive = keep_alive
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    self.waiting_for_100_continue = expect_100_continue
+    ^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    # Determine if the incoming request was http or https based on
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    def format_line(
+            ^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    request = Request(scope)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    if message["type"] == "http.response.start":
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    if match == Match.FULL:
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    else:
+        ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    return f"{class_name}(path={path!r}, name={name!r}, methods={methods!r})"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    # assert asyncio.iscoroutinefunction(func), "WebSocket endpoints must be async"
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    """
+    
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 328, in app
+    
+    
+    ...<9 lines>...
+            dependency_overrides_provider: Optional[Any] = None,
+            ^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 177, in serialize_response
+            exclude_none=exclude_none,
+        )
+    else:
+fastapi.exceptions.ResponseValidationError: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=9, title='Test Goal from script', status='active')>}
+
+2025-09-20 02:45:49.587 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 02:45:49.603 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 02:45:49.607 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 02:45:49.609 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 02:45:49.610 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 02:45:49.611 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 02:45:49.624 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 02:45:49.625 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 02:45:49.646 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=10, title='Test Goal from script', status='active')>}
+
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    self.disconnected = False
+                 ^^^^^^^^^^^^
+    self.keep_alive = keep_alive
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    self.waiting_for_100_continue = expect_100_continue
+    ^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    # Determine if the incoming request was http or https based on
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    def format_line(
+            ^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    request = Request(scope)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    if message["type"] == "http.response.start":
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    if match == Match.FULL:
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    else:
+        ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    return f"{class_name}(path={path!r}, name={name!r}, methods={methods!r})"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    # assert asyncio.iscoroutinefunction(func), "WebSocket endpoints must be async"
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    """
+    
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 328, in app
+    
+    
+    ...<9 lines>...
+            dependency_overrides_provider: Optional[Any] = None,
+            ^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 177, in serialize_response
+            exclude_none=exclude_none,
+        )
+    else:
+fastapi.exceptions.ResponseValidationError: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=10, title='Test Goal from script', status='active')>}
+
+2025-09-20 02:46:38.382 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 02:46:38.393 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 02:46:38.396 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 02:46:38.410 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 02:46:38.410 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 02:46:38.411 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 02:46:38.425 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 02:46:38.427 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 02:46:38.446 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=11, title='Test Goal from script', status='active')>}
+
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    self.disconnected = False
+                 ^^^^^^^^^^^^
+    self.keep_alive = keep_alive
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    self.waiting_for_100_continue = expect_100_continue
+    ^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    # Determine if the incoming request was http or https based on
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    def format_line(
+            ^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    request = Request(scope)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    if message["type"] == "http.response.start":
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    if match == Match.FULL:
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    else:
+        ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    return f"{class_name}(path={path!r}, name={name!r}, methods={methods!r})"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    # assert asyncio.iscoroutinefunction(func), "WebSocket endpoints must be async"
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    """
+    
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 328, in app
+    
+    
+    ...<9 lines>...
+            dependency_overrides_provider: Optional[Any] = None,
+            ^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 177, in serialize_response
+            exclude_none=exclude_none,
+        )
+    else:
+fastapi.exceptions.ResponseValidationError: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=11, title='Test Goal from script', status='active')>}
+
+2025-09-20 02:53:01.556 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 02:53:01.562 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 02:53:01.564 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 02:53:01.565 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 02:53:01.566 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 02:53:01.566 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 02:53:01.573 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 02:53:01.574 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 02:53:01.582 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=12, title='Test Goal from script', status='active')>}
+
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    self.disconnected = False
+                 ^^^^^^^^^^^^
+    self.keep_alive = keep_alive
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    self.waiting_for_100_continue = expect_100_continue
+    ^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    # Determine if the incoming request was http or https based on
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    def format_line(
+            ^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    request = Request(scope)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    if message["type"] == "http.response.start":
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    if match == Match.FULL:
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    else:
+        ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    return f"{class_name}(path={path!r}, name={name!r}, methods={methods!r})"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    # assert asyncio.iscoroutinefunction(func), "WebSocket endpoints must be async"
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    """
+    
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 328, in app
+    
+    
+    ...<9 lines>...
+            dependency_overrides_provider: Optional[Any] = None,
+            ^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 177, in serialize_response
+            exclude_none=exclude_none,
+        )
+    else:
+fastapi.exceptions.ResponseValidationError: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=12, title='Test Goal from script', status='active')>}
+
+2025-09-20 02:57:02.272 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 02:57:02.294 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 02:57:02.298 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 02:57:02.312 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 02:57:02.314 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 02:57:02.315 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 02:57:02.329 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 02:57:02.330 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 02:57:02.353 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=13, title='Test Goal from script', status='active')>}
+
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    self.disconnected = False
+                 ^^^^^^^^^^^^
+    self.keep_alive = keep_alive
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    self.waiting_for_100_continue = expect_100_continue
+    ^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    # Determine if the incoming request was http or https based on
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    def format_line(
+            ^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    request = Request(scope)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    if message["type"] == "http.response.start":
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    if match == Match.FULL:
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    else:
+        ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    return f"{class_name}(path={path!r}, name={name!r}, methods={methods!r})"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    # assert asyncio.iscoroutinefunction(func), "WebSocket endpoints must be async"
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    """
+    
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 328, in app
+    
+    
+    ...<9 lines>...
+            dependency_overrides_provider: Optional[Any] = None,
+            ^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 177, in serialize_response
+            exclude_none=exclude_none,
+        )
+    else:
+fastapi.exceptions.ResponseValidationError: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=13, title='Test Goal from script', status='active')>}
+
+2025-09-20 03:00:03.561 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 03:00:03.564 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 03:00:03.567 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 03:00:03.568 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 03:00:03.569 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 03:00:03.569 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 03:00:03.578 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 03:00:03.579 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 03:00:03.588 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=14, title='Test Goal from script', status='active')>}
+
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    self.disconnected = False
+                 ^^^^^^^^^^^^
+    self.keep_alive = keep_alive
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    self.waiting_for_100_continue = expect_100_continue
+    ^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    # Determine if the incoming request was http or https based on
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    def format_line(
+            ^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    request = Request(scope)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    if message["type"] == "http.response.start":
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    if match == Match.FULL:
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    else:
+        ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    return f"{class_name}(path={path!r}, name={name!r}, methods={methods!r})"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    # assert asyncio.iscoroutinefunction(func), "WebSocket endpoints must be async"
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    """
+    
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 328, in app
+    
+    
+    ...<9 lines>...
+            dependency_overrides_provider: Optional[Any] = None,
+            ^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 177, in serialize_response
+            exclude_none=exclude_none,
+        )
+    else:
+fastapi.exceptions.ResponseValidationError: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=14, title='Test Goal from script', status='active')>}
+
+2025-09-20 03:00:49.695 | DEBUG    | app.utils.security:verify_password:25 - Password verification completed
+2025-09-20 03:00:49.698 | DEBUG    | app.routers.auth:login:121 - Creating access token - SECRET_KEY set: True | JWT_ALGORITHM: HS256 | EXPIRE_MINUTES: 30
+2025-09-20 03:00:49.700 | DEBUG    | app.utils.jwt:create_access_token:25 - Encoding access token using algorithm: HS256
+2025-09-20 03:00:49.701 | DEBUG    | app.utils.jwt:create_access_token:32 - Created access token for user devtest@example.com
+2025-09-20 03:00:49.702 | DEBUG    | app.utils.jwt:create_refresh_token:45 - Encoding refresh token using algorithm: HS256
+2025-09-20 03:00:49.702 | DEBUG    | app.utils.jwt:create_refresh_token:52 - Created refresh token for user devtest@example.com
+2025-09-20 03:00:49.709 | DEBUG    | app.utils.jwt:verify_token:60 - Decoding token using algorithm(s): HS256
+2025-09-20 03:00:49.710 | DEBUG    | app.utils.jwt:verify_token:70 - Token verified for user devtest@example.com
+2025-09-20 03:00:49.719 | ERROR    | app.main:global_exception_handler:94 - Unhandled exception: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=15, title='Test Goal from script', status='active')>}
+
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi
+    self.disconnected = False
+                 ^^^^^^^^^^^^
+    self.keep_alive = keep_alive
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    self.waiting_for_100_continue = expect_100_continue
+    ^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    # Determine if the incoming request was http or https based on
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\applications.py", line 1054, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\applications.py", line 113, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    def format_line(
+            ^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    request = Request(scope)
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\cors.py", line 85, in __call__
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    if message["type"] == "http.response.start":
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    if match == Match.FULL:
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 736, in app
+    else:
+        ^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 290, in handle
+    return f"{class_name}(path={path!r}, name={name!r}, methods={methods!r})"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 78, in app
+    # assert asyncio.iscoroutinefunction(func), "WebSocket endpoints must be async"
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\starlette\routing.py", line 75, in app
+    """
+    
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 328, in app
+    
+    
+    ...<9 lines>...
+            dependency_overrides_provider: Optional[Any] = None,
+            ^^^^^^^^^^^^^^^^^
+  File "C:\Users\shruthi\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\fastapi\routing.py", line 177, in serialize_response
+            exclude_none=exclude_none,
+        )
+    else:
+fastapi.exceptions.ResponseValidationError: 1 validation errors:
+  {'type': 'missing', 'loc': ('response', 'progress'), 'msg': 'Field required', 'input': <CareerGoal(id=15, title='Test Goal from script', status='active')>}
+
+forrtl: error (200): program aborting due to window-CLOSE event
+Image              PC                Routine            Line        Source             
+KERNELBASE.dll     00007FFF68DCA09D  Unknown               Unknown  Unknown
+KERNEL32.DLL       00007FFF6A7DE8D7  Unknown               Unknown  Unknown
+ntdll.dll          00007FFF6B628D9C  Unknown               Unknown  Unknown

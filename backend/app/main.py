@@ -6,6 +6,7 @@ from typing import Any
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi import HTTPException
 from loguru import logger
 
 from app.core.config import settings
@@ -21,6 +22,11 @@ async def lifespan(app: FastAPI):
     """Application lifespan manager."""
     # Startup
     logger.info("🚀 Starting Dristhi backend...")
+    # Log configured CORS origins for debugging CORS preflight issues
+    try:
+        logger.info("Configured BACKEND_CORS_ORIGINS: %s", settings.BACKEND_CORS_ORIGINS)
+    except Exception:
+        logger.info("Could not read BACKEND_CORS_ORIGINS from settings")
     
     # Initialize AI services
     if settings.ENABLE_AI_FEATURES:
@@ -79,12 +85,17 @@ app = FastAPI(
 )
 
 # Add CORS middleware
+# Use configured BACKEND_CORS_ORIGINS explicitly. Do not use '*' with
+# allow_credentials=True because Starlette will reject that combination.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    # Accept common local development origins (both localhost and 127.0.0.1) via regex so
+    # frontend dev servers running on different ports don't trigger CORS preflight failures.
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
 )
 
 # Global exception handler
@@ -92,6 +103,9 @@ app.add_middleware(
 async def global_exception_handler(request: Request, exc: Exception):
     """Global exception handler."""
     logger.error(f"Unhandled exception: {exc}")
+    # If the exception is an HTTPException with detail, preserve it.
+    if isinstance(exc, HTTPException):
+        return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
     return JSONResponse(
         status_code=500,
         content={"detail": "Internal server error"},
@@ -125,9 +139,11 @@ async def root() -> dict[str, Any]:
 
 # Include API routers
 app.include_router(auth.router, prefix=settings.API_V1_STR, tags=["authentication"])
-app.include_router(career.router, prefix=settings.API_V1_STR, tags=["career"])
-app.include_router(habits.router, prefix=settings.API_V1_STR, tags=["habits"])
-app.include_router(finance.router, prefix=settings.API_V1_STR, tags=["finance"])
+app.include_router(career.router, prefix=f"{settings.API_V1_STR}/career", tags=["career"])
+# Register habits under /api/v1/habits so frontend paths like /api/v1/habits/dashboard
+# and /api/v1/habits/tasks resolve correctly.
+app.include_router(habits.router, prefix=f"{settings.API_V1_STR}/habits", tags=["habits"])
+app.include_router(finance.router, prefix=f"{settings.API_V1_STR}/finance", tags=["finance"])
 app.include_router(__import__("app.routers.ai", fromlist=["router"]).router, prefix=settings.API_V1_STR, tags=["ai"])
 app.include_router(mood.router, prefix=settings.API_V1_STR, tags=["mood"])
 app.include_router(gamification.router, prefix=settings.API_V1_STR, tags=["gamification"])

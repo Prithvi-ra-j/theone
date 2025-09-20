@@ -30,43 +30,84 @@ import { formatCurrency } from '../utils/formatters';
 import { format, subDays, startOfMonth, endOfMonth } from 'date-fns';
 
 const Finance = () => {
+  const [timedOut, setTimedOut] = React.useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-  const [modalType, setModalType] = useState('expense'); // 'expense', 'income', 'budget', 'goal'
+  const [modalType, setModalType] = useState('expense');
   const [filters, setFilters] = useState({
     type: 'all',
     category: 'all',
     dateRange: 'month',
     search: ''
   });
-
   const queryClient = useQueryClient();
-
-  // Fetch finance data
-  const { data: financeData, isLoading } = useQuery({
+  const { data: financeData, isLoading, isError: financeError, error: financeErrObj } = useQuery({
     queryKey: ['finance-dashboard'],
     queryFn: financeAPI.getFinanceDashboard,
   });
-
-  const { data: expenses, isLoading: expensesLoading } = useQuery({
+  const { data: expenses, isLoading: expensesLoading, isError: expensesError, error: expensesErrObj } = useQuery({
     queryKey: ['expenses'],
     queryFn: financeAPI.getExpenses,
   });
-
-  const { data: income, isLoading: incomeLoading } = useQuery({
+  const { data: income, isLoading: incomeLoading, isError: incomeError, error: incomeErrObj } = useQuery({
     queryKey: ['income'],
     queryFn: financeAPI.getIncome,
   });
-
-  const { data: budgets, isLoading: budgetsLoading } = useQuery({
+  const { data: budgets, isLoading: budgetsLoading, isError: budgetsError, error: budgetsErrObj } = useQuery({
     queryKey: ['budgets'],
     queryFn: financeAPI.getBudgets,
   });
-
-  const { data: goals, isLoading: goalsLoading } = useQuery({
+  const { data: goals, isLoading: goalsLoading, isError: goalsError, error: goalsErrObj } = useQuery({
     queryKey: ['financial-goals'],
     queryFn: financeAPI.getFinancialGoals,
   });
+
+  // Timeout logic (must be after useQuery hooks)
+  React.useEffect(() => {
+    if (!(isLoading || expensesLoading || incomeLoading || budgetsLoading || goalsLoading)) return;
+    const timeout = setTimeout(() => setTimedOut(true), 30000);
+    return () => clearTimeout(timeout);
+  }, [isLoading, expensesLoading, incomeLoading, budgetsLoading, goalsLoading]);
+
+  // ...all mutation hooks and handler functions...
+
+  // Place error/timeout UI checks here, just before main render return
+  if (timedOut) {
+    console.error('Finance page load timeout: Data did not load within 30 seconds');
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-yellow-50 dark:bg-yellow-900">
+        <div>
+          <h2 className="text-xl font-bold text-yellow-700 dark:text-yellow-300">Timeout: Finance data did not load within 30 seconds</h2>
+          <p className="text-xs text-yellow-600 dark:text-yellow-200">Please check your network or backend server.</p>
+        </div>
+      </div>
+    );
+  }
+  if (financeError || expensesError || incomeError || budgetsError || goalsError) {
+    console.error('Finance page load error:', {
+      finance: financeErrObj,
+      expenses: expensesErrObj,
+      income: incomeErrObj,
+      budgets: budgetsErrObj,
+      goals: goalsErrObj,
+    });
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-red-50 dark:bg-red-900">
+        <div>
+          <h2 className="text-xl font-bold text-red-700 dark:text-red-300">Error loading finance data</h2>
+          <pre className="text-xs text-red-600 dark:text-red-200">
+            {JSON.stringify({
+              finance: financeErrObj?.message,
+              expenses: expensesErrObj?.message,
+              income: incomeErrObj?.message,
+              budgets: budgetsErrObj?.message,
+              goals: goalsErrObj?.message,
+            }, null, 2)}
+          </pre>
+        </div>
+      </div>
+    );
+  }
 
   // Mutations
   const createExpenseMutation = useMutation({

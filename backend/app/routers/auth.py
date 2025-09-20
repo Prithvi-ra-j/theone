@@ -1,11 +1,12 @@
 """Authentication router for user registration, login, and profile management."""
 
 from datetime import timedelta
-from typing import Any
+from typing import Any, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
+from loguru import logger
 
 from app.core.config import settings
 from app.db.session import get_db
@@ -18,17 +19,33 @@ from app.utils.jwt import create_access_token, create_refresh_token, verify_toke
 from app.utils.security import hash_password, verify_password
 
 router = APIRouter(prefix="/auth")
-security = HTTPBearer()
+# Make HTTPBearer not raise automatically so we can return consistent 401 responses
+# and avoid 403 responses from the security dependency interfering with OPTIONS/CORS.
+security = HTTPBearer(auto_error=False)
 
 
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    request: Request,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
     db: Session = Depends(get_db)
 ) -> User:
     """Get current authenticated user."""
+    # Allow preflight (OPTIONS) requests to proceed without authentication so CORS
+    # preflight does not fail because of missing Authorization header.
+    if request is not None and request.method == "OPTIONS":
+        return None  # Lifespan/preflight; route handler won't be executed for OPTIONS
+
+    # If no credentials were provided, return 401 so frontend gets a clear unauthenticated response
+    if credentials is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     token = credentials.credentials
     token_data = verify_token(token)
-    
+
     if token_data is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -104,13 +121,27 @@ async def login(user_credentials: UserLogin, db: Session = Depends(get_db)) -> A
     user.update_last_login()
     db.commit()
     
-    # Create tokens
+    # Create tokens (wrap in try/except to log detailed errors)
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.email, "user_id": user.id},
-        expires_delta=access_token_expires
-    )
-    refresh_token = create_refresh_token(data={"sub": user.email, "user_id": user.id})
+    # Debug: log relevant JWT settings to help diagnose AttributeError issues
+    logger.debug("Creating access token - SECRET_KEY set: {} | JWT_ALGORITHM: {} | EXPIRE_MINUTES: {}",
+                 bool(getattr(settings, "SECRET_KEY", None)),
+                 getattr(settings, "JWT_ALGORITHM", None),
+                 getattr(settings, "ACCESS_TOKEN_EXPIRE_MINUTES", None))
+    try:
+        access_token = create_access_token(
+            data={"sub": user.email, "user_id": user.id},
+            expires_delta=access_token_expires
+        )
+        refresh_token = create_refresh_token(data={"sub": user.email, "user_id": user.id})
+    except Exception as exc:
+        # Log full exception and re-raise as HTTP 500 to preserve original behavior while
+        # providing clearer logs for debugging.
+        logger.exception("Failed creating JWT tokens: {}", exc)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal error creating authentication tokens",
+        )
     
     return {
         "access_token": access_token,

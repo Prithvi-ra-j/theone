@@ -1,4 +1,6 @@
+
 import { createContext, useContext, useState, useEffect } from "react";
+import authAPI from "../api/auth";
 
 const AuthContext = createContext();
 
@@ -18,20 +20,23 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
-  const login = ({ email, password }) => {
-    // Dummy user check
+
+  const login = async ({ email, password }) => {
     setLoading(true);
     try {
-      if (email === "test@example.com" && password === "1234") {
-        const userData = { email, name: "Test User" };
-        setUser(userData);
-        setLoading(false);
-        return true;
+      // Call backend login API
+      const res = await authAPI.login({ email, password });
+      // Store tokens
+      localStorage.setItem("access_token", res.access_token);
+      if (res.refresh_token) {
+        localStorage.setItem("refresh_token", res.refresh_token);
       }
+      // Fetch user profile
+      const profile = await authAPI.getCurrentUserProfile();
+      setUser(profile);
       setLoading(false);
-      return false;
+      return true;
     } catch (error) {
-      console.error("Login error:", error);
       setLoading(false);
       return false;
     }

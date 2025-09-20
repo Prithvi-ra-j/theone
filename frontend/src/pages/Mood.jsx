@@ -38,15 +38,55 @@ const Mood = () => {
   const queryClient = useQueryClient();
 
   // Fetch mood data
-  const { data: moodData, isLoading } = useQuery({
+  const { data: moodData, isLoading: moodLoading, isError: moodError, error: moodErrObj } = useQuery({
     queryKey: ['mood-dashboard'],
     queryFn: moodAPI.getMoodDashboard,
   });
 
-  const { data: moodLogs, isLoading: logsLoading } = useQuery({
+  const { data: moodLogs, isLoading: logsLoading, isError: logsError, error: logsErrObj } = useQuery({
     queryKey: ['mood-logs'],
     queryFn: moodAPI.getMoodLogs,
   });
+
+  // Timeout logic
+  const [timedOut, setTimedOut] = React.useState(false);
+  React.useEffect(() => {
+    if (!(moodLoading || logsLoading)) return;
+    const timeout = setTimeout(() => setTimedOut(true), 30000);
+    return () => clearTimeout(timeout);
+  }, [moodLoading, logsLoading]);
+
+  // Error logging and error UI
+  if (moodError || logsError) {
+    console.error('Mood page load error:', {
+      mood: moodErrObj,
+      logs: logsErrObj,
+    });
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-red-50 dark:bg-red-900">
+        <div>
+          <h2 className="text-xl font-bold text-red-700 dark:text-red-300">Error loading mood data</h2>
+          <pre className="text-xs text-red-600 dark:text-red-200">
+            {JSON.stringify({
+              mood: moodErrObj?.message,
+              logs: logsErrObj?.message,
+            }, null, 2)}
+          </pre>
+        </div>
+      </div>
+    );
+  }
+  if (timedOut) {
+    console.error('Mood page load timeout: Data did not load within 30 seconds');
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-yellow-50 dark:bg-yellow-900">
+        <div>
+          <h2 className="text-xl font-bold text-yellow-700 dark:text-yellow-300">Timeout: Mood data did not load within 30 seconds</h2>
+          <p className="text-xs text-yellow-600 dark:text-yellow-200">Please check your network or backend server.</p>
+        </div>
+      </div>
+    );
+  }
 
   // Mutations
   const createMoodLogMutation = useMutation({
@@ -110,7 +150,7 @@ const Mood = () => {
     return 'text-red-600 bg-red-100';
   };
 
-  if (isLoading || logsLoading) {
+  if (moodLoading || logsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
