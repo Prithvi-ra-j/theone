@@ -67,11 +67,11 @@ class Settings(BaseSettings):
     ENABLE_COMPATIBILITY_STUBS: bool = False
     
    
-    # API_LLM_API_KEY: str = "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"
+    # API_LLM_API_KEY: str = ""
     # API_LLM_BASE_URL: str = "https://api.perplexity.ai"
     # API_LLM_MODEL: str = "llama-3.1-sonar-large-128k-online"
 
-    API_LLM_API_KEY: str = "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"
+    API_LLM_API_KEY: str = ""
     API_LLM_BASE_URL: str = "https://openrouter.ai/api/v1"
     API_LLM_MODEL: str = "x-ai/grok-4-fast:free"
 
