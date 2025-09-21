@@ -6,11 +6,12 @@ from typing import Any, Dict, List, Optional
 from datetime import datetime
 
 import httpx
-from langchain.llms import Ollama
+from langchain_community.llms import Ollama
 from langchain_openai import ChatOpenAI
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
-from langchain.schema import HumanMessage, SystemMessage
+from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.chains import LLMChain
+from langchain_core.messages import HumanMessage, SystemMessage
 from loguru import logger
 
 from app.core.config import settings
@@ -85,15 +86,27 @@ class AIService:
                     else:
                         logger.warning(f"⚠️ Ollama connection failed: {response.status_code}")
             elif settings.LLM_PROVIDER == "api":
-                self.llm = ChatOpenAI(
-                    api_key=settings.API_LLM_API_KEY,
-                    base_url=settings.API_LLM_BASE_URL,
-                    model=settings.API_LLM_MODEL,
-                    temperature=0.7
-                )
-                self.model_name = settings.API_LLM_MODEL
-                self.is_available = True
-                logger.info(f"✅ API LLM connected successfully with model: {self.model_name}")
+                # Verify API key is available before initializing
+                if not settings.API_LLM_API_KEY:
+                    logger.error("❌ API LLM API key is not set")
+                    self.is_available = False
+                    return
+                    
+                try:
+                    self.llm = ChatOpenAI(
+                        api_key=settings.API_LLM_API_KEY,
+                        base_url=settings.API_LLM_BASE_URL,
+                        model=settings.API_LLM_MODEL,
+                        temperature=0.7
+                    )
+                    # Test the connection with a simple query
+                    _ = self.llm.invoke("Test connection")
+                    self.model_name = settings.API_LLM_MODEL
+                    self.is_available = True
+                    logger.info(f"✅ API LLM connected successfully with model: {self.model_name}")
+                except Exception as e:
+                    logger.error(f"❌ API LLM connection error: {e}")
+                    self.is_available = False
             elif settings.LLM_PROVIDER == "gemini":
                 # If a Gemini API key is provided, consider the gemini provider available.
                 # Optionally do a lightweight health check to validate the base URL.
@@ -236,8 +249,17 @@ class AIService:
             }
             
         except Exception as e:
-            logger.error(f"Error in career advisor: {e}")
-            return self._fallback_response("career_advisor")
+            error_msg = str(e)
+            if "401" in error_msg and "No auth credentials found" in error_msg:
+                logger.error(f"Authentication error in career advisor: {e}")
+                # Update the fallback response to indicate auth issue
+                fallback = self._fallback_response("career_advisor")
+                fallback["advice"] = "AI service authentication error. Please check API credentials."
+                fallback["note"] = "Authentication failed"
+                return fallback
+            else:
+                logger.error(f"Error in career advisor: {e}")
+                return self._fallback_response("career_advisor")
     
     async def finance_tips(
         self,

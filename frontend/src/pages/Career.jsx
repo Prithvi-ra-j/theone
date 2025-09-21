@@ -368,7 +368,7 @@ const Career = () => {
         {aiFeedback && (
           <div className="bg-blue-50 border border-blue-200 rounded p-4 mt-2">
             <h3 className="font-semibold text-blue-800 mb-2">AI Feedback</h3>
-            <div className="text-sm text-blue-900 whitespace-pre-line">{aiFeedback.feedback || aiFeedback.goal || JSON.stringify(aiFeedback)}</div>
+            <div className="text-sm text-blue-900 whitespace-pre-line max-h-60 overflow-y-auto pr-2">{aiFeedback.feedback || aiFeedback.goal || JSON.stringify(aiFeedback)}</div>
           </div>
         )}
       </div>
@@ -673,7 +673,7 @@ const AIAdviceModal = ({ isOpen, onClose, goalId, question, setQuestion, onSubmi
         {response && (
           <div className="mt-4 bg-gray-50 p-4 rounded">
             <h4 className="font-semibold mb-2">AI Response</h4>
-            <div className="prose max-w-none text-sm text-gray-800 whitespace-pre-wrap">{response.advice || response}</div>
+            <div className="prose max-w-none text-sm text-gray-800 whitespace-pre-wrap max-h-60 overflow-y-auto pr-2">{response.advice || response}</div>
           </div>
         )}
       </div>
