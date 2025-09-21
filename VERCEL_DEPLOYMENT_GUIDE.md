@@ -1,15 +1,16 @@
-# Dristhi - Vercel Deployment Guide
+# Dristhi - Deployment Guide
 
-This guide will help you deploy the Dristhi application (both frontend and backend) to Vercel.
+This guide will help you deploy the Dristhi application with the frontend on Vercel and the backend on Render.
 
 ## Prerequisites
 
 1. A Vercel account (sign up at https://vercel.com if you don't have one)
-2. Vercel CLI installed (optional but recommended)
+2. A Render account (sign up at https://render.com if you don't have one)
+3. Vercel CLI installed (optional but recommended)
    ```
    npm install -g vercel
    ```
-3. Git repository for your project (recommended)
+4. Git repository for your project (recommended)
 
 ## Deploying the Frontend
 
@@ -38,34 +39,29 @@ This guide will help you deploy the Dristhi application (both frontend and backe
      - Output Directory: dist
    - Deploy
 
-## Deploying the Backend
+## Deploying the Backend to Render
 
-Note: Vercel is primarily designed for frontend applications. For the backend, we're using a serverless approach, but you may need to adapt your backend further depending on its complexity.
+For the backend, we'll use Render which is better suited for Python/FastAPI applications:
 
-1. Navigate to your backend directory:
-   ```
-   cd backend
-   ```
+1. Log in to your Render account at https://dashboard.render.com/
 
-2. Login to Vercel (if using CLI):
-   ```
-   vercel login
-   ```
-
-3. Deploy to Vercel:
-   ```
-   vercel
-   ```
-   
-   Or deploy directly from the Vercel dashboard:
-   - Go to https://vercel.com/new
-   - Import your Git repository
+2. Create a new Web Service:
+   - Click "New" and select "Web Service"
+   - Connect your Git repository
    - Select the backend directory as the root
-   - Configure the project:
-     - Framework Preset: Other
-     - Build Command: pip install -r requirements.txt
-     - Output Directory: (leave empty)
-   - Deploy
+
+3. Configure the service:
+   - Name: dristhi-backend (or your preferred name)
+   - Runtime: Python 3
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+   - Select the appropriate plan (Free tier works for testing)
+
+4. Add Environment Variables:
+   - Click on "Environment" and add all variables from your backend .env file
+   - Make sure to update database URLs and other connection strings for production
+
+5. Deploy the service by clicking "Create Web Service"
 
 ## Environment Variables
 
@@ -77,29 +73,45 @@ Make sure to set up your environment variables in the Vercel dashboard:
    - For the frontend: API endpoints, authentication keys, etc.
    - For the backend: Database connection strings, API keys, etc.
 
-## Connecting Frontend and Backend
+## Connecting Frontend (Vercel) and Backend (Render)
 
 After deploying both parts:
 
-1. Get the deployment URL for your backend (e.g., https://dristhi-backend.vercel.app)
-2. Update the frontend's vercel.json file to point to your backend URL:
+1. Get the deployment URL for your Render backend (e.g., https://dristhi-backend.onrender.com)
+2. Update the frontend's environment variables in Vercel:
+   - Go to your frontend project in the Vercel dashboard
+   - Navigate to "Settings" > "Environment Variables"
+   - Add or update `VITE_API_BASE_URL` with your Render backend URL
+
+3. Update the frontend's vercel.json file to point to your Render backend URL:
    ```json
    {
      "routes": [
        {
          "src": "/api/(.*)",
-         "dest": "https://your-backend-url.vercel.app/api/$1"
+         "dest": "https://your-render-backend-url.onrender.com/api/$1"
        }
      ]
    }
    ```
-3. Redeploy your frontend
+
+4. Update the CORS settings in your backend .env file on Render:
+   - Add your Vercel frontend URL to the `BACKEND_CORS_ORIGINS` list
+   - Example: `BACKEND_CORS_ORIGINS=["https://your-frontend-url.vercel.app","http://localhost:3000"]`
+
+5. Redeploy your frontend on Vercel
 
 ## Important Notes
 
-1. Database connections: If your backend uses a database, make sure it's accessible from Vercel's serverless functions. Consider using a cloud database service.
-2. Serverless limitations: Vercel's serverless functions have certain limitations (execution time, memory, etc.). You may need to optimize your backend accordingly.
-3. Cold starts: Serverless functions may experience "cold starts" which can cause initial delays.
+1. Database connections: For your Render backend, use a cloud database service like Render's PostgreSQL, Railway, or Supabase that's accessible from Render's servers.
+
+2. Environment variables: Make sure to set all required environment variables in both Vercel (for frontend) and Render (for backend).
+
+3. Cold starts: The free tier of Render has cold starts, meaning your backend may take a moment to respond after periods of inactivity.
+
+4. Custom domains: Both Vercel and Render allow you to set up custom domains for your applications.
+
+5. Render limitations: Be aware of Render's free tier limitations on bandwidth, compute hours, and build minutes.
 
 ## Troubleshooting
 
