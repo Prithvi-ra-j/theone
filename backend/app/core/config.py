@@ -67,16 +67,13 @@ class Settings(BaseSettings):
     ENABLE_COMPATIBILITY_STUBS: bool = False
     
    
-    # API_LLM_API_KEY: str = "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"
-    # API_LLM_BASE_URL: str = "https://api.perplexity.ai"
-    # API_LLM_MODEL: str = "llama-3.1-sonar-large-128k-online"
-
-    API_LLM_API_KEY: str = "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"
-    API_LLM_BASE_URL: str = "https://openrouter.ai/api/v1"
-    API_LLM_MODEL: str = "x-ai/grok-4-fast:free"
+    # LLM API settings - using environment variables for security
+    API_LLM_API_KEY: str = os.getenv("API_LLM_API_KEY", "")
+    API_LLM_BASE_URL: str = os.getenv("API_LLM_BASE_URL", "https://openrouter.ai/api/v1")
+    API_LLM_MODEL: str = os.getenv("API_LLM_MODEL", "x-ai/grok-4-fast:free")
 
     # Gemini (Google) REST API settings (optional)
-    GEMINI_API_KEY: str = ""
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     GEMINI_BASE_URL: str = "https://generativelanguage.googleapis.com/v1"
     GEMINI_MODEL: str = "models/text-bison-001"
 
