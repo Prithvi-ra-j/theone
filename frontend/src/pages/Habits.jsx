@@ -63,48 +63,7 @@ const Habits = () => {
     return () => clearTimeout(timeout);
   }, [habitsLoading, tasksLoading, eventsLoading]);
 
-  // Error logging and error UI
-  if (habitsError || tasksError || eventsError) {
-    console.error('Habits page load error:', {
-      habits: habitsErrObj,
-      tasks: tasksErrObj,
-      events: eventsErrObj,
-    });
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-red-50 dark:bg-red-900">
-        <div>
-          <h2 className="text-xl font-bold text-red-700 dark:text-red-300">Error loading habits data</h2>
-          <pre className="text-xs text-red-600 dark:text-red-200">
-            {JSON.stringify({
-              habits: habitsErrObj?.message,
-              tasks: tasksErrObj?.message,
-              events: eventsErrObj?.message,
-            }, null, 2)}
-          </pre>
-        </div>
-      </div>
-    );
-  }
-  if (timedOut) {
-    console.error('Habits page load timeout: Data did not load within 30 seconds');
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-yellow-50 dark:bg-yellow-900">
-        <div>
-          <h2 className="text-xl font-bold text-yellow-700 dark:text-yellow-300">Timeout: Habits data did not load within 30 seconds</h2>
-          <p className="text-xs text-yellow-600 dark:text-yellow-200">Please check your network or backend server.</p>
-        </div>
-      </div>
-    );
-  }
-  if (habitsLoading || tasksLoading || eventsLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
-      </div>
-    );
-  }
-
-  // Mutations
+  // Mutations - must be declared unconditionally (before any early returns)
   const createHabitMutation = useMutation({
     mutationFn: habitsAPI.createHabit,
     onSuccess: () => {
@@ -182,6 +141,37 @@ const Habits = () => {
     },
   });
 
+  // Prepare render variants (kept as variables so component uses a single return)
+  const errorUI = (
+    <div className="flex items-center justify-center min-h-screen bg-red-50 dark:bg-red-900">
+      <div>
+        <h2 className="text-xl font-bold text-red-700 dark:text-red-300">Error loading habits data</h2>
+        <pre className="text-xs text-red-600 dark:text-red-200">
+          {JSON.stringify({
+            habits: habitsErrObj?.message,
+            tasks: tasksErrObj?.message,
+            events: eventsErrObj?.message,
+          }, null, 2)}
+        </pre>
+      </div>
+    </div>
+  );
+
+  const timeoutUI = (
+    <div className="flex items-center justify-center min-h-screen bg-yellow-50 dark:bg-yellow-900">
+      <div>
+        <h2 className="text-xl font-bold text-yellow-700 dark:text-yellow-300">Timeout: Habits data did not load within 30 seconds</h2>
+        <p className="text-xs text-yellow-600 dark:text-yellow-200">Please check your network or backend server.</p>
+      </div>
+    </div>
+  );
+
+  const loadingUI = (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
+    </div>
+  );
+
   const handleCreateNew = (type) => {
     setModalType(type);
     setEditingItem(null);
@@ -232,18 +222,12 @@ const Habits = () => {
     });
   }, [habitsData?.today_habits, filters]);
 
-  if (isLoading || tasksLoading || eventsLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
-      </div>
-    );
-  }
-
+  // Date formatting used in the main UI
   const today = new Date();
   const todayFormatted = format(today, 'EEEE, MMMM d');
 
-  return (
+  // Decide which UI to show; keep a single return at the end of the component
+  let mainUI = (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
@@ -535,7 +519,15 @@ const Habits = () => {
                         <div className="flex-1">
                           <h4 className="font-medium text-gray-900">{event.title}</h4>
                           <p className="text-sm text-gray-500">
-                            {format(new Date(event.start_time), 'MMM d, h:mm a')}
+                            {event?.start_time ? (() => {
+                              try {
+                                const d = new Date(event.start_time);
+                                if (isNaN(d.getTime())) return 'Invalid date';
+                                return format(d, 'MMM d, h:mm a');
+                              } catch (e) {
+                                return 'Invalid date';
+                              }
+                            })() : 'TBD'}
                           </p>
                         </div>
                       </div>
@@ -577,6 +569,26 @@ const Habits = () => {
       </Modal>
     </div>
   );
+
+  // Choose final page content
+  let pageContent = null;
+  if (habitsError || tasksError || eventsError) {
+    console.error('Habits page load error:', {
+      habits: habitsErrObj,
+      tasks: tasksErrObj,
+      events: eventsErrObj,
+    });
+    pageContent = errorUI;
+  } else if (timedOut) {
+    console.error('Habits page load timeout: Data did not load within 30 seconds');
+    pageContent = timeoutUI;
+  } else if (habitsLoading || tasksLoading || eventsLoading) {
+    pageContent = loadingUI;
+  } else {
+    pageContent = mainUI;
+  }
+
+  return pageContent;
 };
 
 // Form Component

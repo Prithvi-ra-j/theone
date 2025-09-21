@@ -63,22 +63,16 @@ apiClient.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${access_token}`;
           return apiClient(originalRequest);
         } catch (refreshError) {
-          // Refresh failed, clear tokens and redirect to login
+          // Refresh failed: clear tokens but do NOT redirect in prototype mode.
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
-          
-          // Only redirect if we're not already on the login page
-          if (window.location.pathname !== '/login') {
-            window.location.href = '/login';
-          }
-          
           return Promise.reject(refreshError);
         }
       } else {
-        // No refresh token, redirect to login
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login';
-        }
+        // No refresh token - in dev mode avoid redirect
+        // No refresh token: clear local tokens and continue (do not redirect)
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
       }
     }
 
@@ -93,22 +87,24 @@ apiClient.interceptors.response.use(
 );
 
 // Utility functions for common HTTP methods
+// These helpers unwrap axios' response and return response.data so callers
+// receive plain JSON (or blob for downloads) instead of the full AxiosResponse.
 const api = {
   // GET request
-  get: (url, config = {}) => apiClient.get(url, config),
-  
+  get: (url, config = {}) => apiClient.get(url, config).then((res) => res.data),
+
   // POST request
-  post: (url, data = {}, config = {}) => apiClient.post(url, data, config),
-  
+  post: (url, data = {}, config = {}) => apiClient.post(url, data, config).then((res) => res.data),
+
   // PUT request
-  put: (url, data = {}, config = {}) => apiClient.put(url, data, config),
-  
+  put: (url, data = {}, config = {}) => apiClient.put(url, data, config).then((res) => res.data),
+
   // PATCH request
-  patch: (url, data = {}, config = {}) => apiClient.patch(url, data, config),
-  
+  patch: (url, data = {}, config = {}) => apiClient.patch(url, data, config).then((res) => res.data),
+
   // DELETE request
-  delete: (url, config = {}) => apiClient.delete(url, config),
-  
+  delete: (url, config = {}) => apiClient.delete(url, config).then((res) => res.data),
+
   // Upload file
   upload: (url, formData, config = {}) => {
     const uploadConfig = {
@@ -118,18 +114,18 @@ const api = {
         'Content-Type': 'multipart/form-data',
       },
     };
-    return apiClient.post(url, formData, uploadConfig);
+    return apiClient.post(url, formData, uploadConfig).then((res) => res.data);
   },
-  
+
   // Download file
   download: (url, config = {}) => {
     const downloadConfig = {
       ...config,
       responseType: 'blob',
     };
-    return apiClient.get(url, downloadConfig);
+    return apiClient.get(url, downloadConfig).then((res) => res.data);
   },
-  
+
   // Set auth token manually
   setAuthToken: (token) => {
     if (token) {
@@ -140,25 +136,25 @@ const api = {
       delete apiClient.defaults.headers.common.Authorization;
     }
   },
-  
+
   // Clear auth token
   clearAuthToken: () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     delete apiClient.defaults.headers.common.Authorization;
   },
-  
+
   // Get stored tokens
   getTokens: () => ({
     access_token: localStorage.getItem('access_token'),
     refresh_token: localStorage.getItem('refresh_token'),
   }),
-  
+
   // Check if user is authenticated
   isAuthenticated: () => {
     return !!localStorage.getItem('access_token');
   },
-  
+
   // Get base URL
   getBaseURL: () => API_BASE_URL,
 };

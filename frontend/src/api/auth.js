@@ -1,11 +1,27 @@
+import apiClient from './client';
+import api from './client';
+
+// Demo login + logout helpers (prototype convenience)
+async function demoLogin(email = 'demo@example.com') {
+  const body = await api.post('/auth/demo-login', { email });
+  const token = body?.access_token || body?.token || body?.accessToken;
+  if (!token) throw new Error('No token returned from demo-login');
+  api.setAuthToken(token);
+  return token;
+}
+
+function logout() {
+  api.clearAuthToken();
+}
+
 /**
  * Authentication API module
  * Handles user authentication, registration, and profile management
  */
 
-import apiClient from './client';
-
 const authAPI = {
+  demoLogin,
+  logout,
   /**
    * User registration
    * @param {Object} userData - User registration data

@@ -90,7 +90,7 @@ const Mood = () => {
 
   // Mutations
   const createMoodLogMutation = useMutation({
-    mutationFn: moodAPI.logMood,
+    mutationFn: moodAPI.createMoodLog,
     onSuccess: () => {
       queryClient.invalidateQueries(['mood-dashboard']);
       queryClient.invalidateQueries(['mood-logs']);
@@ -505,7 +505,17 @@ const MoodForm = ({ editingEntry, onSubmit, onCancel }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    // Ensure numeric fields are numbers before sending to API
+    const payload = {
+      ...formData,
+      mood_score: Number(formData.mood_score),
+      energy_level: Number(formData.energy_level),
+      stress_level: Number(formData.stress_level),
+      sleep_hours: Number(formData.sleep_hours),
+      exercise_minutes: Number(formData.exercise_minutes || 0),
+    };
+
+    onSubmit(payload);
   };
 
   const handleChange = (e) => {

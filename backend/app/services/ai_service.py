@@ -17,6 +17,39 @@ from app.core.config import settings
 
 
 class AIService:
+    def generate_tasks_for_goal(self, goal_title: str, goal_description: str) -> list:
+        """Generate actionable tasks for a career goal using the LLM."""
+        if not self.llm:
+            return [
+                {"title": "Define your first milestone", "description": "Break your goal into smaller steps."}
+            ]
+        prompt = f"Generate a list of 5 actionable tasks to help achieve the following career goal: {goal_title}. Context: {goal_description}. Return as a JSON list of objects with 'title' and 'description'."
+        try:
+            result = self.llm(prompt)
+            # Try to parse JSON from result
+            tasks = json.loads(result)
+            if isinstance(tasks, list):
+                return tasks
+            return [
+                {"title": "Review AI output", "description": str(result)}
+            ]
+        except Exception as e:
+            logger.error(f"Error generating tasks: {e}")
+            return [
+                {"title": "Define your first milestone", "description": "Break your goal into smaller steps."}
+            ]
+
+    def generate_feedback(self, goal_title: str, completed_tasks: list) -> str:
+        """Generate AI feedback on progress for a career goal."""
+        if not self.llm:
+            return "Keep going!"
+        prompt = f"User's goal: {goal_title}. Completed tasks: {completed_tasks}. Provide feedback and next steps."
+        try:
+            feedback = self.llm(prompt)
+            return str(feedback)
+        except Exception as e:
+            logger.error(f"Error generating feedback: {e}")
+            return "Keep going!"
     """AI service for LLM integration."""
     
     def __init__(self):
@@ -30,6 +63,12 @@ class AIService:
     def _init_llm(self) -> None:
         """Initialize LLM connection."""
         try:
+            # If the developer requests forcing fallback mode, don't attempt
+            # to connect to any external LLM provider.
+            if settings.AI_FORCE_FALLBACK:
+                logger.info("AI_FORCE_FALLBACK is set - using fallback responses only")
+                self.is_available = False
+                return
             if settings.LLM_PROVIDER == "ollama":
                 # Test Ollama connection
                 with httpx.Client(timeout=5.0) as client:
@@ -96,21 +135,54 @@ class AIService:
     async def career_advisor(
         self,
         user_context: Dict[str, Any],
-        question: str
+        question: str,
+        temperature: Optional[float] = None,
+        user_id: Optional[int] = None
     ) -> Dict[str, Any]:
         """Get career advice using AI."""
-        if not self.is_available:
+        # If the service is not available or developer wanted fallback, return
+        # the built-in fallback response instead of attempting a remote call.
+        if not self.is_available or settings.AI_FORCE_FALLBACK:
             return self._fallback_response("career_advisor")
         
         try:
-            # Create career advice prompt
+            # Get relevant memories using semantic search if user_id is provided
+            memory_context = ""
+            if user_id is not None:
+                try:
+                    from app.services.memory_service import MemoryService
+                    memory_service = MemoryService()
+                    
+                    # Use semantic search to find relevant memories
+                    relevant_memories = memory_service.semantic_search(
+                        user_id=user_id,
+                        query=question,
+                        memory_type="career",
+                        top_k=5
+                    )
+                    
+                    # Extract memory content for context enhancement
+                    if relevant_memories:
+                        memory_context = "Relevant user information:\n"
+                        for i, memory in enumerate(relevant_memories):
+                            memory_context += f"- {memory.get('content', '')}"
+                            if memory.get('description'):
+                                memory_context += f": {memory.get('description', '')}"
+                            memory_context += "\n"
+                except Exception as mem_err:
+                    logger.error(f"Error retrieving memories: {mem_err}")
+            
+            # Create career advice prompt with enhanced context
             prompt = PromptTemplate(
-                input_variables=["context", "question"],
+                input_variables=["context", "memory_context", "question"],
                 template="""
                 You are Dristhi, an AI career advisor for Indian students. 
                 Provide personalized, practical career guidance based on the user's context.
                 
                 User Context: {context}
+                
+                User Memory Context: {memory_context}
+                
                 Question: {question}
                 
                 Please provide:
@@ -123,12 +195,35 @@ class AIService:
                 """
             )
             
-            chain = LLMChain(llm=self.llm, prompt=prompt)
+            # Allow callers to override temperature for deterministic outputs
+            llm_to_use = self.llm
+            if temperature is not None:
+                try:
+                    if settings.LLM_PROVIDER == "api":
+                        # Create a temporary ChatOpenAI with the requested temperature
+                        llm_to_use = ChatOpenAI(
+                            api_key=settings.API_LLM_API_KEY,
+                            base_url=settings.API_LLM_BASE_URL,
+                            model=settings.API_LLM_MODEL,
+                            temperature=temperature,
+                        )
+                    elif settings.LLM_PROVIDER == "ollama":
+                        llm_to_use = Ollama(
+                            base_url=settings.OLLAMA_BASE_URL,
+                            model=settings.OLLAMA_MODEL,
+                            temperature=temperature,
+                        )
+                except Exception as _:
+                    # Fall back to the configured llm if temporary creation fails
+                    llm_to_use = self.llm
+
+            chain = LLMChain(llm=llm_to_use, prompt=prompt)
             
             # Run the chain
             result = await asyncio.to_thread(
                 chain.run,
                 context=json.dumps(user_context, indent=2),
+                memory_context=memory_context if memory_context else "No additional memory context available.",
                 question=question
             )
             
@@ -136,7 +231,8 @@ class AIService:
                 "advice": result.strip(),
                 "timestamp": datetime.utcnow().isoformat(),
                 "model": self.model_name,
-                "context_used": user_context
+                "context_used": user_context,
+                "enhanced_with_rag": bool(memory_context)
             }
             
         except Exception as e:
@@ -146,21 +242,49 @@ class AIService:
     async def finance_tips(
         self,
         user_context: Dict[str, Any],
-        financial_question: str
+        financial_question: str,
+        user_id: Optional[int] = None
     ) -> Dict[str, Any]:
         """Get financial advice using AI."""
         if not self.is_available:
             return self._fallback_response("finance_tips")
         
         try:
+            # Get relevant memories using semantic search if user_id is provided
+            memory_context = ""
+            if user_id is not None:
+                try:
+                    from app.services.memory_service import MemoryService
+                    memory_service = MemoryService()
+                    
+                    # Use semantic search to find relevant memories
+                    relevant_memories = memory_service.semantic_search(
+                        user_id=user_id,
+                        query=financial_question,
+                        memory_type="finance",
+                        top_k=5
+                    )
+                    
+                    # Extract memory content for context enhancement
+                    if relevant_memories:
+                        memory_context = "Relevant financial information:\n"
+                        for i, memory in enumerate(relevant_memories):
+                            memory_context += f"- {memory.get('content', '')}"
+                            if memory.get('description'):
+                                memory_context += f": {memory.get('description', '')}"
+                            memory_context += "\n"
+                except Exception as mem_err:
+                    logger.error(f"Error retrieving memories: {mem_err}")
+            
             # Create finance advice prompt
             prompt = PromptTemplate(
-                input_variables=["context", "question"],
+                input_variables=["context", "memory_context", "question"],
                 template="""
                 You are Dristhi, an AI financial advisor for Indian students. 
                 Provide practical financial advice and tips based on the user's context.
                 
                 User Context: {context}
+                User Memory Context: {memory_context}
                 Financial Question: {question}
                 
                 Please provide:
@@ -180,6 +304,7 @@ class AIService:
             result = await asyncio.to_thread(
                 chain.run,
                 context=json.dumps(user_context, indent=2),
+                memory_context=memory_context if memory_context else "No additional memory context available.",
                 question=financial_question
             )
             
@@ -187,7 +312,8 @@ class AIService:
                 "advice": result.strip(),
                 "timestamp": datetime.utcnow().isoformat(),
                 "model": self.model_name,
-                "context_used": user_context
+                "context_used": user_context,
+                "enhanced_with_rag": bool(memory_context)
             }
             
         except Exception as e:

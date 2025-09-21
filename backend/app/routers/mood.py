@@ -1,49 +1,80 @@
 """Mood router for wellness tracking and mood logging."""
 
-from typing import Any, List
+from typing import Any, List, Optional
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from app.db.session import get_db
 from app.models.user import User
 from app.models.mood import MoodLog
-from app.routers.auth import get_current_user
+from app.routers.auth import get_current_user, get_optional_current_user
 
 router = APIRouter()
 
 
 @router.post("/log", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def log_mood(
-    mood_score: int,
-    mood_label: str = None,
-    energy_level: int = None,
-    stress_level: int = None,
-    sleep_hours: float = None,
-    exercise_minutes: int = None,
-    notes: str = None,
+    payload: dict = Body(...),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
     """Log a new mood entry."""
-    # Validate mood score
+    # Extract fields from JSON payload and validate/cast
+    mood_score = payload.get('mood_score')
+    # map incoming 'mood_label' to model's primary_emotion
+    mood_label = payload.get('mood_label')
+    primary_emotion = payload.get('primary_emotion') or mood_label
+    energy_level = payload.get('energy_level')
+    stress_level = payload.get('stress_level')
+    sleep_hours = payload.get('sleep_hours')
+    exercise_minutes = payload.get('exercise_minutes')
+    notes = payload.get('notes')
+
+    if mood_score is None:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="mood_score is required")
+
+    try:
+        mood_score = int(mood_score)
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="mood_score must be an integer between 1 and 10")
+
     if not 1 <= mood_score <= 10:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Mood score must be between 1 and 10"
         )
-    
+
+    # Optional numeric casts
+    try:
+        energy_level = int(energy_level) if energy_level is not None else None
+    except Exception:
+        energy_level = None
+    try:
+        stress_level = int(stress_level) if stress_level is not None else None
+    except Exception:
+        stress_level = None
+    try:
+        sleep_hours = float(sleep_hours) if sleep_hours is not None else None
+    except Exception:
+        sleep_hours = None
+    try:
+        exercise_minutes = int(exercise_minutes) if exercise_minutes is not None else None
+    except Exception:
+        exercise_minutes = None
+
     db_mood = MoodLog(
         user_id=current_user.id,
         mood_score=mood_score,
-        mood_label=mood_label,
+        primary_emotion=primary_emotion,
         energy_level=energy_level,
         stress_level=stress_level,
         sleep_hours=sleep_hours,
         exercise_minutes=exercise_minutes,
-        notes=notes
+        notes=notes,
+        logged_at=datetime.utcnow()
     )
     db.add(db_mood)
     db.commit()
@@ -54,28 +85,30 @@ async def log_mood(
 @router.get("/logs", response_model=List[dict])
 async def get_mood_logs(
     days: int = 7,
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
     """Get mood logs for the specified number of days."""
     start_date = datetime.utcnow() - timedelta(days=days)
-    
-    logs = db.query(MoodLog).filter(
-        MoodLog.user_id == current_user.id,
-        MoodLog.date >= start_date
-    ).order_by(MoodLog.date.desc()).all()
+
+    # Use `log_date` (model column) and compare against date portion of start_date
+    query = db.query(MoodLog).filter(MoodLog.log_date >= start_date.date())
+    if current_user is not None:
+        query = query.filter(MoodLog.user_id == current_user.id)
+    logs = query.order_by(MoodLog.log_date.desc()).all()
     
     return [
         {
             "id": log.id,
             "mood_score": log.mood_score,
-            "mood_label": log.mood_label,
+            "primary_emotion": getattr(log, 'primary_emotion', None),
             "energy_level": log.energy_level,
             "stress_level": log.stress_level,
             "sleep_hours": log.sleep_hours,
             "exercise_minutes": log.exercise_minutes,
             "notes": log.notes,
-            "date": log.date
+            "date": log.log_date,
+            "logged_at": getattr(log, 'logged_at', None)
         }
         for log in logs
     ]
@@ -83,48 +116,48 @@ async def get_mood_logs(
 
 @router.get("/dashboard")
 async def get_mood_dashboard(
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
     """Get mood dashboard data."""
     # Get current week's data
     week_ago = datetime.utcnow() - timedelta(days=7)
-    
-    # Average mood score
-    avg_mood = db.query(func.avg(MoodLog.mood_score)).filter(
-        MoodLog.user_id == current_user.id,
-        MoodLog.date >= week_ago
-    ).scalar() or 0
+
+    base_filters = [MoodLog.log_date >= week_ago]
+    if current_user is not None:
+        base_filters.insert(0, MoodLog.user_id == current_user.id)
+
+    # Average mood score (MoodLog uses `log_date` and `logged_at`)
+    avg_mood = db.query(func.avg(MoodLog.mood_score)).filter(*base_filters).scalar() or 0
     
     # Average energy level
-    avg_energy = db.query(func.avg(MoodLog.energy_level)).filter(
-        MoodLog.user_id == current_user.id,
-        MoodLog.date >= week_ago,
-        MoodLog.energy_level.isnot(None)
-    ).scalar() or 0
+    energy_filters = [MoodLog.log_date >= week_ago, MoodLog.energy_level.isnot(None)]
+    if current_user is not None:
+        energy_filters.insert(0, MoodLog.user_id == current_user.id)
+    avg_energy = db.query(func.avg(MoodLog.energy_level)).filter(*energy_filters).scalar() or 0
     
     # Average stress level
-    avg_stress = db.query(func.avg(MoodLog.stress_level)).filter(
-        MoodLog.user_id == current_user.id,
-        MoodLog.date >= week_ago,
-        MoodLog.stress_level.isnot(None)
-    ).scalar() or 0
+    stress_filters = [MoodLog.log_date >= week_ago, MoodLog.stress_level.isnot(None)]
+    if current_user is not None:
+        stress_filters.insert(0, MoodLog.user_id == current_user.id)
+    avg_stress = db.query(func.avg(MoodLog.stress_level)).filter(*stress_filters).scalar() or 0
     
     # Average sleep hours
-    avg_sleep = db.query(func.avg(MoodLog.sleep_hours)).filter(
-        MoodLog.user_id == current_user.id,
-        MoodLog.date >= week_ago,
-        MoodLog.sleep_hours.isnot(None)
-    ).scalar() or 0
+    sleep_filters = [MoodLog.log_date >= week_ago, MoodLog.sleep_hours.isnot(None)]
+    if current_user is not None:
+        sleep_filters.insert(0, MoodLog.user_id == current_user.id)
+    avg_sleep = db.query(func.avg(MoodLog.sleep_hours)).filter(*sleep_filters).scalar() or 0
     
     # Mood trends (last 7 days)
+    # Group by log_date (the model column name). Use func.date on log_date
+    # to produce a day bucket for trends.
+    daily_filters = [MoodLog.log_date >= week_ago]
+    if current_user is not None:
+        daily_filters.insert(0, MoodLog.user_id == current_user.id)
     daily_moods = db.query(
-        func.date(MoodLog.date).label('date'),
+        func.date(MoodLog.log_date).label('date'),
         func.avg(MoodLog.mood_score).label('avg_mood')
-    ).filter(
-        MoodLog.user_id == current_user.id,
-        MoodLog.date >= week_ago
-    ).group_by(func.date(MoodLog.date)).all()
+    ).filter(*daily_filters).group_by(func.date(MoodLog.log_date)).all()
     
     return {
         "weekly_averages": {
@@ -135,10 +168,10 @@ async def get_mood_dashboard(
         },
         "mood_trends": [
             {
-                "date": str(date),
-                "avg_mood": round(float(avg_mood), 1)
+                "date": str(day),
+                "avg_mood": round(float(avg_m), 1)
             }
-            for date, avg_mood in daily_moods
+            for day, avg_m in daily_moods
         ],
         "wellness_score": round((float(avg_mood) + float(avg_energy) + (10 - float(avg_stress))) / 3, 1)
     }
@@ -146,7 +179,7 @@ async def get_mood_dashboard(
 
 @router.get("/insights")
 async def get_mood_insights(
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
     """Get AI-generated mood insights."""

@@ -10,7 +10,7 @@ from app.db.session import get_db
 from app.models.user import User
 from app.models.memory import UserMemory, Embedding, Conversation
 from app.services.memory_service import MemoryService
-from app.routers.auth import get_current_user
+from app.routers.auth import get_current_user, get_optional_current_user
 
 router = APIRouter()
 
@@ -20,7 +20,7 @@ async def store_memory(
     content: str,
     memory_type: str = "general",
     metadata: Dict[str, Any] = None,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_optional_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
     """Store a new memory for the user."""
@@ -64,7 +64,7 @@ async def search_memories(
     query: str,
     memory_type: str = None,
     top_k: int = 5,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_optional_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
     """Search memories using semantic similarity."""
@@ -90,7 +90,7 @@ async def search_memories(
 async def get_user_context(
     context_type: str = "general",
     max_memories: int = 10,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_optional_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
     """Get user context for AI personalization."""
@@ -114,7 +114,7 @@ async def get_user_context(
 @router.put("/preferences", response_model=dict)
 async def update_user_preferences(
     preferences: Dict[str, Any],
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_optional_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
     """Update user preferences in memory."""
@@ -143,7 +143,7 @@ async def update_user_preferences(
 @router.get("/suggestions/{suggestion_type}", response_model=List[dict])
 async def get_personalized_suggestions(
     suggestion_type: str = "general",
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_optional_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
     """Get personalized suggestions based on user memory."""
@@ -169,7 +169,7 @@ async def store_conversation(
     message_type: str,
     content: str,
     metadata: Dict[str, Any] = None,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_optional_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
     """Store a conversation message."""
@@ -190,7 +190,7 @@ async def store_conversation(
 @router.get("/conversations/{session_id}", response_model=List[dict])
 async def get_conversation_history(
     session_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_optional_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
     """Get conversation history for a session."""
@@ -214,7 +214,7 @@ async def get_conversation_history(
 @router.get("/memories", response_model=List[dict])
 async def get_user_memories(
     memory_type: str = None,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_optional_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
     """Get all memories for the current user."""
@@ -244,7 +244,7 @@ async def get_user_memories(
 @router.delete("/memories/{memory_id}")
 async def delete_memory(
     memory_id: int,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_optional_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
     """Delete a specific memory."""
@@ -267,7 +267,7 @@ async def delete_memory(
 
 @router.get("/status")
 async def get_memory_service_status(
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_optional_current_user)
 ) -> Any:
     """Get memory service status."""
     try:

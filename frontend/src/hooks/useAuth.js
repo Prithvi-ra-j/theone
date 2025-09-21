@@ -295,28 +295,16 @@ export const useAuth = () => {
 
   const isAuthenticated = !!user;
 
-  const login = ({ email, password }) => {
-    // Dummy credentials
-    const dummyUser = { email: "test@example.com", name: "Test User" };
-
-    if (email === "test@example.com" && password === "1234") {
-      setUser(dummyUser);
-      navigate("/dashboard"); // Redirect after login
-      return true;
-    } else {
-      return false;
-    }
-  };
+  // Login removed for prototype — app shows dashboard without auth
 
   const logout = () => {
     setUser(null);
-    navigate("/login");
+    navigate('/login');
   };
 
   return {
     user,
     isAuthenticated,
-    login,
     logout,
   };
 };

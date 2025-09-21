@@ -11,6 +11,7 @@ export { default as moodAPI } from './mood';
 export { default as gamificationAPI } from './gamification';
 export { default as memoryAPI } from './memory';
 export { default as aiAPI } from './ai';
+export { default as miniAssistantAPI } from './miniAssistant';
 
 // Re-export common utilities
 export { default as apiClient } from './client';

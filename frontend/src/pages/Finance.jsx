@@ -29,6 +29,20 @@ import Select from '../components/ui/Select.jsx';
 import { formatCurrency } from '../utils/formatters';
 import { format, subDays, startOfMonth, endOfMonth } from 'date-fns';
 
+// Safely format dates coming from the backend which may be null, empty,
+// or in an unexpected shape. Returns a placeholder string if the date
+// cannot be parsed.
+const safeFormat = (dateInput, fmt = 'MMM d, yyyy') => {
+  if (!dateInput) return '—';
+  try {
+    const dt = new Date(dateInput);
+    if (Number.isNaN(dt.getTime())) return '—';
+    return format(dt, fmt);
+  } catch (e) {
+    return '—';
+  }
+};
+
 const Finance = () => {
   const [timedOut, setTimedOut] = React.useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -69,47 +83,7 @@ const Finance = () => {
     return () => clearTimeout(timeout);
   }, [isLoading, expensesLoading, incomeLoading, budgetsLoading, goalsLoading]);
 
-  // ...all mutation hooks and handler functions...
-
-  // Place error/timeout UI checks here, just before main render return
-  if (timedOut) {
-    console.error('Finance page load timeout: Data did not load within 30 seconds');
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-yellow-50 dark:bg-yellow-900">
-        <div>
-          <h2 className="text-xl font-bold text-yellow-700 dark:text-yellow-300">Timeout: Finance data did not load within 30 seconds</h2>
-          <p className="text-xs text-yellow-600 dark:text-yellow-200">Please check your network or backend server.</p>
-        </div>
-      </div>
-    );
-  }
-  if (financeError || expensesError || incomeError || budgetsError || goalsError) {
-    console.error('Finance page load error:', {
-      finance: financeErrObj,
-      expenses: expensesErrObj,
-      income: incomeErrObj,
-      budgets: budgetsErrObj,
-      goals: goalsErrObj,
-    });
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-red-50 dark:bg-red-900">
-        <div>
-          <h2 className="text-xl font-bold text-red-700 dark:text-red-300">Error loading finance data</h2>
-          <pre className="text-xs text-red-600 dark:text-red-200">
-            {JSON.stringify({
-              finance: financeErrObj?.message,
-              expenses: expensesErrObj?.message,
-              income: incomeErrObj?.message,
-              budgets: budgetsErrObj?.message,
-              goals: goalsErrObj?.message,
-            }, null, 2)}
-          </pre>
-        </div>
-      </div>
-    );
-  }
-
-  // Mutations
+  // Mutation hooks (declare before any early returns to preserve hook order)
   const createExpenseMutation = useMutation({
     mutationFn: financeAPI.createExpense,
     onSuccess: () => {
@@ -165,6 +139,45 @@ const Finance = () => {
       console.error('Error creating financial goal:', error);
     },
   });
+
+  // Place error/timeout UI checks here, just before main render return
+  if (timedOut) {
+    console.error('Finance page load timeout: Data did not load within 30 seconds');
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-yellow-50 dark:bg-yellow-900">
+        <div>
+          <h2 className="text-xl font-bold text-yellow-700 dark:text-yellow-300">Timeout: Finance data did not load within 30 seconds</h2>
+          <p className="text-xs text-yellow-600 dark:text-yellow-200">Please check your network or backend server.</p>
+        </div>
+      </div>
+    );
+  }
+  if (financeError || expensesError || incomeError || budgetsError || goalsError) {
+    console.error('Finance page load error:', {
+      finance: financeErrObj,
+      expenses: expensesErrObj,
+      income: incomeErrObj,
+      budgets: budgetsErrObj,
+      goals: goalsErrObj,
+    });
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-red-50 dark:bg-red-900">
+        <div>
+          <h2 className="text-xl font-bold text-red-700 dark:text-red-300">Error loading finance data</h2>
+          <pre className="text-xs text-red-600 dark:text-red-200">
+            {JSON.stringify({
+              finance: financeErrObj?.message,
+              expenses: expensesErrObj?.message,
+              income: incomeErrObj?.message,
+              budgets: budgetsErrObj?.message,
+              goals: goalsErrObj?.message,
+            }, null, 2)}
+          </pre>
+        </div>
+      </div>
+    );
+  }
+
 
   const handleCreateNew = (type) => {
     setModalType(type);
@@ -496,7 +509,7 @@ const Finance = () => {
                   <div className="text-right">
                     <p className="font-medium text-red-600">-{formatCurrency(expense.amount)}</p>
                     <p className="text-sm text-gray-500">
-                      {format(new Date(expense.date), 'MMM d, yyyy')}
+                      {safeFormat(expense.date, 'MMM d, yyyy')}
                     </p>
                   </div>
                 </div>
@@ -515,7 +528,7 @@ const Finance = () => {
                   <div className="text-right">
                     <p className="font-medium text-green-600">+{formatCurrency(incomeItem.amount)}</p>
                     <p className="text-sm text-gray-500">
-                      {format(new Date(incomeItem.date), 'MMM d, yyyy')}
+                      {safeFormat(incomeItem.date, 'MMM d, yyyy')}
                     </p>
                   </div>
                 </div>

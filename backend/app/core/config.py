@@ -50,7 +50,14 @@ class Settings(BaseSettings):
 
     # AI Services
     ENABLE_AI_FEATURES: bool = True  # Set to True to enable AI features
-    LLM_PROVIDER: str = "ollama"  # or "api"
+    LLM_PROVIDER: str = "api"  # or "api"
+    # When True, force the AI service to use local fallback responses and
+    # avoid any calls to external LLM providers. Useful for offline or
+    # smoke-test scenarios where external auth is not available.
+    AI_FORCE_FALLBACK: bool = False
+    # When True, force the AI service to return local fallback responses and
+    # avoid making any external network calls to LLM providers (useful for
+    # offline development or when you don't want to configure API keys).
     # Development helpers
     # When True, will enable mock endpoints for frontend development.
     # Default to False so real routes are used unless developer explicitly enables mocks
@@ -59,14 +66,14 @@ class Settings(BaseSettings):
     # unimplemented endpoints. Keep this off in production by default.
     ENABLE_COMPATIBILITY_STUBS: bool = False
     
-    # Ollama Settings
-    OLLAMA_BASE_URL: str = "http://localhost:11434"
-    OLLAMA_MODEL: str = "llama2"
+   
+    # API_LLM_API_KEY: str = "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"
+    # API_LLM_BASE_URL: str = "https://api.perplexity.ai"
+    # API_LLM_MODEL: str = "llama-3.1-sonar-large-128k-online"
 
-    # API LLM Settings
-    API_LLM_API_KEY: str = "your-api-key-from-env"
+    API_LLM_API_KEY: str = "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"
     API_LLM_BASE_URL: str = "https://openrouter.ai/api/v1"
-    API_LLM_MODEL: str = "openai/gpt-oss-20b:free"
+    API_LLM_MODEL: str = "x-ai/grok-4-fast:free"
 
     # Gemini (Google) REST API settings (optional)
     GEMINI_API_KEY: str = ""

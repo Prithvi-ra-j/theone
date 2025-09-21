@@ -10,7 +10,7 @@ from fastapi import HTTPException
 from loguru import logger
 
 from app.core.config import settings
-from app.routers import auth, career, habits, finance, mood, gamification, memory
+from app.routers import auth, career, habits, finance, mood, gamification, memory, mini_assistant
 
 # Global variables for lifespan management
 ai_service = None
@@ -145,9 +145,21 @@ app.include_router(career.router, prefix=f"{settings.API_V1_STR}/career", tags=[
 app.include_router(habits.router, prefix=f"{settings.API_V1_STR}/habits", tags=["habits"])
 app.include_router(finance.router, prefix=f"{settings.API_V1_STR}/finance", tags=["finance"])
 app.include_router(__import__("app.routers.ai", fromlist=["router"]).router, prefix=settings.API_V1_STR, tags=["ai"])
-app.include_router(mood.router, prefix=settings.API_V1_STR, tags=["mood"])
-app.include_router(gamification.router, prefix=settings.API_V1_STR, tags=["gamification"])
+# Register mood and gamification under their own subpaths so routes
+# are reachable at /api/v1/mood/* and /api/v1/gamification/* respectively.
+app.include_router(mood.router, prefix=f"{settings.API_V1_STR}/mood", tags=["mood"])
+app.include_router(gamification.router, prefix=f"{settings.API_V1_STR}/gamification", tags=["gamification"])
 app.include_router(memory.router, prefix=settings.API_V1_STR, tags=["memory"])
+# Mini Assistant router
+from app.routers.mini_assistant import router as mini_assistant_router
+app.include_router(mini_assistant_router, prefix=f"{settings.API_V1_STR}/mini-assistant", tags=["mini-assistant"])
+# Demo auth route for quick prototype login (enabled via ENABLE_DEMO_LOGIN env var)
+try:
+    from app.routers.demo_auth import router as demo_auth_router
+    app.include_router(demo_auth_router, prefix=settings.API_V1_STR, tags=["demo-auth"])
+except Exception as _:
+    # Do not fail startup if demo router import fails
+    pass
 # Optional mock endpoints for frontend development
 if settings.ENABLE_MOCK_ENDPOINTS:
     try:

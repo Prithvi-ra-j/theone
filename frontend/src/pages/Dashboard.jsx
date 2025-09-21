@@ -27,6 +27,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import AnimatedCard from '../components/ui/AnimatedCard';
 import PageTransition from '../components/ui/PageTransition';
 import AnimatedSpinner from '../components/ui/AnimatedSpinner';
+import AIRecommendations from '../components/AIRecommendations';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -35,75 +36,32 @@ const Dashboard = () => {
 
   // Fetch dashboard data
   const { data: careerData, isLoading: careerLoading, isError: careerError, error: careerErrObj } = useQuery({
-    queryKey: ['career-dashboard'],
+    queryKey: ['career','dashboard'],
     queryFn: () => careerAPI.getCareerDashboard(),
   });
 
   const { data: habitsData, isLoading: habitsLoading, isError: habitsError, error: habitsErrObj } = useQuery({
-    queryKey: ['habits-dashboard'],
+    queryKey: ['habits','dashboard'],
     queryFn: () => habitsAPI.getHabitsDashboard(),
   });
 
   const { data: financeData, isLoading: financeLoading, isError: financeError, error: financeErrObj } = useQuery({
-    queryKey: ['finance-dashboard'],
+    queryKey: ['finance','dashboard'],
     queryFn: () => financeAPI.getFinanceDashboard(),
   });
 
   const { data: moodData, isLoading: moodLoading, isError: moodError, error: moodErrObj } = useQuery({
-    queryKey: ['mood-dashboard'],
+    queryKey: ['mood','dashboard'],
     queryFn: () => moodAPI.getMoodDashboard(),
   });
 
   const { data: userStats, isLoading: statsLoading, isError: statsError, error: statsErrObj } = useQuery({
-    queryKey: ['user-stats'],
+    queryKey: ['gamification','user-stats'],
     queryFn: () => gamificationAPI.getUserStats(),
   });
 
-  // Timeout logic (after all useQuery hooks)
-  useEffect(() => {
-    if (!(careerLoading || habitsLoading || financeLoading || moodLoading || statsLoading)) return;
-    const timeout = setTimeout(() => setTimedOut(true), 30000);
-    return () => clearTimeout(timeout);
-  }, [careerLoading, habitsLoading, financeLoading, moodLoading, statsLoading]);
-
-  // Prepare UI elements based on conditions
-  let dashboardContent;
-  
-  if (timedOut) {
-    console.error('Dashboard page load timeout: Data did not load within 30 seconds');
-    dashboardContent = (
-      <div className="flex items-center justify-center min-h-screen bg-yellow-50 dark:bg-yellow-900">
-        <div>
-          <h2 className="text-xl font-bold text-yellow-700 dark:text-yellow-300">Timeout: Dashboard data did not load within 30 seconds</h2>
-          <p className="text-xs text-yellow-600 dark:text-yellow-200">Please check your network or backend server.</p>
-        </div>
-      </div>
-    );
-  } else if (careerError || habitsError || financeError || moodError || statsError) {
-    console.error('Dashboard load error:', {
-      career: careerErrObj,
-      habits: habitsErrObj,
-      finance: financeErrObj,
-      mood: moodErrObj,
-      stats: statsErrObj,
-    });
-    dashboardContent = (
-      <div className="flex items-center justify-center min-h-screen bg-red-50 dark:bg-red-900">
-        <div>
-          <h2 className="text-xl font-bold text-red-700 dark:text-red-300">Error loading dashboard data</h2>
-          <pre className="text-xs text-red-600 dark:text-red-200">
-            {JSON.stringify({
-              career: careerErrObj?.message,
-              habits: habitsErrObj?.message,
-              finance: financeErrObj?.message,
-              mood: moodErrObj?.message,
-              stats: statsErrObj?.message,
-            }, null, 2)}
-          </pre>
-        </div>
-      </div>
-    );
-  }
+  // Prepare UI elements; no blocking timeout/error early returns so dashboard always renders
+  let dashboardContent = null;
 
   const isLoading = careerLoading || habitsLoading || financeLoading || moodLoading || statsLoading;
 
@@ -168,10 +126,7 @@ const Dashboard = () => {
     }
   };
 
-  // If we have dashboardContent (error or loading states), return it
-  if (dashboardContent) {
-    return dashboardContent;
-  }
+  // Render main dashboard unconditionally (dashboardContent used for non-blocking states)
   
   // Otherwise, render the main dashboard
   return (
@@ -353,10 +308,36 @@ const Dashboard = () => {
                         of {stat.value} completed
                       </p>
                     )}
+
+                    {/* Navigation button for each card */}
+                    <div className="mt-4">
+                      <button
+                        onClick={() => {
+                          // navigate to the appropriate page
+                          if (stat.title === 'Career Goals') window.location.href = '/career';
+                          if (stat.title === 'Daily Habits') window.location.href = '/habits';
+                          if (stat.title === 'Financial Goals') window.location.href = '/finance';
+                          if (stat.title === 'Mood Score') window.location.href = '/mood';
+                        }}
+                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                      >
+                        View
+                      </button>
+                    </div>
                   </motion.div>
                 </AnimatedCard>
               ))}
             </div>
+
+            {/* AI Recommendations */}
+            <AnimatedCard delay={5} className="p-6">
+              <motion.div variants={itemVariants}>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                  AI Career Recommendations
+                </h2>
+                <AIRecommendations />
+              </motion.div>
+            </AnimatedCard>
 
             {/* Recent Activity */}
             <AnimatedCard delay={6} className="p-6">

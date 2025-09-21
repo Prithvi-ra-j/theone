@@ -107,20 +107,13 @@ const careerAPI = {
 
   // AI Recommendations
   getSkillRecommendations: (params = {}) => {
-    const queryParams = new URLSearchParams();
-    if (params.goals) queryParams.append('goals', params.goals);
-    if (params.current_skills) queryParams.append('current_skills', params.current_skills);
-    if (params.industry) queryParams.append('industry', params.industry);
-    
-    const url = queryParams.toString() 
-      ? `${CAREER_BASE_URL}/recommendations/skills?${queryParams.toString()}`
-      : `${CAREER_BASE_URL}/recommendations/skills`;
-    
+    const url = `${CAREER_BASE_URL}/recommendations`;
     return api.get(url);
   },
 
-  getCareerAdvice: (query, context = {}) => 
-    api.post(`${CAREER_BASE_URL}/advice`, { query, context }),
+  // Note: backend exposes POST /career/goals/{goal_id}/advice
+  postGoalAdvice: (goalId, payload) =>
+    api.post(`${CAREER_BASE_URL}/goals/${goalId}/advice`, payload),
 
   // Career Analytics
   getCareerAnalytics: (timeframe = 'month') => 

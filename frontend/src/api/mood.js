@@ -31,8 +31,9 @@ const moodAPI = {
   getMoodLog: (logId) => 
     api.get(`${MOOD_BASE_URL}/logs/${logId}`),
 
+  // Backend exposes POST /mood/log (singular) for creating a mood entry
   createMoodLog: (moodData) => 
-    api.post(`${MOOD_BASE_URL}/logs`, moodData),
+    api.post(`${MOOD_BASE_URL}/log`, moodData),
 
   updateMoodLog: (logId, moodData) => 
     api.put(`${MOOD_BASE_URL}/logs/${logId}`, moodData),

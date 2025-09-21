@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle, Circle, Clock, AlertCircle, Trash2, Edit3 } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 
 const TaskCard = ({
   id,
@@ -13,6 +14,7 @@ const TaskCard = ({
   onComplete,
   onEdit,
   onDelete,
+  onAIAdvice,
   type = 'task', // 'task', 'habit', 'goal'
   streak = 0,
   className = '',
@@ -108,6 +110,15 @@ const TaskCard = ({
                 <Edit3 className="w-4 h-4" />
               </button>
             )}
+                    {typeof onAIAdvice === 'function' && (
+                      <button
+                        onClick={() => onAIAdvice(id)}
+                        title="Get AI Advice"
+                        className="p-1 text-gray-400 hover:text-indigo-500 transition-colors"
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                      </button>
+                    )}
             {onDelete && (
               <button
                 onClick={() => onDelete(id)}

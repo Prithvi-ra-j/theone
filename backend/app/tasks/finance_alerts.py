@@ -107,16 +107,18 @@ def send_financial_goal_updates():
                 # Calculate progress percentage
                 if goal.target_amount > 0:
                     progress = (goal.current_amount / goal.target_amount) * 100
+                    # Prefer title, fall back to legacy name attribute
+                    goal_label = getattr(goal, 'title', None) or getattr(goal, 'name', None) or 'your'
                     
                     # Send milestone alerts
                     if progress >= 25 and progress < 30:
-                        milestone_message = f"Great progress! You're 25% towards your '{goal.name}' goal!"
+                        milestone_message = f"Great progress! You're 25% towards your '{goal_label}' goal!"
                     elif progress >= 50 and progress < 55:
-                        milestone_message = f"Halfway there! You've reached 50% of your '{goal.name}' goal!"
+                        milestone_message = f"Halfway there! You've reached 50% of your '{goal_label}' goal!"
                     elif progress >= 75 and progress < 80:
-                        milestone_message = f"Almost there! You're 75% towards your '{goal.name}' goal!"
+                        milestone_message = f"Almost there! You're 75% towards your '{goal_label}' goal!"
                     elif progress >= 100:
-                        milestone_message = f"Congratulations! You've achieved your '{goal.name}' goal!"
+                        milestone_message = f"Congratulations! You've achieved your '{goal_label}' goal!"
                     else:
                         continue
                     

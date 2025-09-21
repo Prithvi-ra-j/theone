@@ -26,36 +26,25 @@ function App() {
     )
   }
 
-  // RequireAuth renders children via <Outlet /> when user is authenticated
-  const RequireAuth = () => {
-    const { user: currentUser } = useAuth()
-    if (!currentUser) return <Navigate to="/login" replace />
-    return <Outlet />
-  }
-
   return (
     <Routes>
-      {/* Public routes */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      {/* Login/register routes removed for prototype - always show dashboard */}
 
-      {/* Protected routes */}
-      <Route element={<RequireAuth />}>
-        <Route element={<Layout />}>
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="career" element={<Career />} />
-          <Route path="habits" element={<Habits />} />
-          <Route path="finance" element={<Finance />} />
-          <Route path="mood" element={<Mood />} />
-          <Route path="motivation" element={<Motivation />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="demo" element={<AnimationDemo />} />
-        </Route>
+      {/* No auth gating - render Layout and all pages directly for prototype */}
+      <Route element={<Layout />}>
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="career" element={<Career />} />
+        <Route path="habits" element={<Habits />} />
+        <Route path="finance" element={<Finance />} />
+        <Route path="mood" element={<Mood />} />
+        <Route path="motivation" element={<Motivation />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="demo" element={<AnimationDemo />} />
       </Route>
 
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to={user ? '/dashboard' : '/login'} replace />} />
+      {/* Fallback - always go to dashboard for prototype */}
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   )
 }

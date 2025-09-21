@@ -16,10 +16,11 @@ import {
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { careerAPI } from '../api';
-import { mockCareerData } from '../api/mockData';
+// Removed mock data import to rely on real backend data
 import { toast } from 'react-hot-toast';
 import TaskCard from '../components/ui/TaskCard.jsx';
 import ProgressBar from '../components/ui/ProgressBar.jsx';
+import AIRecommendations from '../components/AIRecommendations.jsx';
 import Modal from '../components/ui/Modal.jsx';
 import Button from '../components/ui/Button.jsx';
 import Input from '../components/ui/Input.jsx';
@@ -27,20 +28,37 @@ import Textarea from '../components/ui/Textarea.jsx';
 import Select from '../components/ui/Select.jsx';
 
 const Career = () => {
+  // AI Feedback state
+  const [aiFeedbackLoading, setAiFeedbackLoading] = useState(false);
+  const [aiFeedback, setAiFeedback] = useState(null);
+
+  const handleGetAIFeedback = async () => {
+    setAiFeedbackLoading(true);
+    setAiFeedback(null);
+    try {
+      const res = await careerAPI.getAIFeedback(); // Should call GET /career/feedback
+      setAiFeedback(res);
+    } catch (err) {
+      toast.error('Failed to fetch AI feedback');
+      setAiFeedback(null);
+    } finally {
+      setAiFeedbackLoading(false);
+    }
+  };
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState(null);
   const [modalType, setModalType] = useState('goal'); // 'goal', 'skill', 'learning-path'
   
   // Query hooks need to be defined before they're used in the timeout effect
   const { data: initialCareerData = { recent_goals: [], stats: {}, skills: [] }, isLoading: initialLoading, error: initialCareerError } = useQuery({
-    queryKey: ['career'],
+    queryKey: ['career', 'dashboard'],
     queryFn: async () => {
       try {
-        const response = await careerAPI.getCareerDashboard();
-        return response.data || mockCareerData || { recent_goals: [], stats: {}, skills: [] };
+        const data = await careerAPI.getCareerDashboard();
+        return data || { recent_goals: [], stats: {}, skills: [] };
       } catch (error) {
         console.error('Error fetching career dashboard:', error);
-        return mockCareerData || { recent_goals: [], stats: {}, skills: [] };
+        throw error; // Let React Query handle the error state
       }
     },
     retry: 2,
@@ -49,11 +67,11 @@ const Career = () => {
   });
   
   const { data: skillsData = { skills: [] }, isLoading: isSkillsLoading, error: skillsQueryError } = useQuery({
-    queryKey: ['skills'],
+    queryKey: ['career', 'skills'],
     queryFn: async () => {
       try {
-        const response = await careerAPI.getSkills();
-        return response.data || { skills: [] };
+        const data = await careerAPI.getSkills();
+        return data || { skills: [] };
       } catch (error) {
         console.error('Error fetching skills:', error);
         return { skills: [] };
@@ -65,11 +83,11 @@ const Career = () => {
   });
   
   const { data: pathsData = { paths: [] }, isLoading: isPathsLoading, error: pathsQueryError } = useQuery({
-    queryKey: ['learning-paths'],
+    queryKey: ['career', 'learning-paths'],
     queryFn: async () => {
       try {
-        const response = await careerAPI.getLearningPaths();
-        return response.data || { paths: [] };
+        const data = await careerAPI.getLearningPaths();
+        return data || { paths: [] };
       } catch (error) {
         console.error('Error fetching learning paths:', error);
         return { paths: [] };
@@ -104,6 +122,12 @@ const Career = () => {
     priority: 'all',
     search: ''
   });
+  // AI advice modal state
+  const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [aiQuestion, setAiQuestion] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiResponse, setAiResponse] = useState(null);
+  const [aiTargetGoalId, setAiTargetGoalId] = useState(null);
 
   const queryClient = useQueryClient();
 
@@ -114,12 +138,20 @@ const Career = () => {
   const isError = initialCareerError;
   const careerErrObj = initialCareerError;
 
-  const skills = (skillsData && skillsData.skills) ? skillsData.skills : [];
+  const skills = Array.isArray(skillsData)
+    ? skillsData
+    : (skillsData && skillsData.skills)
+      ? skillsData.skills
+      : [];
   const skillsLoading = isSkillsLoading;
   const skillsError = skillsQueryError;
   const skillsErrObj = skillsQueryError;
 
-  const learningPaths = (pathsData && pathsData.paths) ? pathsData.paths : [];
+  const learningPaths = Array.isArray(pathsData)
+    ? pathsData
+    : (pathsData && pathsData.paths)
+      ? pathsData.paths
+      : [];
   const pathsLoading = isPathsLoading;
   const pathsError = pathsQueryError;
   const pathsErrObj = pathsQueryError;
@@ -127,43 +159,14 @@ const Career = () => {
   // Mutations
   const createGoalMutation = useMutation({
     mutationFn: async (formData) => {
-      try {
-        const response = await careerAPI.createCareerGoal(formData);
-        return response;
-      } catch (error) {
-        // Check if it's a CORS error or network error
-        if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
-          console.warn('CORS or network error detected, using mock data fallback');
-          // Return a mock successful response with the form data
-          return { 
-            data: { 
-              ...formData, 
-              id: `mock-${Date.now()}`,
-              created_at: new Date().toISOString(),
-              status: formData.status || 'in_progress'
-            } 
-          };
-        }
-        throw error;
-      }
+      const data = await careerAPI.createCareerGoal(formData);
+      return data;
     },
-    onSuccess: (response) => {
-      // Check if this is mock data (has mock- prefix in ID)
-      const isMockData = response.data?.id?.toString().startsWith('mock-');
-      
-      if (isMockData) {
-        // Manually update the query cache with the mock data
-        const currentData = queryClient.getQueryData(['career-dashboard']) || { recent_goals: [] };
-        queryClient.setQueryData(['career-dashboard'], {
-          ...currentData,
-          recent_goals: [response.data, ...(currentData.recent_goals || [])]
-        });
-        toast.success('Goal created in offline mode');
-      } else {
-        // Normal invalidation for real API responses
-        queryClient.invalidateQueries(['career-dashboard']);
-        toast.success('Career goal created successfully!');
-      }
+    onSuccess: (data) => {
+      // Invalidate the career dashboard and goals list so UI updates
+      queryClient.invalidateQueries(['career', 'dashboard']);
+      queryClient.invalidateQueries(['career', 'goals']);
+      toast.success('Career goal created successfully!');
       setIsModalOpen(false);
     },
     onError: (error) => {
@@ -174,45 +177,15 @@ const Career = () => {
 
   const updateGoalMutation = useMutation({
     mutationFn: async (formData) => {
-      try {
-        const response = await careerAPI.updateCareerGoal(formData);
-        return response;
-      } catch (error) {
-        // Check if it's a CORS error or network error
-        if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
-          console.warn('CORS or network error detected, using mock data fallback');
-          // Return a mock successful response with the form data
-          return { 
-            data: { 
-              ...formData,
-              updated_at: new Date().toISOString()
-            } 
-          };
-        }
-        throw error;
-      }
+      // Expect formData to include id when updating
+      const { id, ...payload } = formData;
+      const data = await careerAPI.updateCareerGoal(id, payload);
+      return data;
     },
-    onSuccess: (response) => {
-  // Check if this is mock data (has mock- prefix in ID), keep detection consistent
-  const isMockData = response.data?.id?.toString().startsWith('mock-');
-      
-      if (isMockData) {
-        // Manually update the query cache with the mock data
-        const currentData = queryClient.getQueryData(['career-dashboard']) || { recent_goals: [] };
-        const updatedGoals = currentData.recent_goals?.map(goal => 
-          goal.id === response.data.id ? { ...goal, ...response.data } : goal
-        ) || [];
-        
-        queryClient.setQueryData(['career-dashboard'], {
-          ...currentData,
-          recent_goals: updatedGoals
-        });
-        toast.success('Goal updated in offline mode');
-      } else {
-        // Normal invalidation for real API responses
-        queryClient.invalidateQueries(['career-dashboard']);
-        toast.success('Career goal updated successfully!');
-      }
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(['career', 'dashboard']);
+      queryClient.invalidateQueries(['career', 'goals']);
+      toast.success('Career goal updated successfully!');
       setIsModalOpen(false);
       setEditingGoal(null);
     },
@@ -225,7 +198,7 @@ const Career = () => {
   const deleteGoalMutation = useMutation({
     mutationFn: careerAPI.deleteCareerGoal,
     onSuccess: () => {
-      queryClient.invalidateQueries(['career-dashboard']);
+      queryClient.invalidateQueries(['career', 'dashboard']);
       toast.success('Career goal deleted successfully!');
     },
     onError: (error) => {
@@ -236,8 +209,34 @@ const Career = () => {
 
   const createSkillMutation = useMutation({
     mutationFn: careerAPI.createSkill,
-    onSuccess: () => {
-      queryClient.invalidateQueries(['skills']);
+    onSuccess: (data) => {
+      // data should be the created skill shaped by the API
+      const created = data;
+
+      if (created) {
+        // Seed individual skill cache
+        queryClient.setQueryData(['career', 'skills', created.id], created);
+
+        // Prepend to the skills list if present (handle array or { skills: [] } shapes)
+        queryClient.setQueryData(['career', 'skills'], (old) => {
+          if (!old) return [created];
+          if (Array.isArray(old)) return [created, ...old];
+          if (old && Array.isArray(old.skills)) return { ...old, skills: [created, ...old.skills] };
+          return old;
+        });
+
+        // Also update career dashboard top_skills cache if present
+        queryClient.setQueryData(['career', 'dashboard'], (old) => {
+          if (!old) return old;
+          const top = old.top_skills && Array.isArray(old.top_skills) ? old.top_skills : [];
+          return { ...old, top_skills: [created, ...top].slice(0, 5) };
+        });
+      }
+
+      // Trigger refetch as a safety net
+      queryClient.invalidateQueries(['career', 'skills']);
+      queryClient.invalidateQueries(['career', 'dashboard']);
+
       toast.success('Skill added successfully!');
       setIsModalOpen(false);
     },
@@ -250,7 +249,7 @@ const Career = () => {
   const createLearningPathMutation = useMutation({
     mutationFn: careerAPI.createLearningPath,
     onSuccess: () => {
-      queryClient.invalidateQueries(['learning-paths']);
+      queryClient.invalidateQueries(['career', 'learning-paths']);
       toast.success('Learning path created successfully!');
       setIsModalOpen(false);
     },
@@ -272,6 +271,13 @@ const Career = () => {
     setIsModalOpen(true);
   };
 
+  const handleAIAdvice = (goalId) => {
+    setAiTargetGoalId(goalId);
+    setAiQuestion('');
+    setAiResponse(null);
+    setAiModalOpen(true);
+  };
+
   const handleDelete = (goalId) => {
     if (window.confirm('Are you sure you want to delete this career goal?')) {
       deleteGoalMutation.mutate(goalId);
@@ -289,6 +295,22 @@ const Career = () => {
       createSkillMutation.mutate(formData);
     } else if (modalType === 'learning-path') {
       createLearningPathMutation.mutate(formData);
+    }
+  };
+
+  // AI advice submit handler
+  const handleSubmitAI = async () => {
+    if (!aiQuestion || !aiTargetGoalId) return;
+    setAiLoading(true);
+    setAiResponse(null);
+    try {
+      const res = await careerAPI.postGoalAdvice(aiTargetGoalId, { question: aiQuestion });
+      setAiResponse(res);
+    } catch (err) {
+      console.error('AI advice error:', err);
+      toast.error('Failed to fetch AI advice');
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -338,6 +360,18 @@ const Career = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* AI Feedback Button */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <Button onClick={handleGetAIFeedback} disabled={aiFeedbackLoading} className="mb-4">
+          {aiFeedbackLoading ? 'Getting AI Feedback...' : 'Get AI Feedback on My Progress'}
+        </Button>
+        {aiFeedback && (
+          <div className="bg-blue-50 border border-blue-200 rounded p-4 mt-2">
+            <h3 className="font-semibold text-blue-800 mb-2">AI Feedback</h3>
+            <div className="text-sm text-blue-900 whitespace-pre-line">{aiFeedback.feedback || aiFeedback.goal || JSON.stringify(aiFeedback)}</div>
+          </div>
+        )}
+      </div>
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -498,6 +532,7 @@ const Career = () => {
                     type="goal"
                     onEdit={() => handleEdit(goal)}
                     onDelete={() => handleDelete(goal.id)}
+                    onAIAdvice={() => handleAIAdvice(goal.id)}
                   />
                 ))}
               </div>
@@ -540,6 +575,10 @@ const Career = () => {
                   ))}
                 </div>
               )}
+              <div className="mt-6">
+                <h3 className="text-sm font-medium text-gray-800 mb-2">AI Recommendations</h3>
+                <AIRecommendations />
+              </div>
             </div>
           </div>
 
@@ -602,10 +641,49 @@ const Career = () => {
           }}
         />
       </Modal>
+
+      {/* AI Advice modal trigger */}
+      <AIAdviceModal
+        isOpen={aiModalOpen}
+        onClose={() => setAiModalOpen(false)}
+        goalId={aiTargetGoalId}
+        question={aiQuestion}
+        setQuestion={setAiQuestion}
+        onSubmit={handleSubmitAI}
+        loading={aiLoading}
+        response={aiResponse}
+      />
+
     </div>
   );
 };
 
+// AI Advice Modal Component (simple inline modal using existing Modal)
+const AIAdviceModal = ({ isOpen, onClose, goalId, question, setQuestion, onSubmit, loading, response }) => {
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title={goalId ? 'Ask AI about this goal' : 'Ask AI'}>
+      <div className="space-y-4">
+        <label className="block text-sm font-medium text-gray-700">Your question</label>
+        <Textarea value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Ask the AI for practical steps, resources, or suggestions..." />
+        <div className="flex justify-end space-x-2">
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button onClick={onSubmit} disabled={loading || !question}>{loading ? 'Asking...' : 'Ask AI'}</Button>
+        </div>
+
+        {response && (
+          <div className="mt-4 bg-gray-50 p-4 rounded">
+            <h4 className="font-semibold mb-2">AI Response</h4>
+            <div className="prose max-w-none text-sm text-gray-800 whitespace-pre-wrap">{response.advice || response}</div>
+          </div>
+        )}
+      </div>
+    </Modal>
+  );
+};
+
+
+// Hook up the AI modal submission using the careerAPI helper
+// (This is placed after export default to keep the page component uncluttered)
 // Form Component
 const CareerForm = ({ type, editingGoal, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -794,3 +872,4 @@ const CareerForm = ({ type, editingGoal, onSubmit, onCancel }) => {
 };
 
 export default Career;
+

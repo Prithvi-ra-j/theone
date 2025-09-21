@@ -18,6 +18,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ui/ThemeToggle';
+import MiniAssistant from './MiniAssistant';
 
 import { Outlet } from 'react-router-dom';
 
@@ -58,7 +59,6 @@ const Layout = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
   };
 
   const sidebarVariants = {
@@ -226,6 +226,9 @@ const Layout = () => {
           <Outlet />
         </main>
       </div>
+      
+      {/* Mini Assistant */}
+      {user && <MiniAssistant />}
     </div>
   );
 };

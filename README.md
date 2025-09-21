@@ -1,8 +1,18 @@
-# Dristhi
+
+# Dristhi (Alpha)
+
+**Project Status:** Alpha — Major features for AI, memory, gamification, and mini assistant are now live and personalized. All mock/demo data removed; endpoints and frontend rely on real backend data. See below for details.
 
 AI-powered career & life improvement platform focused on helping students build skills, manage habits, track finances, and improve wellbeing.
 
-This README is a concise, actionable developer-first guide to run and contribute to the project locally.
+---
+
+## Development Notes (AI/Memory)
+- AI endpoints now use OpenRouter and robust JSON parsing for recommendations/advice.
+- MemoryService aggregates real user data (goals, skills, habits, mood, finance) for context and suggestions.
+- Mini Assistant backend and router implemented; supports user preferences and interactions.
+- Gamification endpoints (badges, stats, leaderboard, challenges) query live user stats and achievements.
+- Frontend Career page fetches all data from backend, with loading/error states and no mock fallback.
 
 ---
 
@@ -220,7 +230,8 @@ pip install -r requirements.txt
 alembic upgrade head
 
 # Start development server
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000 (. .\.venv311\Scripts\Activate.ps1)
+
 Frontend Development
 bash
 cd frontend
@@ -376,6 +387,29 @@ Solution:
 Ensure Ollama service is running
 Download required models: docker exec -it dristhi-ollama-1 ollama pull llama2
 Check Ollama logs for errors
+
+If you are using a remote LLM provider (for example Perplexity or OpenAI-compatible APIs), add the following entries to `backend/.env` (copy from `backend/env.example`):
+
+```powershell
+# Example for a generic API-based provider
+LLM_PROVIDER=api
+API_LLM_API_KEY=your_api_key_here
+API_LLM_BASE_URL=https://api.perplexity.ai
+API_LLM_MODEL=gpt-4o-mini
+AI_FORCE_FALLBACK=false
+```
+
+Quick local check: we added a helper script `backend/tools/check_llm.py` that will initialize the project's `AIService` using your `.env` values and run a short sample prompt to verify connectivity.
+
+Run it from the repo root in PowerShell after activating your virtualenv:
+
+```powershell
+cd backend
+.\.venv311\Scripts\Activate.ps1
+python tools\check_llm.py
+```
+
+The script prints the detected provider, model, availability and a sample response (or an error message). If it reports "LLM not available" ensure the API key and base URL are correct and that `AI_FORCE_FALLBACK` is not set to `true`.
 5. Authentication Issues
 Problem: Login fails or tokens expire quickly
 
