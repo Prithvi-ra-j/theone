@@ -309,6 +309,7 @@ make seed
 
 # View logs
 make logs
+```
 📁 Project Structure
 text
 dristhi/
@@ -340,6 +341,7 @@ dristhi/
 ├── Makefile                   # Development commands
 ├── README.md                  # This file
 └── PROJECT_STATUS.md          # Project progress
+```
 🔧 Available Commands
 Development Commands
 bash
