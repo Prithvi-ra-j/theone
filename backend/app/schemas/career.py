@@ -146,3 +146,38 @@ class SkillRecommendation(BaseModel):
     estimated_effort: str
     related_skills: List[str]
     learning_resources: List[str]
+
+
+class RoadmapTask(BaseModel):
+    title: str
+    description: Optional[str] = None
+    est_hours: Optional[int] = None
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "title": "Read ""Introduction to Algorithms""",
+                "description": "Skim chapters 1-3",
+                "est_hours": 6
+            }
+        }
+
+
+class RoadmapMilestone(BaseModel):
+    title: str
+    description: Optional[str] = None
+    estimated_weeks: Optional[int] = None
+    tasks: List[RoadmapTask] = []
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "title": "Foundations",
+                "description": "Build core CS fundamentals",
+                "estimated_weeks": 4,
+                "tasks": [
+                    {"title": "Read intro", "description": "Chapters 1-3", "est_hours": 6}
+                ]
+            }
+        }
+

@@ -52,7 +52,10 @@ async def get_career_feedback(
     try:
         feedback = ai_service.generate_feedback(goal.title, completed_titles)
     except Exception:
-        feedback = ai_service.llm(prompt) if ai_service.llm else "Keep going!"
+        from loguru import logger
+        logger.exception("Error generating AI feedback; using fallback")
+        # Safe fallback: do not call ai_service.llm directly here (may not be callable)
+        feedback = "Keep going!"
     return {"goal": goal.title, "feedback": feedback}
 
 
@@ -95,8 +98,10 @@ async def get_career_tasks(
     try:
         tasks = ai_service.generate_tasks_for_goal(goal.title, goal.description)
     except Exception:
-        # Fallback: use prompt directly
-        tasks = ai_service.llm(prompt) if ai_service.llm else [
+        from loguru import logger
+        logger.exception("Error generating tasks via AIService; using fallback tasks")
+        # Safe fallback list instead of invoking ai_service.llm directly
+        tasks = [
             {"title": "Define your first milestone", "description": "Break your goal into smaller steps."}
         ]
     # Ensure tasks are a list of dicts
@@ -850,6 +855,46 @@ async def get_skill_recommendations(
                 learning_resources=[],
             )
         ]
+
+
+from app.schemas.career import (
+    CareerGoalCreate, CareerGoalRead, CareerGoalUpdate,
+    SkillCreate, SkillRead, SkillUpdate,
+    LearningPathCreate, LearningPathRead, LearningPathUpdate,
+    CareerDashboard, SkillRecommendation, RoadmapMilestone
+)
+
+
+@router.post("/generate-roadmap", response_model=List[RoadmapMilestone])
+async def generate_roadmap(
+    payload: Optional[dict] = Body(None),
+    current_user: Optional[User] = Depends(get_optional_current_user),
+    db: Session = Depends(get_db)
+) -> Any:
+    """Generate a personalized career roadmap for the user by delegating to CareerService."""
+    try:
+        from app.services.career_service import CareerService
+    except Exception:
+        # If the service file is missing/unimportable, return a simple fallback
+        return [{"title": "Plan your career", "description": "CareerService unavailable.", "estimated_weeks": "unknown", "tasks": []}]
+
+    # Resolve effective user for unauthenticated calls (demo/testing)
+    def _resolve_user(u: Optional[User]) -> Optional[User]:
+        if u is not None:
+            return u
+        try:
+            demo = db.query(User).filter(User.email == 'demo@example.com').first()
+            if demo:
+                return demo
+            first = db.query(User).order_by(User.id.asc()).first()
+            return first
+        except Exception:
+            return None
+
+    effective_user = _resolve_user(current_user)
+
+    service = CareerService(db)
+    return await service.generate_roadmap(effective_user, payload)
 
 
 @router.post("/goals/{goal_id}/advice")

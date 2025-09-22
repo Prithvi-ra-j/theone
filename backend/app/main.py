@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException
 from loguru import logger
+import os
 
 from app.core.config import settings
 from app.routers import auth, career, habits, finance, mood, gamification, memory, mini_assistant
@@ -97,6 +98,31 @@ app.add_middleware(
     # frontend dev servers running on different ports don't trigger CORS preflight failures.
     allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
 )
+
+
+# Dynamic CORS fallback middleware
+# If the environment has not been configured with explicit BACKEND_CORS_ORIGINS,
+# this middleware will echo the incoming Origin header into the Access-Control-Allow-Origin
+# response header when either DEBUG is true or ALLOW_CORS_FROM_REQUEST=1 is set.
+# This is a development-friendly fallback and should be used with caution in production.
+@app.middleware("http")
+async def dynamic_cors_middleware(request: Request, call_next):
+    response = await call_next(request)
+    try:
+        origin = request.headers.get("origin")
+        # Only set dynamic CORS in debug or when explicitly allowed via env
+        allow_dynamic = bool(settings.DEBUG) or os.getenv("ALLOW_CORS_FROM_REQUEST", "0") == "1"
+        if origin and allow_dynamic and "access-control-allow-origin" not in (k.lower() for k in response.headers.keys()):
+            response.headers["Access-Control-Allow-Origin"] = origin
+            # Ensure Vary so caches know responses vary by Origin
+            response.headers["Vary"] = response.headers.get("Vary", "Origin")
+            # Common CORS headers to allow browser requests from frontend apps
+            response.headers.setdefault("Access-Control-Allow-Headers", "Authorization,Content-Type")
+            response.headers.setdefault("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
+    except Exception:
+        # Be defensive: do not break request flow on middleware errors
+        logger.exception("Error in dynamic CORS middleware")
+    return response
 
 # Global exception handler
 @app.exception_handler(Exception)

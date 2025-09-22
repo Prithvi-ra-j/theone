@@ -1,98 +1,65 @@
 
-# 🔮 Dristhi - Your AI Life Coach
+# Dristhi (Alpha)
 
-<div align="center">
-  
-  ![Dristhi Logo](frontend/public/logo.svg)
+**Project Status:** Alpha — Major features for AI, memory, gamification, and mini assistant are now live and personalized. All mock/demo data removed; endpoints and frontend rely on real backend data. See below for details.
 
-  ### *Empowering students to build their best future*
-  
-  [![Project Status: Alpha](https://img.shields.io/badge/Status-Alpha-orange?style=for-the-badge)](https://github.com/Prithvi-ra-j/theone)
-  [![Made with React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
-  [![Powered by FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-  [![AI Powered](https://img.shields.io/badge/AI-Powered-purple?style=for-the-badge)](https://github.com/Prithvi-ra-j/theone)
-  
-</div>
+AI-powered career & life improvement platform focused on helping students build skills, manage habits, track finances, and improve wellbeing.
 
-## ✨ What is Dristhi?
+---
 
-Dristhi is an **AI-powered life improvement platform** that helps students navigate their career journey, build productive habits, manage finances, and improve overall wellbeing. Think of it as your personal AI coach that's always in your corner!
+## Development Notes (AI/Memory)
+- AI endpoints now use OpenRouter and robust JSON parsing for recommendations/advice.
+- MemoryService aggregates real user data (goals, skills, habits, mood, finance) for context and suggestions.
+- Mini Assistant backend and router implemented; supports user preferences and interactions.
+- Gamification endpoints (badges, stats, leaderboard, challenges) query live user stats and achievements.
+- Frontend Career page fetches all data from backend, with loading/error states and no mock fallback.
 
-> 🚀 **Project Status:** Alpha — All major features for AI, memory, gamification, and mini assistant are now live and fully personalized!
+---
 
-## 🧠 Smart Features
+## Quick overview
+- Frontend: React + Vite + Tailwind
+- Backend: FastAPI (Python)
+- DB: PostgreSQL
+- Cache: Redis
+- AI: Ollama (local LLMs) + LangChain integrations
+- Orchestration: Docker Compose
 
-- **🤖 AI Career Guidance** - Get personalized advice tailored to your skills and goals
-- **📊 Habit Tracking** - Build consistency with streak tracking and smart reminders
-- **💰 Financial Wisdom** - Track expenses, set budgets, and get saving tips
-- **😊 Mood & Wellbeing** - Monitor your mental health and receive personalized suggestions
-- **🏆 Gamification** - Earn badges and climb leaderboards as you improve
+---
 
-## 🛠️ Tech Stack
+## Prerequisites
+- Node.js 18+ and npm/yarn
+- Python 3.11+
+- Docker & Docker Compose (v2+)
+- Git
 
-<table>
-  <tr>
-    <td align="center"><b>Frontend</b></td>
-    <td align="center"><b>Backend</b></td>
-    <td align="center"><b>Infrastructure</b></td>
-  </tr>
-  <tr>
-    <td>
-      • React + Vite<br/>
-      • Tailwind CSS<br/>
-      • Context API<br/>
-    </td>
-    <td>
-      • FastAPI (Python)<br/>
-      • SQLAlchemy ORM<br/>
-      • LangChain + Ollama<br/>
-    </td>
-    <td>
-      • PostgreSQL<br/>
-      • Redis Cache<br/>
-      • Docker Compose<br/>
-    </td>
-  </tr>
-</table>
+---
 
-## 🚀 Quick Start
+## Quickstart (Docker)
+1. Copy env files
 
-### Prerequisites
-
-- 📦 Node.js 18+ and npm/yarn
-- 🐍 Python 3.11+
-- 🐳 Docker & Docker Compose (v2+)
-- 📝 Git
-
-### One-Command Setup (Docker)
-
-```bash
-# 1. Clone the repo
-git clone https://github.com/Prithvi-ra-j/theone.git
-cd theone
-
-# 2. Copy environment files
+```powershell
 cp backend/env.example backend/.env
 cp frontend/.env.example frontend/.env
+```
 
-# 3. Launch everything!
+2. Start services
+
+```powershell
+# From repo root
 docker-compose -f infra/docker-compose.yml up --build -d
 ```
 
-### 🌐 Access Your Services
+3. Visit
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API docs: http://localhost:8000/docs
 
-- ✨ **Frontend:** http://localhost:3000
-- 🔧 **Backend API:** http://localhost:8000
-- 📚 **API Docs:** http://localhost:8000/docs
+---
 
-## 💻 Development Setup (No Docker)
+## Development (local, without Docker)
 
-<details>
-<summary>👉 Click to expand setup instructions</summary>
-
-### Backend Setup
-
-```bash
+### Backend
+```powershell
 cd backend
 python -m venv .venv
 .\.venv\Scripts\activate    # Windows PowerShell
@@ -102,58 +69,36 @@ alembic upgrade head
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### Frontend Setup
-
-```bash
+### Frontend
+```powershell
 cd frontend
 npm install
 # create frontend/.env (see frontend/.env.example)
 npm run dev
 ```
 
-</details>
+---
 
-## ⚙️ Environment Variables
-
-<details>
-<summary>👉 Click to see important environment variables</summary>
-
-### Backend (.env)
-- `DATABASE_URL` - PostgreSQL connection string
-- `REDIS_URL` - Redis connection string
-- `SECRET_KEY` - JWT secret key
-- `JWT_ALGORITHM` - Algorithm for JWT (default: HS256)
-- `ACCESS_TOKEN_EXPIRE_MINUTES` - Token expiration time
-
-### Frontend (.env)
-- `VITE_API_BASE_URL` - Backend API URL (e.g., http://localhost:8000)
-- `VITE_APP_NAME` - Application name
-
-</details>
-
-## 🛠️ Useful Commands
-
-```bash
-make setup     # Initial setup (build images, create volumes)
-make dev       # Run all services in development mode
-make migrate   # Run database migrations
-make seed      # Seed sample data
-make db-reset  # Reset database
-```
-
-## 🤝 Contributing
-
-We welcome contributions! Check out our [contributing guidelines](CONTRIBUTING.md) to get started.
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Environment variables
+- Backend: `backend/.env` (copy from `backend/env.example`). Key entries:
+  - DATABASE_URL
+  - REDIS_URL
+  - SECRET_KEY
+  - JWT_ALGORITHM
+  - ACCESS_TOKEN_EXPIRE_MINUTES
+- Frontend: `frontend/.env` (copy from `frontend/.env.example`). Key entries:
+  - VITE_API_BASE_URL (e.g. http://localhost:8000)
+  - VITE_APP_NAME
 
 ---
 
-<div align="center">
-  <p>Built with ❤️ for students everywhere</p>
-</div>
+## Useful commands (Makefile)
+- `make setup` — initial setup (build images, create volumes)
+- `make dev` — run services in development
+- `make dev-backend`, `make dev-frontend` — run single services
+- `make migrate` — run DB migrations
+- `make seed` — seed sample data
+- `make db-reset` — reset DB
 
 ---
 

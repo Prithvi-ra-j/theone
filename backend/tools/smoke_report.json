@@ -1,0 +1,763 @@
+{
+  "working": [
+    {
+      "endpoint": "/career/dashboard",
+      "url": "http://localhost:8000/api/v1/career/dashboard",
+      "status": 200,
+      "summary": "{\"user_id\":232,\"total_goals\":16,\"active_goals\":6,\"completed_goals\":0,\"total_skills\":11,\"skills_in_progress\":11,\"average_skill_level\":2.8,\"recent_goals\":[{\"title\":\"dsfasdf\",\"description\":\"dsfsdfadf\",\"t...",
+      "full": "{\"user_id\":232,\"total_goals\":16,\"active_goals\":6,\"completed_goals\":0,\"total_skills\":11,\"skills_in_progress\":11,\"average_skill_level\":2.8,\"recent_goals\":[{\"title\":\"dsfasdf\",\"description\":\"dsfsdfadf\",\"target_date\":\"2990-11-11T00:00:00\",\"priority\":\"medium\",\"status\":\"not_started\",\"id\":22,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T09:08:55.874910\",\"updated_at\":\"2025-09-21T09:08:55.874910\"},{\"title\":\"dsfasdf\",\"description\":\"dsfsdfadf\",\"target_date\":\"2990-11-11T00:00:00\",\"priority\":\"medium\",\"status\":\"not_started\",\"id\":23,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T09:08:55.991492\",\"updated_at\":\"2025-09-21T09:08:55.991492\"},{\"title\":\"dsfasdf\",\"description\":\"dsfsdfadf\",\"target_date\":\"2990-11-11T00:00:00\",\"priority\":\"medium\",\"status\":\"not_started\",\"id\":24,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T09:08:56.155719\",\"updated_at\":\"2025-09-21T09:08:56.155719\"},{\"title\":\"dsfasdf\",\"description\":\"dsfsdfadf\",\"target_date\":\"2990-11-11T00:00:00\",\"priority\":\"medium\",\"status\":\"not_started\",\"id\":25,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T09:08:56.266038\",\"updated_at\":\"2025-09-21T09:08:56.266038\"},{\"title\":\"dsfasdf\",\"description\":\"dsfsdfadf\",\"target_date\":\"2990-11-11T00:00:00\",\"priority\":\"medium\",\"status\":\"not_started\",\"id\":26,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T09:08:56.392118\",\"updated_at\":\"2025-09-21T09:08:56.392118\"}],\"top_skills\":[{\"name\":\"Test Skill\",\"description\":\"A sample skill\",\"category\":\"general\",\"current_level\":5,\"target_level\":8,\"is_core_skill\":true,\"id\":4,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T11:44:33.044960\",\"updated_at\":\"2025-09-21T11:44:33.044960\"},{\"name\":\"Test Skill\",\"description\":\"A sample skill\",\"category\":\"general\",\"current_level\":5,\"target_level\":8,\"is_core_skill\":true,\"id\":5,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T11:50:26.528359\",\"updated_at\":\"2025-09-21T11:50:26.528359\"},{\"name\":\"Test Skill\",\"description\":\"A sample skill\",\"category\":\"general\",\"current_level\":5,\"target_level\":8,\"is_core_skill\":true,\"id\":10,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T12:31:17.760393\",\"updated_at\":\"2025-09-21T12:31:17.760393\"},{\"name\":\"Python\",\"description\":\"\",\"category\":\"general\",\"current_level\":2,\"target_level\":5,\"is_core_skill\":false,\"id\":6,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T11:50:52.967193\",\"updated_at\":\"2025-09-21T11:50:52.967193\"},{\"name\":\"egrregre\",\"description\":\"\",\"category\":\"general\",\"current_level\":2,\"target_level\":5,\"is_core_skill\":false,\"id\":7,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T12:15:11.143365\",\"updated_at\":\"2025-09-21T12:15:11.143365\"}],\"learning_paths\":[]}"
+    },
+    {
+      "endpoint": "/career/goals",
+      "url": "http://localhost:8000/api/v1/career/goals",
+      "status": 200,
+      "summary": "[{\"title\":\"Get a product manager internship\",\"description\":null,\"target_date\":null,\"priority\":\"medium\",\"status\":\"active\",\"id\":37,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T21:02:25.009421\",...",
+      "full": "[{\"title\":\"Get a product manager internship\",\"description\":null,\"target_date\":null,\"priority\":\"medium\",\"status\":\"active\",\"id\":37,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T21:02:25.009421\",\"updated_at\":\"2025-09-21T21:02:25.009421\"},{\"title\":\"Get a product manager internship\",\"description\":null,\"target_date\":null,\"priority\":\"medium\",\"status\":\"active\",\"id\":36,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T21:01:31.643342\",\"updated_at\":\"2025-09-21T21:01:31.643342\"},{\"title\":\"Test AI Goal\",\"description\":\"Goal used for AI smoke test\",\"target_date\":\"2025-10-21T00:00:00\",\"priority\":\"medium\",\"status\":\"active\",\"id\":35,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T13:41:24.409128\",\"updated_at\":\"2025-09-21T13:41:24.409128\"},{\"title\":\"Test AI Goal\",\"description\":\"Goal used for AI smoke test\",\"target_date\":\"2025-10-21T00:00:00\",\"priority\":\"medium\",\"status\":\"active\",\"id\":34,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T13:40:29.444054\",\"updated_at\":\"2025-09-21T13:40:29.444054\"},{\"title\":\"Test AI Goal\",\"description\":\"Goal used for AI smoke test\",\"target_date\":\"2025-10-21T00:00:00\",\"priority\":\"medium\",\"status\":\"active\",\"id\":33,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T13:38:29.348273\",\"updated_at\":\"2025-09-21T13:38:29.348273\"},{\"title\":\"ddddd\",\"description\":\"ddddddd\",\"target_date\":\"2222-11-11T00:00:00\",\"priority\":\"medium\",\"status\":\"not_started\",\"id\":32,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T12:16:05.690652\",\"updated_at\":\"2025-09-21T12:16:05.690652\"},{\"title\":\"Learn Golang\",\"description\":\"Basics\",\"target_date\":\"2025-10-21T00:00:00\",\"priority\":\"medium\",\"status\":\"active\",\"id\":31,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T10:32:58.112976\",\"updated_at\":\"2025-09-21T10:32:58.112976\"},{\"title\":\"ggggg\",\"description\":\"dsfsdfadf\",\"target_date\":\"2990-11-11T00:00:00\",\"priority\":\"medium\",\"status\":\"not_started\",\"id\":30,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T09:34:45.843695\",\"updated_at\":\"2025-09-21T09:34:45.843695\"},{\"title\":\"dsfasdf\",\"description\":\"dsfsdfadf\",\"target_date\":\"2990-11-11T00:00:00\",\"priority\":\"medium\",\"status\":\"not_started\",\"id\":29,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T09:34:39.685151\",\"updated_at\":\"2025-09-21T09:34:39.685151\"},{\"title\":\"CLI Test Goal - after DB fix\",\"description\":\"Created by CLI for testing after DB fix\",\"target_date\":\"2025-09-21T00:00:00\",\"priority\":\"low\",\"status\":\"not_started\",\"id\":28,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T09:29:44.270825\",\"updated_at\":\"2025-09-21T09:29:44.270825\"},{\"title\":\"dsfasdf\",\"description\":\"dsfsdfadf\",\"target_date\":\"2990-11-11T00:00:00\",\"priority\":\"medium\",\"status\":\"not_started\",\"id\":27,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T09:08:56.538192\",\"updated_at\":\"2025-09-21T09:08:56.538192\"},{\"title\":\"dsfasdf\",\"description\":\"dsfsdfadf\",\"target_date\":\"2990-11-11T00:00:00\",\"priority\":\"medium\",\"status\":\"not_started\",\"id\":26,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T09:08:56.392118\",\"updated_at\":\"2025-09-21T09:08:56.392118\"},{\"title\":\"dsfasdf\",\"description\":\"dsfsdfadf\",\"target_date\":\"2990-11-11T00:00:00\",\"priority\":\"medium\",\"status\":\"not_started\",\"id\":25,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T09:08:56.266038\",\"updated_at\":\"2025-09-21T09:08:56.266038\"},{\"title\":\"dsfasdf\",\"description\":\"dsfsdfadf\",\"target_date\":\"2990-11-11T00:00:00\",\"priority\":\"medium\",\"status\":\"not_started\",\"id\":24,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T09:08:56.155719\",\"updated_at\":\"2025-09-21T09:08:56.155719\"},{\"title\":\"dsfasdf\",\"description\":\"dsfsdfadf\",\"target_date\":\"2990-11-11T00:00:00\",\"priority\":\"medium\",\"status\":\"not_started\",\"id\":23,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T09:08:55.991492\",\"updated_at\":\"2025-09-21T09:08:55.991492\"},{\"title\":\"dsfasdf\",\"description\":\"dsfsdfadf\",\"target_date\":\"2990-11-11T00:00:00\",\"priority\":\"medium\",\"status\":\"not_started\",\"id\":22,\"user_id\":232,\"progress\":0.0,\"created_at\":\"2025-09-21T09:08:55.874910\",\"updated_at\":\"2025-09-21T09:08:55.874910\"}]"
+    },
+    {
+      "endpoint": "/career/learning-paths",
+      "url": "http://localhost:8000/api/v1/career/learning-paths",
+      "status": 200,
+      "summary": "[]",
+      "full": "[]"
+    },
+    {
+      "endpoint": "/career/recommendations",
+      "url": "http://localhost:8000/api/v1/career/recommendations",
+      "status": 200,
+      "summary": "[{\"skill_name\":\"Python Advanced\",\"description\":\"Advanced Python programming concepts\",\"category\":\"technical\",\"reason\":\"Based on your current Python level and career goals\",\"priority\":\"high\",\"estimated...",
+      "full": "[{\"skill_name\":\"Python Advanced\",\"description\":\"Advanced Python programming concepts\",\"category\":\"technical\",\"reason\":\"Based on your current Python level and career goals\",\"priority\":\"high\",\"estimated_effort\":\"40 hours\",\"related_skills\":[\"Data Structures\",\"Algorithms\",\"Web Development\"],\"learning_resources\":[\"Python.org\",\"Real Python\",\"LeetCode\"]}]"
+    },
+    {
+      "endpoint": "/career/skills",
+      "url": "http://localhost:8000/api/v1/career/skills",
+      "status": 200,
+      "summary": "[{\"name\":\"AI Recommendation\",\"description\":\"I'm currently unavailable, but here's some general career advice: Focus on building practical skills, network actively, and stay updated with industry trend...",
+      "full": "[{\"name\":\"AI Recommendation\",\"description\":\"I'm currently unavailable, but here's some general career advice: Focus on building practical skills, network actively, and stay updated with industry trends. Consider internships and projects to gain hands-on experience.\",\"category\":\"general\",\"current_level\":2,\"target_level\":5,\"is_core_skill\":false,\"id\":11,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T15:31:08.340063\",\"updated_at\":\"2025-09-21T15:31:08.340063\"},{\"name\":\"AI Recommendation\",\"description\":\"I'm currently unavailable, but here's some general career advice: Focus on building practical skills, network actively, and stay updated with industry trends. Consider internships and projects to gain hands-on experience.\",\"category\":\"general\",\"current_level\":2,\"target_level\":5,\"is_core_skill\":false,\"id\":13,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T16:09:04.067189\",\"updated_at\":\"2025-09-21T16:09:04.067189\"},{\"name\":\"AI Recommendation\",\"description\":\"I'm currently unavailable, but here's some general career advice: Focus on building practical skills, network actively, and stay updated with industry trends. Consider internships and projects to gain hands-on experience.\",\"category\":\"general\",\"current_level\":2,\"target_level\":5,\"is_core_skill\":false,\"id\":12,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T15:31:45.946772\",\"updated_at\":\"2025-09-21T15:31:45.946772\"},{\"name\":\"egrregre\",\"description\":\"\",\"category\":\"general\",\"current_level\":2,\"target_level\":5,\"is_core_skill\":false,\"id\":7,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T12:15:11.143365\",\"updated_at\":\"2025-09-21T12:15:11.143365\"},{\"name\":\"ffffff\",\"description\":\"\",\"category\":\"general\",\"current_level\":2,\"target_level\":5,\"is_core_skill\":false,\"id\":8,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T12:23:30.659647\",\"updated_at\":\"2025-09-21T12:23:30.659647\"},{\"name\":\"fffffff\",\"description\":\"\",\"category\":\"general\",\"current_level\":2,\"target_level\":5,\"is_core_skill\":false,\"id\":9,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T12:23:57.610763\",\"updated_at\":\"2025-09-21T12:23:57.610763\"},{\"name\":\"python\",\"description\":\"\",\"category\":\"general\",\"current_level\":2,\"target_level\":5,\"is_core_skill\":false,\"id\":14,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T16:26:03.572965\",\"updated_at\":\"2025-09-21T16:26:03.572965\"},{\"name\":\"Python\",\"description\":\"\",\"category\":\"general\",\"current_level\":2,\"target_level\":5,\"is_core_skill\":false,\"id\":6,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T11:50:52.967193\",\"updated_at\":\"2025-09-21T11:50:52.967193\"},{\"name\":\"Test Skill\",\"description\":\"A sample skill\",\"category\":\"general\",\"current_level\":5,\"target_level\":8,\"is_core_skill\":true,\"id\":10,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T12:31:17.760393\",\"updated_at\":\"2025-09-21T12:31:17.760393\"},{\"name\":\"Test Skill\",\"description\":\"A sample skill\",\"category\":\"general\",\"current_level\":5,\"target_level\":8,\"is_core_skill\":true,\"id\":5,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T11:50:26.528359\",\"updated_at\":\"2025-09-21T11:50:26.528359\"},{\"name\":\"Test Skill\",\"description\":\"A sample skill\",\"category\":\"general\",\"current_level\":5,\"target_level\":8,\"is_core_skill\":true,\"id\":4,\"user_id\":232,\"career_goal_id\":null,\"created_at\":\"2025-09-21T11:44:33.044960\",\"updated_at\":\"2025-09-21T11:44:33.044960\"}]"
+    },
+    {
+      "endpoint": "/finance/budgets",
+      "url": "http://localhost:8000/api/v1/finance/budgets",
+      "status": 200,
+      "summary": "[{\"id\":7,\"name\":\"Test Budget\",\"amount\":123.45,\"category\":\"test\",\"period\":\"monthly\",\"start_date\":\"2025-09-01\",\"end_date\":\"2025-09-30\"},{\"id\":8,\"name\":\"Test Budget\",\"amount\":123.45,\"category\":\"test\",\"pe...",
+      "full": "[{\"id\":7,\"name\":\"Test Budget\",\"amount\":123.45,\"category\":\"test\",\"period\":\"monthly\",\"start_date\":\"2025-09-01\",\"end_date\":\"2025-09-30\"},{\"id\":8,\"name\":\"Test Budget\",\"amount\":123.45,\"category\":\"test\",\"period\":\"monthly\",\"start_date\":\"2025-09-01\",\"end_date\":\"2025-09-30\"},{\"id\":9,\"name\":\"Test Budget\",\"amount\":123.45,\"category\":\"test\",\"period\":\"monthly\",\"start_date\":\"2025-09-01\",\"end_date\":\"2025-09-30\"},{\"id\":10,\"name\":\"sdd\",\"amount\":3333.0,\"category\":\"food\",\"period\":\"monthly\",\"start_date\":\"2025-09-21\",\"end_date\":\"2025-09-21\"}]"
+    },
+    {
+      "endpoint": "/finance/dashboard",
+      "url": "http://localhost:8000/api/v1/finance/dashboard",
+      "status": 200,
+      "summary": "{\"monthly_summary\":{\"expenses\":38.0,\"income\":500.0,\"savings\":462.0,\"month\":9,\"year\":2025},\"expenses_by_category\":[{\"category\":\"food\",\"total\":38.0}],\"active_budgets\":4,\"financial_goals\":[{\"name\":\"SaveF...",
+      "full": "{\"monthly_summary\":{\"expenses\":38.0,\"income\":500.0,\"savings\":462.0,\"month\":9,\"year\":2025},\"expenses_by_category\":[{\"category\":\"food\",\"total\":38.0}],\"active_budgets\":4,\"financial_goals\":[{\"name\":\"SaveForLaptop\",\"progress\":0.0,\"remaining\":1000.0},{\"name\":\"fffff\",\"progress\":9.900000099e-05,\"remaining\":22222200.0},{\"name\":\"fffff\",\"progress\":9.900000099e-05,\"remaining\":22222200.0},{\"name\":\"fffff\",\"progress\":9.900000099e-05,\"remaining\":22222200.0},{\"name\":\"fffff\",\"progress\":9.900000099e-05,\"remaining\":22222200.0},{\"name\":\"d\",\"progress\":50.0,\"remaining\":1.0}],\"savings_rate\":92.4}"
+    },
+    {
+      "endpoint": "/finance/expenses",
+      "url": "http://localhost:8000/api/v1/finance/expenses",
+      "status": 200,
+      "summary": "[{\"id\":43,\"amount\":12.5,\"description\":\"coffee\",\"category\":\"food\",\"subcategory\":null,\"date\":\"2025-09-21\",\"payment_method\":null,\"is_recurring\":false,\"notes\":null},{\"id\":44,\"amount\":25.5,\"description\":\"C...",
+      "full": "[{\"id\":43,\"amount\":12.5,\"description\":\"coffee\",\"category\":\"food\",\"subcategory\":null,\"date\":\"2025-09-21\",\"payment_method\":null,\"is_recurring\":false,\"notes\":null},{\"id\":44,\"amount\":25.5,\"description\":\"Coffee\",\"category\":\"food\",\"subcategory\":null,\"date\":\"2025-09-21\",\"payment_method\":\"card\",\"is_recurring\":false,\"notes\":\"test\"}]"
+    },
+    {
+      "endpoint": "/finance/goals",
+      "url": "http://localhost:8000/api/v1/finance/goals",
+      "status": 200,
+      "summary": "[{\"id\":10,\"title\":\"SaveForLaptop\",\"description\":null,\"goal_type\":\"savings\",\"target_amount\":1000.0,\"current_amount\":0.0,\"progress_percentage\":0.0,\"remaining_amount\":1000.0,\"target_date\":\"2025-12-31\",\"p...",
+      "full": "[{\"id\":10,\"title\":\"SaveForLaptop\",\"description\":null,\"goal_type\":\"savings\",\"target_amount\":1000.0,\"current_amount\":0.0,\"progress_percentage\":0.0,\"remaining_amount\":1000.0,\"target_date\":\"2025-12-31\",\"priority\":\"medium\",\"status\":\"active\"},{\"id\":11,\"title\":\"fffff\",\"description\":null,\"goal_type\":\"savings\",\"target_amount\":22222222.0,\"current_amount\":22.0,\"progress_percentage\":9.900000099000001e-05,\"remaining_amount\":22222200.0,\"target_date\":\"2222-11-11\",\"priority\":\"medium\",\"status\":\"active\"},{\"id\":12,\"title\":\"fffff\",\"description\":null,\"goal_type\":\"savings\",\"target_amount\":22222222.0,\"current_amount\":22.0,\"progress_percentage\":9.900000099000001e-05,\"remaining_amount\":22222200.0,\"target_date\":\"2222-11-11\",\"priority\":\"medium\",\"status\":\"active\"},{\"id\":13,\"title\":\"fffff\",\"description\":null,\"goal_type\":\"savings\",\"target_amount\":22222222.0,\"current_amount\":22.0,\"progress_percentage\":9.900000099000001e-05,\"remaining_amount\":22222200.0,\"target_date\":\"2222-11-11\",\"priority\":\"medium\",\"status\":\"active\"},{\"id\":14,\"title\":\"fffff\",\"description\":null,\"goal_type\":\"savings\",\"target_amount\":22222222.0,\"current_amount\":22.0,\"progress_percentage\":9.900000099000001e-05,\"remaining_amount\":22222200.0,\"target_date\":\"2222-11-11\",\"priority\":\"medium\",\"status\":\"active\"},{\"id\":15,\"title\":\"d\",\"description\":null,\"goal_type\":\"savings\",\"target_amount\":2.0,\"current_amount\":1.0,\"progress_percentage\":50.0,\"remaining_amount\":1.0,\"target_date\":\"2002-11-11\",\"priority\":\"medium\",\"status\":\"active\"}]"
+    },
+    {
+      "endpoint": "/finance/income",
+      "url": "http://localhost:8000/api/v1/finance/income",
+      "status": 200,
+      "summary": "[{\"id\":7,\"amount\":500.0,\"source\":\"salary\",\"description\":\"September salary\",\"date_received\":\"2025-09-21\",\"is_recurring\":true,\"recurring_frequency\":null}]",
+      "full": "[{\"id\":7,\"amount\":500.0,\"source\":\"salary\",\"description\":\"September salary\",\"date_received\":\"2025-09-21\",\"is_recurring\":true,\"recurring_frequency\":null}]"
+    },
+    {
+      "endpoint": "/gamification/badges",
+      "url": "http://localhost:8000/api/v1/gamification/badges",
+      "status": 200,
+      "summary": "[]",
+      "full": "[]"
+    },
+    {
+      "endpoint": "/gamification/stats",
+      "url": "http://localhost:8000/api/v1/gamification/stats",
+      "status": 200,
+      "summary": "{\"total_points\":0,\"level\":1,\"current_level_points\":0.0,\"points_to_next_level\":100,\"progress_percentage\":0.0,\"streaks\":{\"habit_streak\":0,\"longest_habit_streak\":0,\"login_streak\":0,\"longest_login_streak\"...",
+      "full": "{\"total_points\":0,\"level\":1,\"current_level_points\":0.0,\"points_to_next_level\":100,\"progress_percentage\":0.0,\"streaks\":{\"habit_streak\":0,\"longest_habit_streak\":0,\"login_streak\":0,\"longest_login_streak\":0},\"counts\":{\"total_habits_completed\":0,\"total_tasks_completed\":0,\"total_goals_achieved\":0},\"last_activity\":null}"
+    },
+    {
+      "endpoint": "/habits",
+      "url": "http://localhost:8000/api/v1/habits",
+      "status": 200,
+      "summary": "[{\"id\":19,\"name\":\"Meditate\",\"description\":\"5 minutes\",\"frequency\":\"daily\",\"target_value\":5.0,\"unit\":\"minutes\",\"current_streak\":0,\"longest_streak\":0,\"is_active\":true},{\"id\":20,\"name\":\"asdfasdf\",\"descri...",
+      "full": "[{\"id\":19,\"name\":\"Meditate\",\"description\":\"5 minutes\",\"frequency\":\"daily\",\"target_value\":5.0,\"unit\":\"minutes\",\"current_streak\":0,\"longest_streak\":0,\"is_active\":true},{\"id\":20,\"name\":\"asdfasdf\",\"description\":\"afewafef\",\"frequency\":\"daily\",\"target_value\":null,\"unit\":null,\"current_streak\":0,\"longest_streak\":0,\"is_active\":true},{\"id\":21,\"name\":\"xzcfvzv\",\"description\":\"sdasggwe\",\"frequency\":\"daily\",\"target_value\":null,\"unit\":null,\"current_streak\":0,\"longest_streak\":0,\"is_active\":true},{\"id\":22,\"name\":\"ADDFE\",\"description\":\"FAFEAFWE\",\"frequency\":\"daily\",\"target_value\":null,\"unit\":null,\"current_streak\":0,\"longest_streak\":0,\"is_active\":true},{\"id\":23,\"name\":\"SERGERGA\",\"description\":\"REGAWEWEGF\",\"frequency\":\"daily\",\"target_value\":null,\"unit\":null,\"current_streak\":0,\"longest_streak\":0,\"is_active\":true},{\"id\":24,\"name\":\"hhhh\",\"description\":\"hhhhhh\",\"frequency\":\"daily\",\"target_value\":null,\"unit\":null,\"current_streak\":0,\"longest_streak\":0,\"is_active\":true}]"
+    },
+    {
+      "endpoint": "/habits/dashboard",
+      "url": "http://localhost:8000/api/v1/habits/dashboard",
+      "status": 200,
+      "summary": "{\"total_habits\":6,\"completed_habits_today\":0,\"pending_tasks\":1,\"upcoming_events\":[],\"streak_summary\":{\"total_streak\":0,\"longest_streak\":0},\"current_streak\":0,\"today_habits\":[{\"id\":19,\"name\":\"Meditate\"...",
+      "full": "{\"total_habits\":6,\"completed_habits_today\":0,\"pending_tasks\":1,\"upcoming_events\":[],\"streak_summary\":{\"total_streak\":0,\"longest_streak\":0},\"current_streak\":0,\"today_habits\":[{\"id\":19,\"name\":\"Meditate\",\"description\":\"5 minutes\",\"category\":\"wellness\",\"frequency\":\"daily\",\"target_value\":5.0,\"unit\":\"minutes\",\"current_streak\":0,\"longest_streak\":0,\"is_active\":true,\"is_completed\":false},{\"id\":20,\"name\":\"asdfasdf\",\"description\":\"afewafef\",\"category\":\"productivity\",\"frequency\":\"daily\",\"target_value\":null,\"unit\":null,\"current_streak\":0,\"longest_streak\":0,\"is_active\":true,\"is_completed\":false},{\"id\":21,\"name\":\"xzcfvzv\",\"description\":\"sdasggwe\",\"category\":\"productivity\",\"frequency\":\"daily\",\"target_value\":null,\"unit\":null,\"current_streak\":0,\"longest_streak\":0,\"is_active\":true,\"is_completed\":false},{\"id\":22,\"name\":\"ADDFE\",\"description\":\"FAFEAFWE\",\"category\":\"productivity\",\"frequency\":\"daily\",\"target_value\":null,\"unit\":null,\"current_streak\":0,\"longest_streak\":0,\"is_active\":true,\"is_completed\":false},{\"id\":23,\"name\":\"SERGERGA\",\"description\":\"REGAWEWEGF\",\"category\":\"productivity\",\"frequency\":\"daily\",\"target_value\":null,\"unit\":null,\"current_streak\":0,\"longest_streak\":0,\"is_active\":true,\"is_completed\":false},{\"id\":24,\"name\":\"hhhh\",\"description\":\"hhhhhh\",\"category\":\"productivity\",\"frequency\":\"daily\",\"target_value\":null,\"unit\":null,\"current_streak\":0,\"longest_streak\":0,\"is_active\":true,\"is_completed\":false}]}"
+    },
+    {
+      "endpoint": "/habits/events",
+      "url": "http://localhost:8000/api/v1/habits/events",
+      "status": 200,
+      "summary": "[{\"id\":26,\"title\":\"Quick Meeting\",\"description\":\"Test event from smoke test\",\"start_datetime\":\"2025-09-21T17:39:36.346295\",\"end_datetime\":\"2025-09-21T18:39:36.380008\",\"start_time\":\"2025-09-21T17:39:36...",
+      "full": "[{\"id\":26,\"title\":\"Quick Meeting\",\"description\":\"Test event from smoke test\",\"start_datetime\":\"2025-09-21T17:39:36.346295\",\"end_datetime\":\"2025-09-21T18:39:36.380008\",\"start_time\":\"2025-09-21T17:39:36.346295\",\"end_time\":\"2025-09-21T18:39:36.380008\",\"location\":\"Zoom\",\"all_day\":false}]"
+    },
+    {
+      "endpoint": "/habits/tasks",
+      "url": "http://localhost:8000/api/v1/habits/tasks",
+      "status": 200,
+      "summary": "[{\"id\":19,\"title\":\"agaag\",\"description\":\"g3tg3\",\"status\":\"pending\",\"priority\":\"medium\",\"category\":\"productivity\",\"due_date\":\"2222-11-11\",\"estimated_minutes\":null}]",
+      "full": "[{\"id\":19,\"title\":\"agaag\",\"description\":\"g3tg3\",\"status\":\"pending\",\"priority\":\"medium\",\"category\":\"productivity\",\"due_date\":\"2222-11-11\",\"estimated_minutes\":null}]"
+    },
+    {
+      "endpoint": "/mood/dashboard",
+      "url": "http://localhost:8000/api/v1/mood/dashboard",
+      "status": 200,
+      "summary": "{\"weekly_averages\":{\"mood_score\":7.3,\"energy_level\":6.0,\"stress_level\":3.5,\"sleep_hours\":7.0},\"mood_trends\":[{\"date\":\"2025-09-21\",\"avg_mood\":7.3}],\"wellness_score\":6.6}",
+      "full": "{\"weekly_averages\":{\"mood_score\":7.3,\"energy_level\":6.0,\"stress_level\":3.5,\"sleep_hours\":7.0},\"mood_trends\":[{\"date\":\"2025-09-21\",\"avg_mood\":7.3}],\"wellness_score\":6.6}"
+    },
+    {
+      "endpoint": "/mood/logs",
+      "url": "http://localhost:8000/api/v1/mood/logs",
+      "status": 200,
+      "summary": "[{\"id\":9,\"mood_score\":8,\"primary_emotion\":\"happy\",\"energy_level\":7,\"stress_level\":2,\"sleep_hours\":7.0,\"exercise_minutes\":20,\"notes\":\"Testing demo user behavior\",\"date\":\"2025-09-21\",\"logged_at\":\"2025-0...",
+      "full": "[{\"id\":9,\"mood_score\":8,\"primary_emotion\":\"happy\",\"energy_level\":7,\"stress_level\":2,\"sleep_hours\":7.0,\"exercise_minutes\":20,\"notes\":\"Testing demo user behavior\",\"date\":\"2025-09-21\",\"logged_at\":\"2025-09-21T10:08:46.828442\"},{\"id\":10,\"mood_score\":5,\"primary_emotion\":null,\"energy_level\":5,\"stress_level\":5,\"sleep_hours\":7.0,\"exercise_minutes\":0,\"notes\":\"fgfngfxnfg\",\"date\":\"2025-09-21\",\"logged_at\":\"2025-09-21T10:09:07.415251\"},{\"id\":11,\"mood_score\":8,\"primary_emotion\":\"happy\",\"energy_level\":7,\"stress_level\":2,\"sleep_hours\":7.0,\"exercise_minutes\":20,\"notes\":\"Testing demo user behavior\",\"date\":\"2025-09-21\",\"logged_at\":\"2025-09-21T10:18:17.220675\"},{\"id\":12,\"mood_score\":5,\"primary_emotion\":null,\"energy_level\":5,\"stress_level\":5,\"sleep_hours\":7.0,\"exercise_minutes\":0,\"notes\":\"asdfae\",\"date\":\"2025-09-21\",\"logged_at\":\"2025-09-21T10:18:44.281676\"},{\"id\":13,\"mood_score\":10,\"primary_emotion\":null,\"energy_level\":5,\"stress_level\":5,\"sleep_hours\":7.0,\"exercise_minutes\":0,\"notes\":\"lllll\",\"date\":\"2025-09-21\",\"logged_at\":\"2025-09-21T10:19:02.310703\"},{\"id\":14,\"mood_score\":8,\"primary_emotion\":\"happy\",\"energy_level\":7,\"stress_level\":2,\"sleep_hours\":7.0,\"exercise_minutes\":20,\"notes\":\"smoke test\",\"date\":\"2025-09-21\",\"logged_at\":\"2025-09-21T10:32:17.893941\"}]"
+    }
+  ],
+  "not_working": [
+    {
+      "endpoint": "/ai/analytics",
+      "url": "http://localhost:8000/api/v1/ai/analytics",
+      "status": null,
+      "summary": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)",
+      "full": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)"
+    },
+    {
+      "endpoint": "/ai/career",
+      "url": "http://localhost:8000/api/v1/ai/career",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/ai/conversation",
+      "url": "http://localhost:8000/api/v1/ai/conversation",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/ai/finance",
+      "url": "http://localhost:8000/api/v1/ai/finance",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/ai/habits",
+      "url": "http://localhost:8000/api/v1/ai/habits",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/ai/insights",
+      "url": "http://localhost:8000/api/v1/ai/insights",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/ai/learning",
+      "url": "http://localhost:8000/api/v1/ai/learning",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/ai/models",
+      "url": "http://localhost:8000/api/v1/ai/models",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/ai/mood",
+      "url": "http://localhost:8000/api/v1/ai/mood",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/ai/personalized",
+      "url": "http://localhost:8000/api/v1/ai/personalized",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/ai/preferences",
+      "url": "http://localhost:8000/api/v1/ai/preferences",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/ai/quality",
+      "url": "http://localhost:8000/api/v1/ai/quality",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/ai/status",
+      "url": "http://localhost:8000/api/v1/ai/status",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/ai/test",
+      "url": "http://localhost:8000/api/v1/ai/test",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/ai/validation",
+      "url": "http://localhost:8000/api/v1/ai/validation",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/ai/wellness",
+      "url": "http://localhost:8000/api/v1/ai/wellness",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/auth/change-password",
+      "url": "http://localhost:8000/api/v1/auth/change-password",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/auth/forgot-password",
+      "url": "http://localhost:8000/api/v1/auth/forgot-password",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/auth/login",
+      "url": "http://localhost:8000/api/v1/auth/login",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/auth/logout",
+      "url": "http://localhost:8000/api/v1/auth/logout",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/auth/me",
+      "url": "http://localhost:8000/api/v1/auth/me",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/auth/preferences",
+      "url": "http://localhost:8000/api/v1/auth/preferences",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/auth/refresh",
+      "url": "http://localhost:8000/api/v1/auth/refresh",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/auth/register",
+      "url": "http://localhost:8000/api/v1/auth/register",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/auth/reset-password",
+      "url": "http://localhost:8000/api/v1/auth/reset-password",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/auth/verify-email",
+      "url": "http://localhost:8000/api/v1/auth/verify-email",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/career/advice",
+      "url": "http://localhost:8000/api/v1/career/advice",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/career/analytics",
+      "url": "http://localhost:8000/api/v1/career/analytics",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/career/assessment",
+      "url": "http://localhost:8000/api/v1/career/assessment",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/career/connections",
+      "url": "http://localhost:8000/api/v1/career/connections",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/career/events",
+      "url": "http://localhost:8000/api/v1/career/events",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/career/plan",
+      "url": "http://localhost:8000/api/v1/career/plan",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/career/resources",
+      "url": "http://localhost:8000/api/v1/career/resources",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/finance/advice",
+      "url": "http://localhost:8000/api/v1/finance/advice",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/finance/analytics",
+      "url": "http://localhost:8000/api/v1/finance/analytics",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/finance/categories",
+      "url": "http://localhost:8000/api/v1/finance/categories",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/finance/debts",
+      "url": "http://localhost:8000/api/v1/finance/debts",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/finance/investments",
+      "url": "http://localhost:8000/api/v1/finance/investments",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/finance/plan",
+      "url": "http://localhost:8000/api/v1/finance/plan",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/finance/recommendations",
+      "url": "http://localhost:8000/api/v1/finance/recommendations",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/finance/recurring",
+      "url": "http://localhost:8000/api/v1/finance/recurring",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/finance/reports",
+      "url": "http://localhost:8000/api/v1/finance/reports",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/gamification/achievements",
+      "url": "http://localhost:8000/api/v1/gamification/achievements",
+      "status": 500,
+      "summary": "{\"detail\":\"Internal server error\"}",
+      "full": "{\"detail\":\"Internal server error\"}"
+    },
+    {
+      "endpoint": "/gamification/analytics",
+      "url": "http://localhost:8000/api/v1/gamification/analytics",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/gamification/challenges",
+      "url": "http://localhost:8000/api/v1/gamification/challenges",
+      "status": 500,
+      "summary": "{\"detail\":\"Internal server error\"}",
+      "full": "{\"detail\":\"Internal server error\"}"
+    },
+    {
+      "endpoint": "/gamification/dashboard",
+      "url": "http://localhost:8000/api/v1/gamification/dashboard",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/gamification/leaderboards",
+      "url": "http://localhost:8000/api/v1/gamification/leaderboards",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/gamification/levels",
+      "url": "http://localhost:8000/api/v1/gamification/levels",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/gamification/milestones",
+      "url": "http://localhost:8000/api/v1/gamification/milestones",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/gamification/quests",
+      "url": "http://localhost:8000/api/v1/gamification/quests",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/gamification/rewards",
+      "url": "http://localhost:8000/api/v1/gamification/rewards",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/gamification/streaks",
+      "url": "http://localhost:8000/api/v1/gamification/streaks",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/gamification/xp",
+      "url": "http://localhost:8000/api/v1/gamification/xp",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/habits/analytics",
+      "url": "http://localhost:8000/api/v1/habits/analytics",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/habits/categories",
+      "url": "http://localhost:8000/api/v1/habits/categories",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/habits/challenges",
+      "url": "http://localhost:8000/api/v1/habits/challenges",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/habits/reminders",
+      "url": "http://localhost:8000/api/v1/habits/reminders",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/habits/shared",
+      "url": "http://localhost:8000/api/v1/habits/shared",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/habits/templates",
+      "url": "http://localhost:8000/api/v1/habits/templates",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/habits/today",
+      "url": "http://localhost:8000/api/v1/habits/today",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/habits/upcoming",
+      "url": "http://localhost:8000/api/v1/habits/upcoming",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/memory",
+      "url": "http://localhost:8000/api/v1/memory",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/memory/analytics",
+      "url": "http://localhost:8000/api/v1/memory/analytics",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/memory/categories",
+      "url": "http://localhost:8000/api/v1/memory/categories",
+      "status": null,
+      "summary": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)",
+      "full": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)"
+    },
+    {
+      "endpoint": "/memory/cleanup",
+      "url": "http://localhost:8000/api/v1/memory/cleanup",
+      "status": null,
+      "summary": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)",
+      "full": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)"
+    },
+    {
+      "endpoint": "/memory/context",
+      "url": "http://localhost:8000/api/v1/memory/context",
+      "status": null,
+      "summary": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)",
+      "full": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)"
+    },
+    {
+      "endpoint": "/memory/conversations",
+      "url": "http://localhost:8000/api/v1/memory/conversations",
+      "status": null,
+      "summary": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)",
+      "full": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)"
+    },
+    {
+      "endpoint": "/memory/embeddings",
+      "url": "http://localhost:8000/api/v1/memory/embeddings",
+      "status": null,
+      "summary": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)",
+      "full": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)"
+    },
+    {
+      "endpoint": "/memory/export",
+      "url": "http://localhost:8000/api/v1/memory/export",
+      "status": null,
+      "summary": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)",
+      "full": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)"
+    },
+    {
+      "endpoint": "/memory/import",
+      "url": "http://localhost:8000/api/v1/memory/import",
+      "status": null,
+      "summary": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)",
+      "full": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)"
+    },
+    {
+      "endpoint": "/memory/insights",
+      "url": "http://localhost:8000/api/v1/memory/insights",
+      "status": null,
+      "summary": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)",
+      "full": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=2.0)"
+    },
+    {
+      "endpoint": "/memory/preferences",
+      "url": "http://localhost:8000/api/v1/memory/preferences",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/memory/search",
+      "url": "http://localhost:8000/api/v1/memory/search",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/memory/status",
+      "url": "http://localhost:8000/api/v1/memory/status",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/memory/suggestions",
+      "url": "http://localhost:8000/api/v1/memory/suggestions",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/memory/tags",
+      "url": "http://localhost:8000/api/v1/memory/tags",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/memory/trends",
+      "url": "http://localhost:8000/api/v1/memory/trends",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/mood/ai-insights",
+      "url": "http://localhost:8000/api/v1/mood/ai-insights",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/mood/analytics",
+      "url": "http://localhost:8000/api/v1/mood/analytics",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/mood/current",
+      "url": "http://localhost:8000/api/v1/mood/current",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/mood/exercise",
+      "url": "http://localhost:8000/api/v1/mood/exercise",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/mood/goals",
+      "url": "http://localhost:8000/api/v1/mood/goals",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/mood/journal",
+      "url": "http://localhost:8000/api/v1/mood/journal",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/mood/sleep",
+      "url": "http://localhost:8000/api/v1/mood/sleep",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/mood/stress",
+      "url": "http://localhost:8000/api/v1/mood/stress",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/mood/tips",
+      "url": "http://localhost:8000/api/v1/mood/tips",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/mood/trend",
+      "url": "http://localhost:8000/api/v1/mood/trend",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/mood/triggers",
+      "url": "http://localhost:8000/api/v1/mood/triggers",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "endpoint": "/mood/wellness",
+      "url": "http://localhost:8000/api/v1/mood/wellness",
+      "status": 404,
+      "summary": "{\"detail\":\"Not Found\"}",
+      "full": "{\"detail\":\"Not Found\"}"
+    }
+  ],
+  "summary": {
+    "total": 107,
+    "ok": 18,
+    "auth": 0,
+    "not_found": 78,
+    "server_err": 2,
+    "errors": 9
+  }
+}

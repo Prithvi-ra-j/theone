@@ -20,37 +20,62 @@ from app.core.config import settings
 class AIService:
     def generate_tasks_for_goal(self, goal_title: str, goal_description: str) -> list:
         """Generate actionable tasks for a career goal using the LLM."""
+        fallback = [
+            {"title": "Define your first milestone", "description": "Break your goal into smaller steps."}
+        ]
         if not self.llm:
-            return [
-                {"title": "Define your first milestone", "description": "Break your goal into smaller steps."}
-            ]
+            return fallback
         prompt = f"Generate a list of 5 actionable tasks to help achieve the following career goal: {goal_title}. Context: {goal_description}. Return as a JSON list of objects with 'title' and 'description'."
         try:
-            result = self.llm(prompt)
+            # Support different LLM client interfaces
+            if callable(self.llm):
+                result = self.llm(prompt)
+            elif hasattr(self.llm, "invoke"):
+                result = self.llm.invoke(prompt)
+            elif hasattr(self.llm, "generate"):
+                # Some LLM clients use generate and return an object
+                gen = self.llm.generate([prompt])
+                # Attempt to extract string
+                result = str(gen) if gen is not None else None
+            else:
+                result = None
+
+            if not result:
+                return fallback
+
             # Try to parse JSON from result
-            tasks = json.loads(result)
-            if isinstance(tasks, list):
-                return tasks
-            return [
-                {"title": "Review AI output", "description": str(result)}
-            ]
+            try:
+                tasks = json.loads(result)
+                if isinstance(tasks, list):
+                    return tasks
+            except Exception:
+                # Not JSON, return best-effort wrapper
+                return [{"title": "Review AI output", "description": str(result)}]
         except Exception as e:
             logger.error(f"Error generating tasks: {e}")
-            return [
-                {"title": "Define your first milestone", "description": "Break your goal into smaller steps."}
-            ]
+            return fallback
 
     def generate_feedback(self, goal_title: str, completed_tasks: list) -> str:
         """Generate AI feedback on progress for a career goal."""
+        fallback = "Keep going!"
         if not self.llm:
-            return "Keep going!"
+            return fallback
         prompt = f"User's goal: {goal_title}. Completed tasks: {completed_tasks}. Provide feedback and next steps."
         try:
-            feedback = self.llm(prompt)
-            return str(feedback)
+            if callable(self.llm):
+                feedback = self.llm(prompt)
+            elif hasattr(self.llm, "invoke"):
+                feedback = self.llm.invoke(prompt)
+            elif hasattr(self.llm, "generate"):
+                gen = self.llm.generate([prompt])
+                feedback = str(gen) if gen is not None else None
+            else:
+                feedback = None
+
+            return str(feedback) if feedback else fallback
         except Exception as e:
             logger.error(f"Error generating feedback: {e}")
-            return "Keep going!"
+            return fallback
     """AI service for LLM integration."""
     
     def __init__(self):
