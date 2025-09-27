@@ -15,6 +15,7 @@ const TaskCard = ({
   onEdit,
   onDelete,
   onAIAdvice,
+  aiLoading = false,
   type = 'task', // 'task', 'habit', 'goal'
   streak = 0,
   className = '',
@@ -172,6 +173,17 @@ const TaskCard = ({
           <div className="mt-2 text-xs text-success-600">
             Completed on {formatDate(completedAt)}
           </div>
+        )}
+
+        {/* AI Advice Button */}
+        {typeof onAIAdvice === 'function' && (
+          <button
+            onClick={() => onAIAdvice(id)}
+            disabled={aiLoading}
+            className="mt-4 px-3 py-1 rounded-md text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition-colors flex items-center justify-center"
+          >
+            {aiLoading ? 'Asking AI...' : 'Ask AI'}
+          </button>
         )}
       </div>
     </motion.div>

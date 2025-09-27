@@ -13,7 +13,7 @@ alembic==1.12.1
 psycopg2-binary==2.9.9
 
 redis==5.0.1
-
+langchain-openrouter>=0.1.0
 # AI and Machine Learning
 langchain
 langchain-community

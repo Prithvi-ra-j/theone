@@ -259,6 +259,30 @@ const Career = () => {
     },
   });
 
+  // AI mutations (paste after other useMutation blocks)
+  const getAIFeedbackMutation = useMutation({
+    mutationFn: () => careerAPI.getAIFeedback(),
+    onSuccess: (data) => setAiFeedback(data),
+    onError: (err) => {
+      console.error('Failed to fetch AI feedback', err);
+      toast.error('Failed to fetch AI feedback');
+      setAiFeedback(null);
+    }
+  });
+
+  const postGoalAdviceMutation = useMutation({
+    mutationFn: ({ goalId, question }) => careerAPI.postGoalAdvice(goalId, { question }),
+    onSuccess: (data) => {
+      setAiResponse(data);
+      queryClient.invalidateQueries(['career', 'dashboard']); // optional
+    },
+    onError: (err) => {
+      console.error('AI advice error:', err);
+      toast.error('Failed to fetch AI advice');
+      setAiResponse(null);
+    },
+  });
+
   const handleCreateNew = (type) => {
     setModalType(type);
     setEditingGoal(null);
@@ -299,19 +323,10 @@ const Career = () => {
   };
 
   // AI advice submit handler
-  const handleSubmitAI = async () => {
+  const handleSubmitAI = () => {
     if (!aiQuestion || !aiTargetGoalId) return;
-    setAiLoading(true);
     setAiResponse(null);
-    try {
-      const res = await careerAPI.postGoalAdvice(aiTargetGoalId, { question: aiQuestion });
-      setAiResponse(res);
-    } catch (err) {
-      console.error('AI advice error:', err);
-      toast.error('Failed to fetch AI advice');
-    } finally {
-      setAiLoading(false);
-    }
+    postGoalAdviceMutation.mutate({ goalId: aiTargetGoalId, question: aiQuestion });
   };
 
   const filteredGoals = React.useMemo(() => {
@@ -362,13 +377,20 @@ const Career = () => {
     <div className="min-h-screen bg-gray-50">
       {/* AI Feedback Button */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <Button onClick={handleGetAIFeedback} disabled={aiFeedbackLoading} className="mb-4">
-          {aiFeedbackLoading ? 'Getting AI Feedback...' : 'Get AI Feedback on My Progress'}
+        <Button
+          onClick={() => getAIFeedbackMutation.mutate()}
+          disabled={getAIFeedbackMutation.isLoading}
+          className="mb-4"
+        >
+          {getAIFeedbackMutation.isLoading ? 'Getting AI Feedback...' : 'Get AI Feedback on My Progress'}
         </Button>
+
         {aiFeedback && (
           <div className="bg-blue-50 border border-blue-200 rounded p-4 mt-2">
             <h3 className="font-semibold text-blue-800 mb-2">AI Feedback</h3>
-            <div className="text-sm text-blue-900 whitespace-pre-line max-h-60 overflow-y-auto pr-2">{aiFeedback.feedback || aiFeedback.goal || JSON.stringify(aiFeedback)}</div>
+            <div className="text-sm text-blue-900 whitespace-pre-line max-h-60 overflow-y-auto pr-2">
+              {aiFeedback.feedback || aiFeedback.goal || JSON.stringify(aiFeedback)}
+            </div>
           </div>
         )}
       </div>
@@ -533,6 +555,7 @@ const Career = () => {
                     onEdit={() => handleEdit(goal)}
                     onDelete={() => handleDelete(goal.id)}
                     onAIAdvice={() => handleAIAdvice(goal.id)}
+                    aiLoading={postGoalAdviceMutation.isLoading}
                   />
                 ))}
               </div>
@@ -650,7 +673,7 @@ const Career = () => {
         question={aiQuestion}
         setQuestion={setAiQuestion}
         onSubmit={handleSubmitAI}
-        loading={aiLoading}
+        loading={postGoalAdviceMutation.isLoading}
         response={aiResponse}
       />
 
@@ -667,7 +690,9 @@ const AIAdviceModal = ({ isOpen, onClose, goalId, question, setQuestion, onSubmi
         <Textarea value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Ask the AI for practical steps, resources, or suggestions..." />
         <div className="flex justify-end space-x-2">
           <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={onSubmit} disabled={loading || !question}>{loading ? 'Asking...' : 'Ask AI'}</Button>
+          <Button onClick={onSubmit} disabled={loading || !question}>
+            {loading ? 'Asking...' : 'Ask AI'}
+          </Button>
         </div>
 
         {response && (

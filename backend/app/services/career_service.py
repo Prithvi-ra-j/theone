@@ -81,18 +81,25 @@ class CareerService:
         if self.memory_service and effective_user:
             try:
                 mem = None
-                # Prefer explicit helper if available
+
+                # 1) Try get_user_context (may be sync or async)
                 if hasattr(self.memory_service, "get_user_context"):
-                    mem = self.memory_service.get_user_context(effective_user.id, context_type="career")
+                    maybe = self.memory_service.get_user_context(effective_user.id, context_type="career")
+                    if hasattr(maybe, "__await__"):
+                        # it's awaitable (e.g., AsyncMock or an async function)
+                        mem = await maybe
+                    else:
+                        mem = maybe
 
-                # If result is not a usable type, or empty, try semantic_search as a fallback
+                # 2) If result is not a usable type, or empty, try semantic_search as a fallback
                 if not isinstance(mem, (dict, list, str)) and hasattr(self.memory_service, "semantic_search"):
-                    mem = self.memory_service.semantic_search(user_id=effective_user.id, query="career", top_k=10)
+                    maybe2 = self.memory_service.semantic_search(user_id=effective_user.id, query="career", top_k=10)
+                    if hasattr(maybe2, "__await__"):
+                        mem = await maybe2
+                    else:
+                        mem = maybe2
 
-                if hasattr(mem, "__await__"):
-                    mem = await mem
-
-                # If mem isn't a dict/list/str, normalize to empty
+                # Normalize to a safe type
                 if not isinstance(mem, (dict, list, str)):
                     mem = None
 

@@ -169,3 +169,39 @@ Integrate Features: Use the career slice as a hub. The Mini Assistant should hel
 Update Documentation: After making progress on the above, update PROJECT_STATUS.md and README.md to reflect the true state of the project. Honesty about project status is critical for managing expectations.
 You have a strong base to build upon. By focusing your efforts on implementing the AI logic within a single, complete feature loop, you will make significant and tangible progress.
 
+
+
+
+
+
+Summary of statuses (done / in-progress / not-started)
+
+Completed
+
+Weighted score summary (final score 74/100) — Done
+Configure LLM credentials + smoke test — Done (we ran the POST with fallback and got AI responses)
+Create CareerService (career_service.py) — Done (robust parsing/normalization implemented)
+Refactor router to use CareerService (/generate-roadmap) — Done
+Enhance AI prompt for personalization — Done (prompt includes memory/context)
+In-progress
+
+DB migration for UserMemory.vector_id — In-progress (marked as the immediate working item)
+Immediate duplicate task for DB migration — In-progress (same as above)
+Not-started
+
+Verify / create FAISS index
+Add basic integration smoke test
+Add loading states & error UX for AI calls (frontend)
+Add 5–10 automated tests
+Add CI workflow (GitHub Actions)
+Add DEVELOPMENT.md & runtime checklist
+Observability & metrics
+Privacy & policy docs
+UX polish, accessibility, onboarding
+Define Mini Assistant first use case
+Create MiniAssistantService
+Implement Mini Assistant tool-use
+Create gamification DB models
+Implement reward logic on task completion
+Build leaderboard endpoint
+Immediate duplicates for FAISS, tests, smoke test — Not-starte

@@ -124,6 +124,8 @@ const careerAPI = {
 
   getSkillGrowthTrend: (skillId, timeframe = 'month') => 
     api.get(`${CAREER_BASE_URL}/skills/${skillId}/growth-trend?timeframe=${timeframe}`),
+    // AI feedback for active goal (frontend calls careerAPI.getAIFeedback())
+    getAIFeedback: () => api.get('/career/feedback'),
 
   // Career Resources
   getCareerResources: (category = null) => {

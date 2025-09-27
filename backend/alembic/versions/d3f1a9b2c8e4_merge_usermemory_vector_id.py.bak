@@ -1,0 +1,25 @@
+﻿"""merge heads for usermemory.vector_id
+
+Revision ID: d3f1a9b2c8e4
+Revises: 20250922_add_usermemory_vector_id, 5a3c2129f802
+Create Date: 2025-09-22 00:00:00.000000
+"""
+
+from alembic import op
+import sqlalchemy as sa
+
+# revision identifiers, used by Alembic.
+revision = 'd3f1a9b2c8e4'
+down_revision = ('20250922_add_usermemory_vector_id', '5a3c2129f802')
+branch_labels = None
+depends_on = None
+
+
+def upgrade() -> None:
+    # merge-only revision: no schema changes, records the merge of two heads
+    pass
+
+
+def downgrade() -> None:
+    # no-op: downgrading a merge-only revision typically does nothing
+    pass

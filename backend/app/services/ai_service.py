@@ -4,13 +4,13 @@ import json
 import asyncio
 from typing import Any, Dict, List, Optional
 from datetime import datetime
-
+import os
 import httpx
 from langchain_community.llms import Ollama
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.chains import LLMChain
+from langchain.chains import LLMChain
 from langchain_core.messages import HumanMessage, SystemMessage
 from loguru import logger
 
@@ -110,8 +110,9 @@ class AIService:
                         logger.info(f"✅ Ollama connected successfully with model: {self.model_name}")
                     else:
                         logger.warning(f"⚠️ Ollama connection failed: {response.status_code}")
-            elif settings.LLM_PROVIDER == "api":
+            elif settings.LLM_PROVIDER in ["api","openrouter"]:
                 # Verify API key is available before initializing
+                os.environ["OPENROUTER_API_KEY"] = settings.API_LLM_API_KEY
                 if not settings.API_LLM_API_KEY:
                     logger.error("❌ API LLM API key is not set")
                     self.is_available = False
@@ -120,9 +121,13 @@ class AIService:
                 try:
                     self.llm = ChatOpenAI(
                         api_key=settings.API_LLM_API_KEY,
-                        base_url=settings.API_LLM_BASE_URL,
+                        base_url="https://openrouter.ai/api/v1",
                         model=settings.API_LLM_MODEL,
-                        temperature=0.7
+                        temperature=0.7,
+                        default_headers={"Authorization": f"Bearer {settings.API_LLM_API_KEY}",
+                                     "HTTP-Referer":"http://127.0.0.1:8000",
+                                     "X-Title": settings.PROJECT_NAME or "Dristhi AI"},
+                    
                     )
                     # Test the connection with a simple query
                     _ = self.llm.invoke("Test connection")
@@ -244,6 +249,7 @@ class AIService:
                             base_url=settings.API_LLM_BASE_URL,
                             model=settings.API_LLM_MODEL,
                             temperature=temperature,
+                            
                         )
                     elif settings.LLM_PROVIDER == "ollama":
                         llm_to_use = Ollama(
