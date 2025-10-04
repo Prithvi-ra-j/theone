@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Target, 
@@ -12,7 +14,8 @@ import {
   Clock,
   Star,
   Filter,
-  Search
+  Search,
+  AlertCircle
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { careerAPI } from '../api';
@@ -128,6 +131,21 @@ const Career = () => {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiResponse, setAiResponse] = useState(null);
   const [aiTargetGoalId, setAiTargetGoalId] = useState(null);
+  // Reality Check hint banner
+  const [showRealityTip, setShowRealityTip] = useState(true);
+
+  // Learning Path modal state
+  const [pathModalOpen, setPathModalOpen] = useState(false);
+  const [selectedPath, setSelectedPath] = useState(null);
+  const [pathStartDate, setPathStartDate] = useState(() => new Date().toISOString().slice(0,10));
+
+  const openPathModal = (path) => {
+    setSelectedPath(path);
+    // default start date: today or existing started_at
+    const start = path?.started_at ? String(path.started_at).slice(0,10) : new Date().toISOString().slice(0,10);
+    setPathStartDate(start);
+    setPathModalOpen(true);
+  };
 
   const queryClient = useQueryClient();
 
@@ -246,6 +264,42 @@ const Career = () => {
     },
   });
 
+  // Delete Skill
+  const deleteSkillMutation = useMutation({
+    mutationFn: careerAPI.deleteSkill,
+    onSuccess: (data, skillId) => {
+      // Remove from skills cache if present (handle array or { skills: [] })
+      queryClient.setQueryData(['career', 'skills'], (old) => {
+        if (!old) return old;
+        if (Array.isArray(old)) return old.filter((s) => s.id !== skillId);
+        if (old && Array.isArray(old.skills)) {
+          return { ...old, skills: old.skills.filter((s) => s.id !== skillId) };
+        }
+        return old;
+      });
+
+      // Remove individual skill cache entry
+      queryClient.removeQueries({ queryKey: ['career', 'skills', skillId] });
+
+      // Update dashboard top_skills if present
+      queryClient.setQueryData(['career', 'dashboard'], (old) => {
+        if (!old) return old;
+        const top = Array.isArray(old.top_skills) ? old.top_skills.filter((s) => s.id !== skillId) : old.top_skills;
+        return { ...old, top_skills: top };
+      });
+
+      // Safety net: invalidate related queries
+      queryClient.invalidateQueries({ queryKey: ['career', 'skills'] });
+      queryClient.invalidateQueries({ queryKey: ['career', 'dashboard'] });
+
+      toast.success('Skill deleted successfully!');
+    },
+    onError: (error) => {
+      toast.error('Failed to delete skill');
+      console.error('Error deleting skill:', error);
+    },
+  });
+
   const createLearningPathMutation = useMutation({
     mutationFn: careerAPI.createLearningPath,
     onSuccess: () => {
@@ -305,6 +359,12 @@ const Career = () => {
   const handleDelete = (goalId) => {
     if (window.confirm('Are you sure you want to delete this career goal?')) {
       deleteGoalMutation.mutate(goalId);
+    }
+  };
+
+  const handleDeleteSkill = (skillId) => {
+    if (window.confirm('Are you sure you want to delete this skill?')) {
+      deleteSkillMutation.mutate(skillId);
     }
   };
 
@@ -374,9 +434,9 @@ const Career = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* AI Feedback Button */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <Button
           onClick={() => getAIFeedbackMutation.mutate()}
           disabled={getAIFeedbackMutation.isLoading}
@@ -386,22 +446,24 @@ const Career = () => {
         </Button>
 
         {aiFeedback && (
-          <div className="bg-blue-50 border border-blue-200 rounded p-4 mt-2">
-            <h3 className="font-semibold text-blue-800 mb-2">AI Feedback</h3>
-            <div className="text-sm text-blue-900 whitespace-pre-line max-h-60 overflow-y-auto pr-2">
-              {aiFeedback.feedback || aiFeedback.goal || JSON.stringify(aiFeedback)}
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-900 rounded p-4 mt-2">
+            <h3 className="font-semibold text-blue-800 dark:text-blue-300 mb-2">AI Feedback</h3>
+            <div className="text-sm text-blue-900 dark:text-blue-200 max-h-60 overflow-y-auto pr-2">
+              <ReactMarkdown className="prose prose-sm dark:prose-invert max-w-none">
+                {String(aiFeedback.feedback || aiFeedback.goal || JSON.stringify(aiFeedback))}
+              </ReactMarkdown>
             </div>
           </div>
         )}
       </div>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Career Development</h1>
-                <p className="mt-2 text-gray-600">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Career Development</h1>
+                <p className="mt-2 text-gray-600 dark:text-gray-300">
                   Set goals, track skills, and plan your learning journey.
                 </p>
               </div>
@@ -421,13 +483,32 @@ const Career = () => {
                   <Plus className="w-4 h-4" />
                   <span>Add Skill</span>
                 </Button>
+                {/* Reality Check button removed per request; banner tip remains below */}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-gray-900 dark:text-gray-100">
+        {/* Reality Check tip banner */}
+        {showRealityTip && (
+          <div className="mb-6 p-4 rounded-lg border bg-amber-50 border-amber-200 text-amber-900 dark:bg-amber-900/20 dark:border-amber-800 dark:text-amber-200 flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5">
+                <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-300" />
+              </div>
+              <div>
+                <p className="font-medium">Tip: Get a quick Reality Check for your chosen path.</p>
+                <p className="text-sm opacity-90">Use the Reality Check page to estimate 5-year outlook, ROI vs. investment, and practical alternatives tailored to your education and location.</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <a href="/reality-check" className="inline-flex items-center px-3 py-1.5 rounded-md bg-green-600 text-white hover:bg-green-700 text-sm">Try Reality Check</a>
+              <button onClick={() => setShowRealityTip(false)} className="text-sm text-amber-700 dark:text-amber-300 hover:underline">Dismiss</button>
+            </div>
+          </div>
+        )}
         {/* Progress Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg border border-gray-200">
@@ -566,69 +647,81 @@ const Career = () => {
         {/* Skills and Learning Paths */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Skills Section */}
-          <div className="bg-white rounded-lg border border-gray-200">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Skills</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Skills</h2>
             </div>
             <div className="p-6">
               {skills?.length === 0 ? (
                 <div className="text-center py-8">
-                  <BookOpen className="mx-auto h-8 w-8 text-gray-400" />
-                  <p className="mt-2 text-sm text-gray-500">No skills added yet.</p>
+                  <TrendingUp className="mx-auto h-8 w-8 text-gray-400" />
+                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">No skills added yet.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {skills?.map((skill) => (
-                    <div key={skill.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div key={skill.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
                       <div>
-                        <h4 className="font-medium text-gray-900">{skill.name}</h4>
-                        <p className="text-sm text-gray-500">Level {skill.current_level}</p>
+                        <h4 className="font-medium text-gray-900 dark:text-gray-100">{skill.name}</h4>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Level {skill.current_level}</p>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${
-                              i < skill.current_level ? 'text-yellow-400 fill-current' : 'text-gray-300'
-                            }`}
-                          />
-                        ))}
+                      <div className="flex items-center space-x-3">
+                        <button
+                          type="button"
+                          aria-label="Delete skill"
+                          title="Delete skill"
+                          onClick={() => handleDeleteSkill(skill.id)}
+                          disabled={deleteSkillMutation.isLoading}
+                          className="p-2 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 disabled:opacity-60"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
               <div className="mt-6">
-                <h3 className="text-sm font-medium text-gray-800 mb-2">AI Recommendations</h3>
+                <h3 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">AI Recommendations</h3>
                 <AIRecommendations />
               </div>
             </div>
           </div>
 
           {/* Learning Paths Section */}
-          <div className="bg-white rounded-lg border border-gray-200">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Learning Paths</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Learning Paths</h2>
             </div>
             <div className="p-6">
               {learningPaths?.length === 0 ? (
                 <div className="text-center py-8">
                   <TrendingUp className="mx-auto h-8 w-8 text-gray-400" />
-                  <p className="mt-2 text-sm text-gray-500">No learning paths created yet.</p>
+                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">No learning paths created yet.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {learningPaths?.map((path) => (
-                    <div key={path.id} className="p-3 bg-gray-50 rounded-lg">
-                      <h4 className="font-medium text-gray-900">{path.title}</h4>
-                      <p className="text-sm text-gray-500 mt-1">{path.description}</p>
-                      <div className="mt-2">
-                        <ProgressBar 
-                          progress={path.progress || 0} 
-                          size="sm"
-                        />
+                    <button
+                      key={path.id}
+                      type="button"
+                      onClick={() => openPathModal(path)}
+                      className="w-full text-left p-4 bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">{path.title}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{path.description}</p>
+                        </div>
+                        <span className={`px-2 py-0.5 text-xs rounded-full border ${path.status === 'active' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-600'}`}>{path.status || 'planned'}</span>
                       </div>
-                    </div>
+                      <div className="mt-3">
+                        <ProgressBar progress={path.progress || 0} size="sm" />
+                      </div>
+                      <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                        {path.estimated_hours ? `${path.estimated_hours} hrs • ${Math.max(1, Math.ceil(path.estimated_hours/20))} weeks` : 'Timeline TBD'}
+                      </div>
+                    </button>
                   ))}
                 </div>
               )}
@@ -677,6 +770,15 @@ const Career = () => {
         response={aiResponse}
       />
 
+      {/* Learning Path Detail Modal */}
+      <LearningPathModal
+        isOpen={pathModalOpen}
+        onClose={() => setPathModalOpen(false)}
+        path={selectedPath}
+        startDate={pathStartDate}
+        onChangeStartDate={setPathStartDate}
+      />
+
     </div>
   );
 };
@@ -696,9 +798,13 @@ const AIAdviceModal = ({ isOpen, onClose, goalId, question, setQuestion, onSubmi
         </div>
 
         {response && (
-          <div className="mt-4 bg-gray-50 p-4 rounded">
-            <h4 className="font-semibold mb-2">AI Response</h4>
-            <div className="prose max-w-none text-sm text-gray-800 whitespace-pre-wrap max-h-60 overflow-y-auto pr-2">{response.advice || response}</div>
+          <div className="mt-4 bg-gray-50 dark:bg-gray-800/60 p-4 rounded border border-gray-200 dark:border-gray-700">
+            <h4 className="font-semibold mb-2 text-gray-900 dark:text-gray-100">AI Response</h4>
+            <div className="text-sm text-gray-800 dark:text-gray-200 max-h-60 overflow-y-auto pr-2">
+              <ReactMarkdown className="prose prose-sm dark:prose-invert max-w-none">
+                {String(response.advice || response)}
+              </ReactMarkdown>
+            </div>
           </div>
         )}
       </div>
@@ -897,4 +1003,120 @@ const CareerForm = ({ type, editingGoal, onSubmit, onCancel }) => {
 };
 
 export default Career;
+
+// Learning Path detail modal with coverage, timeline, start date, and example projects
+const LearningPathModal = ({ isOpen, onClose, path, startDate, onChangeStartDate }) => {
+  const navigate = useNavigate();
+  const [detail, setDetail] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
+  React.useEffect(() => {
+    let active = true;
+    const fetchDetail = async () => {
+      if (!isOpen || !path) return;
+      setLoading(true);
+      try {
+        const data = await careerAPI.getLearningPath(path.id);
+        if (active) setDetail(data);
+      } catch (e) {
+        console.error('Failed to load learning path detail', e);
+        if (active) setDetail(null);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    fetchDetail();
+    return () => { active = false; };
+  }, [isOpen, path?.id]);
+
+  if (!path) return null;
+
+  const weeks = Math.max(1, Math.ceil(((detail?.estimated_hours ?? path.estimated_hours) || 20) / 20));
+  const milestones = Array.isArray(detail?.milestones) ? detail.milestones : [];
+  const projects = Array.isArray(detail?.projects) ? detail.projects : [];
+
+  const queryClient = useQueryClient();
+  const updatePathMutation = useMutation({
+    mutationFn: (payload) => careerAPI.updateLearningPath(path.id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['career', 'learning-paths']);
+      queryClient.invalidateQueries(['career', 'dashboard']);
+      onClose();
+    }
+  });
+
+  const handleStart = () => {
+    if (!startDate) return;
+    updatePathMutation.mutate({ started_at: startDate });
+  };
+
+  const handleRealityCheck = () => {
+    if (!path) return;
+    const params = new URLSearchParams();
+    if (path.title) params.set('career_path', path.title);
+    navigate(`/reality-check?${params.toString()}`);
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title={path?.title || 'Learning Path'}>
+      <div className="space-y-4 text-gray-900 dark:text-gray-100">
+        <p className="text-sm text-gray-700 dark:text-gray-300">{detail?.description || path?.description}</p>
+
+        <div>
+          <h4 className="font-semibold mb-2">What you'll cover</h4>
+          {loading && <div className="text-sm text-gray-500 dark:text-gray-400">Loading…</div>}
+          {!loading && milestones.length === 0 && (
+            <div className="text-sm text-gray-500 dark:text-gray-400">No milestones yet.</div>
+          )}
+          {!loading && milestones.length > 0 && (
+            <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-1">
+              {milestones.map((m) => (
+                <li key={m.id || m.title}><span className="font-medium">{m.title}</span>{m.description ? ` — ${m.description}` : ''}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div>
+          <h4 className="font-semibold mb-2">Timeline</h4>
+          <div className="flex flex-wrap gap-2">
+            {Array.from({ length: weeks }).map((_, i) => (
+              <span key={i} className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">Week {i+1}</span>
+            ))}
+          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Estimated: {path?.estimated_hours || weeks*20} hours • {weeks} weeks</p>
+        </div>
+
+        <div>
+          <h4 className="font-semibold mb-2">Projects</h4>
+          {loading && <div className="text-sm text-gray-500 dark:text-gray-400">Loading…</div>}
+          {!loading && projects.length === 0 && (
+            <div className="text-sm text-gray-500 dark:text-gray-400">No projects yet.</div>
+          )}
+          {!loading && projects.length > 0 && (
+            <ul className="space-y-2">
+              {projects.map((p) => (
+                <li key={p.id || p.title} className="p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded">
+                  <div className="font-medium text-gray-900 dark:text-gray-100">{p.title}</div>
+                  {p.description && <div className="text-sm text-gray-600 dark:text-gray-300">{p.description}</div>}
+                  {p.est_hours && <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">~{p.est_hours} hours</div>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="pt-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Choose a start date</label>
+          <Input type="date" value={startDate} onChange={(e) => onChangeStartDate(e.target.value)} />
+        </div>
+
+        <div className="flex justify-end gap-2 pt-2">
+          <Button variant="outline" onClick={onClose}>Close</Button>
+          <Button variant="outline" onClick={handleRealityCheck}>Reality Check</Button>
+          <Button onClick={handleStart} disabled={updatePathMutation.isLoading}>{updatePathMutation.isLoading ? 'Saving...' : 'Start this path'}</Button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
 

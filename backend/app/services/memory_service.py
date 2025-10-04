@@ -405,7 +405,8 @@ class MemoryService:
             from app.models.habits import Habit, HabitLog
             from app.models.finance import Budget, Expense, FinancialGoal
             from app.models.mood import MoodLog
-            from app.models.user import User, UserSkill
+            from app.models.user import User
+            from app.models.career import Skill as UserSkill
             
             # Create database session
             db = SessionLocal()
@@ -428,11 +429,34 @@ class MemoryService:
                 # Get user information
                 user = db.query(User).filter(User.id == user_id).first()
                 if user:
+                    # Pull optional preferences from the JSON field to avoid attribute errors
+                    try:
+                        prefs = user.get_preferences() if hasattr(user, "get_preferences") else {}
+                    except Exception:
+                        prefs = {}
+
+                    tz = (
+                        (prefs.get("timezone") if isinstance(prefs, dict) else None)
+                        or getattr(user, "timezone", None)
+                        or "Asia/Kolkata"
+                    )
+                    theme = (
+                        (prefs.get("theme") if isinstance(prefs, dict) else None)
+                        or getattr(user, "theme_preference", None)
+                        or "system"
+                    )
+
                     context["preferences"] = {
-                        "name": user.name,
-                        "email": user.email,
-                        "timezone": user.timezone,
-                        "theme": user.theme_preference
+                        "name": getattr(user, "name", None),
+                        "email": getattr(user, "email", None),
+                        "timezone": tz,
+                        "theme": theme,
+                        # Optionally include other onboarding preferences if present
+                        "branch": (prefs.get("branch") if isinstance(prefs, dict) else None),
+                        "year": (prefs.get("year") if isinstance(prefs, dict) else None),
+                        "target_role": (prefs.get("target_role") if isinstance(prefs, dict) else None),
+                        "interests": (prefs.get("interests") if isinstance(prefs, dict) else None),
+                        "location": (prefs.get("location") if isinstance(prefs, dict) else None),
                     }
                 
                 # Add context based on type
@@ -449,9 +473,9 @@ class MemoryService:
                     
                     # Format career progress data
                     context["career_progress"] = {
-                        "current_goals": [goal.title for goal in career_goals if goal.status == "active"],
-                        "skills_in_progress": [skill.name for skill in user_skills if skill.proficiency_level < 8],
-                        "recent_achievements": [goal.title for goal in career_goals if goal.status == "completed"]
+                        "current_goals": [goal.title for goal in career_goals if getattr(goal, "status", None) == "active"],
+                        "skills_in_progress": [skill.name for skill in user_skills if (getattr(skill, "proficiency_score", 0) or 0) < 80],
+                        "recent_achievements": [goal.title for goal in career_goals if getattr(goal, "status", None) == "completed"]
                     }
                 
                 if context_type == "habits" or context_type == "general":

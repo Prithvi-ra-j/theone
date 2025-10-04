@@ -21,7 +21,7 @@ export default function Modal({ children, isOpen = true, onClose = () => {}, tit
           <button
             type="button"
             aria-label="Close modal"
-            className="p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+            className="p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
             onClick={onClose}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

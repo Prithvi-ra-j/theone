@@ -21,6 +21,13 @@ const AIRecommendations = () => {
     staleTime: 5 * 60 * 1000,
   });
 
+  // Fetch user's current skills to deduplicate UI
+  const { data: userSkillsData } = useQuery({
+    queryKey: ['career', 'skills'],
+    queryFn: () => careerAPI.getSkills().then(r => r),
+    staleTime: 60_000,
+  });
+
   const createSkill = useMutation({
     mutationFn: async (skill) => {
       return careerAPI.createSkill(skill);
@@ -39,6 +46,8 @@ const AIRecommendations = () => {
   if (error) return <div className="text-sm text-red-500">Failed to load recommendations</div>;
 
   const recommendations = Array.isArray(data) ? data : (data && data.recommendations) ? data.recommendations : [];
+  const userSkills = Array.isArray(userSkillsData) ? userSkillsData : (userSkillsData && userSkillsData.items) ? userSkillsData.items : (userSkillsData?.skills || []);
+  const userSkillNames = new Set((userSkills || []).map(s => (s.name || '').toLowerCase().trim()));
 
   if (!recommendations || recommendations.length === 0) {
     return <div className="text-sm text-gray-500">No AI recommendations at the moment.</div>;
@@ -46,7 +55,10 @@ const AIRecommendations = () => {
 
   return (
     <div className="space-y-3">
-      {recommendations.map((rec, idx) => (
+      {recommendations.map((rec, idx) => {
+        const recName = (rec.skill_name || rec.name || rec.skill || '').toLowerCase().trim();
+        const alreadyHave = recName && userSkillNames.has(recName);
+        return (
         <div key={rec.id || idx} className="p-3 bg-gray-50 rounded-lg border">
           <div className="flex justify-between items-start">
             <div>
@@ -60,8 +72,8 @@ const AIRecommendations = () => {
                 name: rec.skill_name || rec.name || rec.skill, 
                 description: rec.description || '',
                 current_level: rec.level || 1 
-              })}>
-                Add Skill
+              })} disabled={alreadyHave} title={alreadyHave ? 'You already have this skill' : undefined}>
+                {alreadyHave ? 'Added' : 'Add Skill'}
               </Button>
             </div>
           </div>
@@ -78,7 +90,7 @@ const AIRecommendations = () => {
             </div>
           )}
         </div>
-      ))}
+      );})}
     </div>
   );
 };

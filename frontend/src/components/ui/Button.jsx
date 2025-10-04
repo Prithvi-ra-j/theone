@@ -13,8 +13,8 @@ export default function Button({
   
   const variantStyles = {
     primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500",
-    secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-500",
-    outline: "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-primary-500",
+    secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-500 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600 dark:focus:ring-gray-400",
+    outline: "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-primary-500 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-600",
     danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
     success: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500"
   };

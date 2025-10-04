@@ -4,46 +4,158 @@ from typing import Any, List, Optional
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status, Body
+from pydantic import BaseModel
 import json
 import re
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from app.db.session import get_db
 from app.models.user import User
-from app.models.career import CareerGoal, Skill, LearningPath
+from app.models.career import CareerGoal, Skill, LearningPath, LearningPathMilestone, LearningPathProject
 from app.schemas.career import (
     CareerGoalCreate, CareerGoalRead, CareerGoalUpdate,
     SkillCreate, SkillRead, SkillUpdate,
     LearningPathCreate, LearningPathRead, LearningPathUpdate,
-    CareerDashboard, SkillRecommendation
+    CareerDashboard, SkillRecommendation, LearningPathDetailRead, LearningPathMilestone as SLM, LearningPathProject as SLP
 )
 from app.routers.auth import get_current_user, get_optional_current_user
 from app.core.config import settings
 from sqlalchemy.exc import IntegrityError
 
 router = APIRouter()
+class CareerRealityCheckRequest(BaseModel):
+    career_path: str
+    education_level: Optional[str] = None
+    location: Optional[str] = None
+    investment_amount: Optional[float] = None
+    investment_time_years: Optional[int] = None
+
+
+class CareerRealityCheckResponse(BaseModel):
+    roi_percentage: float
+    projected_salary_5_years: float
+    challenges: List[str]
+    alternatives: List[str]
+    ai_summary: str
+
+
+@router.post("/reality-check", response_model=CareerRealityCheckResponse)
+async def career_reality_check(
+    payload: CareerRealityCheckRequest,
+    current_user: Optional[User] = Depends(get_optional_current_user),
+    db: Session = Depends(get_db),
+) -> Any:
+    """Return a quick AI-like ROI reality check using simple heuristics for MVP.
+
+    This is a placeholder that can later call a proper AI service.
+    """
+    # Basic mocked data for common roles
+    salary_baseline = {
+        "software engineer": 6.0,
+        "data scientist": 7.0,
+        "civil engineer": 4.0,
+        "doctor": 9.0,
+        "teacher": 3.5,
+    }
+    key = (payload.career_path or "").strip().lower()
+    base_lpa = salary_baseline.get(key, 5.0)  # LPA first-year
+    # naive 10% YoY growth compounded 5 years
+    projected_5yr = base_lpa * ((1.10) ** 5)
+    invest = float(payload.investment_amount or 500000.0)  # INR
+    # convert LPA to total 5-year income (approx) and compute ROI
+    total_income_5yr = (base_lpa + projected_5yr) / 2 * 5  # simple average * years
+    roi = ((total_income_5yr * 100000.0) - invest) / max(invest, 1.0) * 100.0
+
+    challenges = [
+        "Competition and skill gaps",
+        "Regional job availability",
+        "Keeping up with industry trends",
+    ]
+    alternatives = [
+        "Explore internships and freelancing for experience",
+        "Consider adjacent roles that use similar skills",
+        "Build a strong portfolio and network",
+    ]
+    # Default heuristic summary
+    summary = (
+        f"For {payload.career_path}, a rough 5-year projection suggests an average annual income starting around {base_lpa:.1f} LPA "
+        f"growing to ~{projected_5yr:.1f} LPA. Estimated ROI vs. investment is ~{roi:.0f}% (very rough heuristic)."
+    )
+
+    # Optional enhancement: attempt to enrich with AI if available
+    try:
+        from app.services.ai_service import AIService
+        ai = AIService()
+        # Initialize only if needed; tolerate failures silently
+        if not ai.is_available:
+            await ai.initialize()
+        if ai.is_available and hasattr(ai, "llm") and ai.llm is not None:
+            prompt = (
+                "You are a concise career advisor. Given a user's target career path, education, location, and investment, "
+                "provide a short, encouraging reality check (3-5 sentences) including realistic ROI considerations for India.\n" 
+                f"Career: {payload.career_path}\nEducation: {payload.education_level}\nLocation: {payload.location}\n"
+                f"Investment: INR {int(invest):,} over {payload.investment_time_years or 0} years.\n"
+                f"Baseline first-year salary: {base_lpa:.1f} LPA; 5-year projection: {projected_5yr:.1f} LPA; Heuristic ROI: {roi:.0f}%."
+            )
+            try:
+                if callable(ai.llm):
+                    summary_ai = ai.llm(prompt)
+                elif hasattr(ai.llm, "invoke"):
+                    summary_ai = ai.llm.invoke(prompt)
+                else:
+                    summary_ai = None
+                if summary_ai:
+                    summary = str(summary_ai)
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+    return CareerRealityCheckResponse(
+        roi_percentage=roi,
+        projected_salary_5_years=projected_5yr,
+        challenges=challenges,
+        alternatives=alternatives,
+        ai_summary=summary,
+    )
 
 
 # --- AI-backed career endpoints (moved here so `router` is defined before use) ---
 @router.get("/feedback", response_model=dict)
 async def get_career_feedback(
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
     """Generate AI feedback on user's progress for their active career goal."""
     from app.services.ai_service import AIService
     ai_service = AIService()
     # Find user's active goal
-    goal = db.query(CareerGoal).filter(
-        CareerGoal.user_id == current_user.id,
-        CareerGoal.status == "active"
-    ).order_by(CareerGoal.created_at.desc()).first()
+    # Resolve effective user (allow demo/first user when unauthenticated)
+    effective_user = current_user
+    if effective_user is None:
+        try:
+            demo = db.query(User).filter(User.email == 'demo@example.com').first()
+            effective_user = demo or db.query(User).order_by(User.id.asc()).first()
+        except Exception:
+            effective_user = None
+
+    goal = None
+    if effective_user is not None:
+        goal = db.query(CareerGoal).filter(
+            CareerGoal.user_id == effective_user.id,
+            CareerGoal.status == "active"
+        ).order_by(CareerGoal.created_at.desc()).first()
     if not goal:
-        raise HTTPException(status_code=404, detail="No active career goal found")
+        # Friendly fallback instead of 404 to avoid frontend error spam
+        return {
+            "goal": None,
+            "feedback": "No active career goal found. Create a goal and mark it active to receive personalized AI feedback.",
+        }
     # Find completed tasks for this goal
     from app.models.career import Task
     completed_tasks = db.query(Task).filter(
-        Task.user_id == current_user.id,
+        Task.user_id == effective_user.id,
         Task.career_goal_id == goal.id,
         Task.status == "completed"
     ).all()
@@ -153,6 +265,37 @@ def skill_to_dict(skill: Skill) -> dict:
         "created_at": getattr(skill, "created_at", None),
         "updated_at": getattr(skill, "updated_at", None),
         "user_id": getattr(skill, "user_id", None),
+    }
+
+
+def learning_path_to_dict(lp: LearningPath) -> dict:
+    """Return a dict shaped to match LearningPathRead schema from an ORM LearningPath.
+
+    Maps:
+    - difficulty_level -> difficulty
+    - estimated_duration_weeks -> estimated_hours (approx 20h/week)
+    - is_active -> status ("active"/"paused")
+    - No explicit skill relation in ORM -> skill_id None
+    """
+    weeks = getattr(lp, "estimated_duration_weeks", None)
+    try:
+        estimated_hours = int(weeks) * 20 if weeks is not None else None
+    except Exception:
+        estimated_hours = None
+
+    return {
+        "id": getattr(lp, "id", None),
+        "user_id": getattr(lp, "user_id", None),
+        "skill_id": None,
+        "title": getattr(lp, "title", None),
+        "description": getattr(lp, "description", None),
+        "estimated_hours": estimated_hours,
+        "difficulty": getattr(lp, "difficulty_level", None) or "beginner",
+        "status": "active" if bool(getattr(lp, "is_active", True)) else "paused",
+        "started_at": getattr(lp, "started_at", None),
+        "completed_at": getattr(lp, "completed_at", None),
+        "created_at": getattr(lp, "created_at", None),
+        "updated_at": getattr(lp, "updated_at", None),
     }
 
 
@@ -351,6 +494,17 @@ async def create_skill(
     db: Session = Depends(get_db)
 ) -> Any:
     """Create a new skill."""
+    # Prevent duplicates: case-insensitive match on name per user
+    existing = db.query(Skill).filter(
+        Skill.user_id == current_user.id,
+        func.lower(Skill.name) == func.lower(skill_data.name)
+    ).first()
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Skill '{skill_data.name}' already exists"
+        )
+
     # Map incoming SkillCreate schema to ORM Skill fields.
     data = skill_data.dict(exclude_unset=True)
 
@@ -472,6 +626,19 @@ async def update_skill(
             detail="Skill not found"
         )
     
+    # If renaming, prevent duplicates (case-insensitive)
+    if skill_update.name and skill_update.name.strip():
+        dup = db.query(Skill).filter(
+            Skill.user_id == current_user.id,
+            func.lower(Skill.name) == func.lower(skill_update.name),
+            Skill.id != skill.id,
+        ).first()
+        if dup:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"Skill '{skill_update.name}' already exists"
+            )
+
     # Update fields with similar mapping as create
     updates = skill_update.dict(exclude_unset=True)
     if "description" in updates:
@@ -557,14 +724,27 @@ async def create_learning_path(
             detail="Skill not found"
         )
     
+    # Map API schema fields to ORM columns
+    payload = path_data.dict()
+    # Provide safe defaults/mappings for ORM fields that don't exist in the API schema
     db_path = LearningPath(
-        **path_data.dict(),
-        user_id=current_user.id
+        user_id=current_user.id,
+        title=payload.get("title"),
+        description=payload.get("description"),
+        # Use the associated skill's category as a reasonable default for the 'field'
+        field=getattr(skill, "category", None) or "general",
+        difficulty_level=payload.get("difficulty", "beginner"),
+        # Roughly convert estimated hours to weeks (~5 hours per week); keep None if not provided
+        estimated_duration_weeks=(
+            int(max(1, (payload.get("estimated_hours") or 0) // 5)) if payload.get("estimated_hours") else None
+        ),
+        is_active=True if payload.get("status", "planned") in {"planned", "active", "in_progress"} else False,
+        current_milestone=None,
     )
     db.add(db_path)
     db.commit()
     db.refresh(db_path)
-    return db_path
+    return learning_path_to_dict(db_path)
 
 
 @router.get("/learning-paths", response_model=List[LearningPathRead])
@@ -580,9 +760,58 @@ async def get_learning_paths(
         return []
     query = db.query(LearningPath).filter(LearningPath.user_id == current_user.id)
     if status:
-        query = query.filter(LearningPath.status == status)
+        # Map API status to ORM fields
+        s = (status or "").lower()
+        if s in {"planned", "active", "in_progress"}:
+            query = query.filter(LearningPath.is_active == True)
+        elif s in {"paused"}:
+            query = query.filter(LearningPath.is_active == False)
+        elif s in {"completed"}:
+            query = query.filter(LearningPath.completed_at.isnot(None))
     paths = query.order_by(LearningPath.created_at.desc()).offset(offset).limit(limit).all()
-    return paths
+    return [learning_path_to_dict(p) for p in paths]
+
+
+@router.get("/learning-paths/{path_id}", response_model=LearningPathDetailRead)
+async def get_learning_path_detail(
+    path_id: int,
+    current_user: Optional[User] = Depends(get_optional_current_user),
+    db: Session = Depends(get_db)
+) -> Any:
+    """Return a learning path with milestones and projects."""
+    path = db.query(LearningPath).filter(LearningPath.id == path_id).first()
+    if not path:
+        raise HTTPException(status_code=404, detail="Learning path not found")
+    if current_user and path.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to view this path")
+
+    milestones = db.query(LearningPathMilestone).filter(LearningPathMilestone.learning_path_id == path.id).order_by(LearningPathMilestone.order_index.asc().nullsLast()).all()
+    projects = db.query(LearningPathProject).filter(LearningPathProject.learning_path_id == path.id).order_by(LearningPathProject.order_index.asc().nullsLast()).all()
+
+    shaped = learning_path_to_dict(path)
+    shaped["milestones"] = [
+        {
+            "id": m.id,
+            "title": m.title,
+            "description": m.description,
+            "order_index": m.order_index,
+            "estimated_weeks": m.estimated_weeks,
+            "status": m.status,
+        }
+        for m in milestones
+    ]
+    shaped["projects"] = [
+        {
+            "id": p.id,
+            "title": p.title,
+            "description": p.description,
+            "order_index": p.order_index,
+            "est_hours": p.est_hours,
+            "status": p.status,
+        }
+        for p in projects
+    ]
+    return LearningPathDetailRead.model_validate(shaped)
 
 
 @router.put("/learning-paths/{path_id}", response_model=LearningPathRead)
@@ -610,7 +839,7 @@ async def update_learning_path(
     
     db.commit()
     db.refresh(path)
-    return path
+    return learning_path_to_dict(path)
 
 
 # Dashboard
@@ -641,7 +870,7 @@ async def get_career_dashboard(
     # Prepare response-shaped items to satisfy Pydantic response models
     recent_goals_validated = [CareerGoalRead.model_validate(g) for g in goals[:5]]
     top_skills_shaped = [skill_to_dict(s) for s in sorted(skills, key=lambda x: _label_to_int(getattr(x, "current_level", None)), reverse=True)[:5]]
-    learning_paths_validated = [LearningPathRead.model_validate(lp) for lp in learning_paths[:5]]
+    learning_paths_validated = [LearningPathRead.model_validate(learning_path_to_dict(lp)) for lp in learning_paths[:5]]
 
     return CareerDashboard(
         user_id=current_user.id,
@@ -823,7 +1052,24 @@ async def get_skill_recommendations(
             ))
 
         if recommendations:
-            return recommendations
+            # Filter out duplicates the user already has using normalized names and the resolved effective_user
+            def _normalize(name: str) -> str:
+                try:
+                    base = name.strip().lower()
+                except Exception:
+                    return ""
+                base = re.sub(r"[^a-z0-9]+", "", base)
+                # Simple alias handling
+                base = base.replace("reactjs", "react").replace("nodejs", "node")
+                base = base.replace("javascript", "js")
+                return base
+
+            existing_names = {
+                _normalize(n[0])
+                for n in db.query(Skill.name).filter(Skill.user_id == effective_user.id).all()
+            }
+            filtered = [r for r in recommendations if _normalize(r.skill_name) not in existing_names]
+            return filtered or recommendations
 
         # If parsing yielded nothing, fall back to returning the raw advice as a single recommendation
         return [

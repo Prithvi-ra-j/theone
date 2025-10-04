@@ -127,6 +127,9 @@ const careerAPI = {
     // AI feedback for active goal (frontend calls careerAPI.getAIFeedback())
     getAIFeedback: () => api.get('/career/feedback'),
 
+  // Reality Check Calculator
+  realityCheck: (payload) => api.post(`${CAREER_BASE_URL}/reality-check`, payload),
+
   // Career Resources
   getCareerResources: (category = null) => {
     const url = category 

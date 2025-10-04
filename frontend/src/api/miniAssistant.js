@@ -23,6 +23,16 @@ const miniAssistantAPI = {
 
   // Mark interactions as read
   markInteractionsAsRead: () => api.post('/mini-assistant/interactions/read'),
+
+  // Bulk delete interactions
+  bulkDeleteInteractions: (ids) => api.post('/mini-assistant/interactions/bulk-delete', { ids }),
+
+  // Delete all interactions
+  deleteAllInteractions: () => api.post('/mini-assistant/interactions/delete-all'),
+
+  // Tools
+  listTools: () => api.get('/mini-assistant/tools'),
+  executeTool: (tool, params) => api.post('/mini-assistant/tools/execute', { tool, params }),
 };
 
 export default miniAssistantAPI;

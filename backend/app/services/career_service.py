@@ -58,7 +58,7 @@ class CareerService:
     async def generate_roadmap(self, effective_user: Optional[User], payload: Optional[dict] = None) -> List[dict]:
         """Generate a roadmap for the user. Returns list of milestone dicts.
 
-        Payload may include 'focus' and 'horizon'.
+        Payload may include 'focus', 'horizon', and 'education'.
         """
         # Build user_context
         user_context: Dict[str, Any] = {"user_id": effective_user.id if effective_user else None}
@@ -81,28 +81,20 @@ class CareerService:
         if self.memory_service and effective_user:
             try:
                 mem = None
-
-                # 1) Try get_user_context (may be sync or async)
                 if hasattr(self.memory_service, "get_user_context"):
                     maybe = self.memory_service.get_user_context(effective_user.id, context_type="career")
                     if hasattr(maybe, "__await__"):
-                        # it's awaitable (e.g., AsyncMock or an async function)
                         mem = await maybe
                     else:
                         mem = maybe
-
-                # 2) If result is not a usable type, or empty, try semantic_search as a fallback
                 if not isinstance(mem, (dict, list, str)) and hasattr(self.memory_service, "semantic_search"):
                     maybe2 = self.memory_service.semantic_search(user_id=effective_user.id, query="career", top_k=10)
                     if hasattr(maybe2, "__await__"):
                         mem = await maybe2
                     else:
                         mem = maybe2
-
-                # Normalize to a safe type
                 if not isinstance(mem, (dict, list, str)):
                     mem = None
-
                 user_context["memory"] = mem or {}
             except Exception as e:
                 logger.debug("Memory service error when building roadmap context: %s", e)
@@ -110,30 +102,32 @@ class CareerService:
         else:
             user_context["memory"] = {}
 
-        roadmap_opts = payload or {}
-        focus = roadmap_opts.get("focus") or "career"
-        horizon = roadmap_opts.get("horizon") or "12 weeks"
+        # Options controlling the roadmap
+        opts = payload or {}
+        focus = opts.get("focus") or "career"
+        horizon = opts.get("horizon") or "12 weeks"
+        edu = opts.get("education") or {}
+        edu_level = edu.get("level")
+        edu_start = edu.get("start_date")
+        edu_end = edu.get("end_date")
 
         # Strict JSON-only prompt
         prompt = (
             "You are Dristhi, an AI career advisor. Using the provided user context, RETURN ONLY a valid JSON array (no explanation, no markdown). "
             "Each array item must be an object with keys: title (string), description (string), estimated_weeks (integer or string), tasks (array of objects with title, description, est_hours). "
             "Use culturally relevant, practical milestones and realistic time estimates for Indian students. "
-            f"Focus: {focus}. Time horizon: {horizon}.\n\nExample:\n[{{\n  \"title\": \"Build fundamental skills\",\n  \"description\": \"Gain hands-on experience with projects and core concepts.\",\n  \"estimated_weeks\": 8,\n  \"tasks\": [{{\"title\": \"Complete project A\", \"description\": \"Build a small web app\", \"est_hours\": 20}}]\n}}]\n"
+            f"Focus: {focus}. Time horizon: {horizon}. "
+            f"Education: level={edu_level}, start={edu_start}, end={edu_end}. If level suggests final-year, emphasize interview prep, system design, and 2-3 portfolio projects. If early-year, emphasize fundamentals, breadth, and emerging topics.\n\n"
+            "Example:\n[{\n  \"title\": \"Build fundamental skills\",\n  \"description\": \"Gain hands-on experience with projects and core concepts.\",\n  \"estimated_weeks\": 8,\n  \"tasks\": [{\"title\": \"Complete project A\", \"description\": \"Build a small web app\", \"est_hours\": 20}]\n}]\n"
         )
 
-        # If memory exists, append a short snippet to the prompt so LLM sees recent memories
+        # Append recent memory snippet if available
         try:
             mem = user_context.get("memory")
             mem_text = None
             if mem:
-                # mem may be dict, list of dicts, or list of strings
                 if isinstance(mem, dict):
-                    # try common keys
-                    if "content" in mem:
-                        mem_text = str(mem["content"])
-                    else:
-                        mem_text = json.dumps(mem)
+                    mem_text = str(mem.get("content")) if mem.get("content") is not None else json.dumps(mem)
                 elif isinstance(mem, list):
                     parts = []
                     for item in mem:
@@ -142,16 +136,13 @@ class CareerService:
                         else:
                             parts.append(str(item))
                     mem_text = "\n".join(parts)
-
             if mem_text:
                 prompt += f"\n\nRecent memories (for context):\nMEMORY_SNIPPET:\n{mem_text}\n"
         except Exception:
-            # don't let memory formatting break the prompt
             pass
 
-        # If no ai_service available, provide DB-driven fallback
+        # Fallback if AI unavailable
         if self.ai_service is None:
-            # Prefer active goal
             try:
                 if effective_user:
                     from app.models.career import CareerGoal
@@ -162,44 +153,38 @@ class CareerService:
                 active = None
 
             if active:
-                return [
-                    {
-                        "title": f"Prepare for {active.title}",
-                        "description": getattr(active, 'description', '') or "Work towards the active goal",
-                        "estimated_weeks": 12,
-                        "tasks": [
-                            {"title": "Define milestones", "description": "Break goal into smaller milestones", "est_hours": 5},
-                            {"title": "Build project", "description": "Create a small project demonstrating relevant skills", "est_hours": 40},
-                        ]
-                    }
-                ]
+                return [{
+                    "title": f"Prepare for {active.title}",
+                    "description": getattr(active, 'description', '') or "Work towards the active goal",
+                    "estimated_weeks": 12,
+                    "tasks": [
+                        {"title": "Define milestones", "description": "Break goal into smaller milestones", "est_hours": 5},
+                        {"title": "Build project", "description": "Create a small project demonstrating relevant skills", "est_hours": 40},
+                    ]
+                }]
 
-            return [
-                {"title": "Set clear career goal", "description": "Define a specific role or outcome to aim for.", "estimated_weeks": 4, "tasks": [{"title": "Write down goal", "description": "Write a clear goal statement", "est_hours": 1}]}
-            ]
+            return [{
+                "title": "Set clear career goal",
+                "description": "Define a specific role or outcome to aim for.",
+                "estimated_weeks": 4,
+                "tasks": [{"title": "Write down goal", "description": "Write a clear goal statement", "est_hours": 1}]
+            }]
 
-        # Call AI service with RAG-enhanced context
+        # AI path
         try:
             ai_result = await self.ai_service.career_advisor(user_context, prompt, temperature=0.0, user_id=(effective_user.id if effective_user else None))
-
-            # Normalize advice_text: ai_result may be dict{'advice':...} or a raw string
             advice_text = None
             if isinstance(ai_result, dict):
-                # prefer 'advice' key but fallback to first string value
                 advice_text = ai_result.get("advice") or next((v for v in ai_result.values() if isinstance(v, str)), None)
             elif isinstance(ai_result, str):
                 advice_text = ai_result
 
             parsed = self._parse_json_from_text(advice_text) if advice_text else None
-
             if isinstance(parsed, list):
                 return parsed
-
             if advice_text:
                 return [{"title": "AI Roadmap", "description": advice_text, "estimated_weeks": "unknown", "tasks": []}]
-
             return [{"title": "Plan your career", "description": "AI returned no structured roadmap; try again later.", "estimated_weeks": "unknown", "tasks": []}]
-
         except Exception as e:
             logger.exception("Error in CareerService.generate_roadmap: %s", e)
             return [{"title": "Plan your career (fallback)", "description": str(e), "estimated_weeks": "unknown", "tasks": []}]

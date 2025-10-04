@@ -182,60 +182,71 @@ class AIService:
         temperature: Optional[float] = None,
         user_id: Optional[int] = None
     ) -> Dict[str, Any]:
-        """Get career advice using AI."""
+        """Get career advice using AI.
+
+        Enforcement:
+          - Always return Markdown with sections:
+            ## Overview
+            ## Next 3 Steps
+            ## Resources
+            ## Risks & Watchouts
+          - Append a 'Context used' footnote with up to 3 items.
+        """
         # If the service is not available or developer wanted fallback, return
         # the built-in fallback response instead of attempting a remote call.
         if not self.is_available or settings.AI_FORCE_FALLBACK:
             return self._fallback_response("career_advisor")
         
         try:
-            # Get relevant memories using semantic search if user_id is provided
-            memory_context = ""
+            # Retrieve RAG context (semantic + keyword fallback)
+            rag_items: List[Dict[str, Any]] = []
             if user_id is not None:
                 try:
                     from app.services.memory_service import MemoryService
                     memory_service = MemoryService()
-                    
-                    # Use semantic search to find relevant memories
-                    relevant_memories = memory_service.semantic_search(
+                    rag_items = memory_service.search_memories_with_rag(
                         user_id=user_id,
                         query=question,
                         memory_type="career",
-                        top_k=5
-                    )
-                    
-                    # Extract memory content for context enhancement
-                    if relevant_memories:
-                        memory_context = "Relevant user information:\n"
-                        for i, memory in enumerate(relevant_memories):
-                            memory_context += f"- {memory.get('content', '')}"
-                            if memory.get('description'):
-                                memory_context += f": {memory.get('description', '')}"
-                            memory_context += "\n"
+                        top_k=3,
+                    ) or []
                 except Exception as mem_err:
-                    logger.error(f"Error retrieving memories: {mem_err}")
+                    logger.error(f"Error retrieving RAG context: {mem_err}")
+
+            # Build a concise context block for the prompt
+            if rag_items:
+                context_lines = [
+                    f"- {i+1}. {item.get('content','')[:160]}" + (f" — {item.get('description','')[:120]}" if item.get('description') else "")
+                    for i, item in enumerate(rag_items)
+                ]
+                memory_context = "\n".join(context_lines)
+            else:
+                memory_context = "No additional memory context available."
             
             # Create career advice prompt with enhanced context
             prompt = PromptTemplate(
                 input_variables=["context", "memory_context", "question"],
-                template="""
-                You are Dristhi, an AI career advisor for Indian students. 
-                Provide personalized, practical career guidance based on the user's context.
-                
-                User Context: {context}
-                
-                User Memory Context: {memory_context}
-                
-                Question: {question}
-                
-                Please provide:
-                1. Direct answer to the question
-                2. Actionable steps
-                3. Relevant resources
-                4. Encouragement and motivation
-                
-                Keep the response friendly, practical, and culturally relevant for Indian students.
-                """
+                template=(
+                    "You are Dristhi, an AI career advisor for Indian students. "
+                    "Respond ONLY in GitHub-Flavored Markdown using EXACTLY these sections and order:\n\n"
+                    "## Overview\n"
+                    "- 2–3 sentences answering the question tailored to the user's context.\n\n"
+                    "## Next 3 Steps\n"
+                    "1. [Short, imperative step]\n"
+                    "2. [Short, imperative step]\n"
+                    "3. [Short, imperative step]\n\n"
+                    "## Resources\n"
+                    "- [Title](URL) — why this helps (India-first when possible)\n"
+                    "- [Title](URL) — why this helps\n"
+                    "- [Title](URL) — why this helps\n\n"
+                    "## Risks & Watchouts\n"
+                    "- brief risk or dependency\n"
+                    "- brief pitfall to avoid\n\n"
+                    "Context (JSON): {context}\n"
+                    "Relevant user memory:\n{memory_context}\n\n"
+                    "Question: {question}\n"
+                    "Keep it concise, culturally relevant to Indian students, and avoid generic fluff."
+                ),
             )
             
             # Allow callers to override temperature for deterministic outputs
@@ -264,19 +275,40 @@ class AIService:
             chain = LLMChain(llm=llm_to_use, prompt=prompt)
             
             # Run the chain
-            result = await asyncio.to_thread(
+            raw_result = await asyncio.to_thread(
                 chain.run,
                 context=json.dumps(user_context, indent=2),
-                memory_context=memory_context if memory_context else "No additional memory context available.",
+                memory_context=memory_context,
                 question=question
             )
-            
+            result = str(raw_result or "").strip()
+
+            # Ensure required sections exist; if not, wrap result into template
+            required_sections = ["## Overview", "## Next 3 Steps", "## Resources", "## Risks"]
+            if not all(sec in result for sec in required_sections):
+                result = (
+                    "## Overview\n" + (result[:600] or "Personalized advice will appear here.") + "\n\n"
+                    "## Next 3 Steps\n1. Define your next milestone\n2. Practice with one small project\n3. Share progress for feedback\n\n"
+                    "## Resources\n- NPTEL or free course — baseline theory\n- YouTube playlist — quick practice\n- Official docs — reference\n\n"
+                    "## Risks & Watchouts\n- Overcommitting without schedule\n- Skipping fundamentals\n"
+                )
+
+            # Append context footer
+            if rag_items:
+                refs = "\n".join([
+                    f"- {min(60, len(item.get('content','')))} chars: {item.get('content','')[:60]}" for item in rag_items
+                ])
+            else:
+                refs = "- none"
+            result = result + "\n\n---\n**Context used:**\n\n" + refs
+
             return {
                 "advice": result.strip(),
                 "timestamp": datetime.utcnow().isoformat(),
                 "model": self.model_name,
                 "context_used": user_context,
-                "enhanced_with_rag": bool(memory_context)
+                "enhanced_with_rag": bool(rag_items),
+                "references": rag_items,
             }
             
         except Exception as e:
@@ -624,7 +656,22 @@ class AIService:
         """Provide fallback responses when AI is unavailable."""
         fallback_responses = {
             "career_advisor": {
-                "advice": "I'm currently unavailable, but here's some general career advice: Focus on building practical skills, network actively, and stay updated with industry trends. Consider internships and projects to gain hands-on experience.",
+                "advice": (
+                    "## Overview\n"
+                    "AI is temporarily unavailable. Here’s a structured, general roadmap you can use right now.\n\n"
+                    "## Next 3 Steps\n"
+                    "1. Define a 2-week mini-project aligned to your goal\n"
+                    "2. Study 30–45 min/day using one focused resource\n"
+                    "3. Share work-in-progress for feedback (GitHub/LinkedIn)\n\n"
+                    "## Resources\n"
+                    "- NPTEL/Free course — build foundations\n"
+                    "- YouTube playlist — practice quickly\n"
+                    "- Official docs — reference while building\n\n"
+                    "## Risks & Watchouts\n"
+                    "- Overcommitting time; schedule small, consistent slots\n"
+                    "- Tutorial-only learning without projects\n\n"
+                    "---\n**Context used:**\n\n- none"
+                ),
                 "timestamp": datetime.utcnow().isoformat(),
                 "model": "fallback",
                 "note": "AI service temporarily unavailable"

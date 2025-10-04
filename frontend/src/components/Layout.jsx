@@ -1,4 +1,5 @@
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -13,14 +14,17 @@ import {
   X,
   Sparkles,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Activity,
+  MessageSquare,
+  BookOpen
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ui/ThemeToggle';
-import MiniAssistant from './MiniAssistant';
 
 import { Outlet } from 'react-router-dom';
+import statusAPI from '../api/status';
 
 const Layout = () => {
   const { user, logout } = useAuth();
@@ -30,6 +34,11 @@ const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [isLarge, setIsLarge] = React.useState(false);
   const [collapsed, setCollapsed] = React.useState(false);
+  const { data: health } = useQuery({
+    queryKey: ['healthz'],
+    queryFn: () => statusAPI.getHealth(),
+    refetchInterval: 30_000,
+  });
 
   // Track large screens so the sidebar stays open on desktop
   React.useEffect(() => {
@@ -50,12 +59,16 @@ const Layout = () => {
   const navigation = [
     { path: '/dashboard', label: 'Dashboard', icon: Home },
     { path: '/career', label: 'Career', icon: Target },
+    { path: '/reality-check', label: 'Reality Check', icon: Activity },
     { path: '/habits', label: 'Habits', icon: Calendar },
     { path: '/finance', label: 'Finance', icon: DollarSign },
-    { path: '/mood', label: 'Mood', icon: Heart },
+    { path: '/journal', label: 'Journal', icon: BookOpen },
+    { path: '/assistant', label: 'Assistant', icon: MessageSquare },
     { path: '/profile', label: 'Profile', icon: User },
-    { path: '/demo', label: 'Animation Demo', icon: Sparkles },
+  // Animation Demo removed
   ];
+
+  // Mini assistant floating widget removed for now
 
   const handleLogout = () => {
     logout();
@@ -128,6 +141,11 @@ const Layout = () => {
             </div>
             {/* Show title only when not collapsed */}
             {!collapsed && <span className="text-xl font-bold text-gray-900 dark:text-white">Dristhi</span>}
+            {!collapsed && (
+              <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${health?.db && health?.ai?.available ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`} title="System health">
+                {health?.ai?.model || 'no-ai'} · {health?.db ? 'db' : 'no-db'}
+              </span>
+            )}
           </motion.div>
           
           <div className="flex items-center space-x-2">
@@ -164,6 +182,7 @@ const Layout = () => {
               </li>
             ))}
           </ul>
+          {/* Assistant setup CTA removed for now */}
         </nav>
 
     <div className="absolute bottom-6 left-6 right-6">
@@ -227,8 +246,7 @@ const Layout = () => {
         </main>
       </div>
       
-      {/* Mini Assistant */}
-      {user && <MiniAssistant />}
+  {/* Floating mini assistant removed for now */}
     </div>
   );
 };

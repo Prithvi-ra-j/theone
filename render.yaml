@@ -1,0 +1,56 @@
+# Render Blueprint for Dristhi backend (FastAPI) + managed Postgres + Redis
+
+services:
+  - type: web
+    name: dristhi-backend
+    env: python
+    plan: free
+    rootDir: backend
+    region: oregon
+    buildCommand: |
+      pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: DATABASE_URL
+        fromDatabase:
+          name: dristhi-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: dristhi-redis
+          type: redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "60"
+      - key: API_V1_STR
+        value: /api/v1
+      - key: ENABLE_AI_FEATURES
+        value: "false"
+      # CORS: Add your Vercel domain(s) below, comma-separated (no trailing slash)
+      # Example: https://dristhi-demo.vercel.app,https://your-custom-domain.com
+      - key: BACKEND_CORS_ORIGINS
+        value: https://<your-vercel-project>.vercel.app
+      # Optional: dynamic CORS for debugging only (do not enable in prod)
+      - key: ALLOW_CORS_FROM_REQUEST
+        value: "0"
+    postdeploy: alembic upgrade head
+
+  - type: redis
+    name: dristhi-redis
+    plan: free
+    ipAllowList: []
+
+  - type: postgres
+    name: dristhi-postgres
+    plan: free
+    ipAllowList: []
+    databaseName: dristhi
+    user: dristhi

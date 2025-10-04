@@ -8,6 +8,33 @@ from app.core.config import settings
 
 router = APIRouter()
 
+@router.get("/status")
+async def ai_status():
+    """Return AI provider availability and model details for UI health badges.
+
+    Response example:
+    {"available": true, "provider": "ollama|api|gemini", "model": "llama3|gpt-4o-mini|..."}
+    """
+    try:
+        from app.main import ai_service  # type: ignore
+    except Exception:
+        ai_service = None
+
+    if ai_service is None:
+        return {"available": False, "provider": None, "model": None}
+
+    try:
+        from app.core.config import settings
+        provider = getattr(settings, "LLM_PROVIDER", None)
+    except Exception:
+        provider = None
+
+    return {
+        "available": bool(getattr(ai_service, "is_available", False)),
+        "provider": provider,
+        "model": getattr(ai_service, "model_name", None),
+    }
+
 
 @router.post("/conversation")
 async def conversation(payload: Dict[str, Any]):

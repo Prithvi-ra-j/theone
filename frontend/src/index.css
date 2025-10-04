@@ -108,6 +108,21 @@
   .dark .shadow-glow-secondary {
     box-shadow: 0 0 20px rgba(217, 70, 239, 0.5);
   }
+
+  /*
+    Dark-mode harmonizers
+    Many pages still use base Tailwind classes like bg-white / border-gray-200 / text-gray-*.
+    Override their appearance in dark mode to ensure consistent theming without touching every page.
+    These use !important to take precedence over utility classes.
+  */
+  .dark .bg-white { background-color: #1f2937 !important; } /* gray-800 */
+  .dark .bg-gray-50 { background-color: #0f172a !important; } /* slate-900 */
+  .dark .border-gray-200 { border-color: #374151 !important; } /* gray-700 */
+  .dark .text-gray-900 { color: #f3f4f6 !important; } /* gray-100 */
+  .dark .text-gray-800 { color: #e5e7eb !important; } /* gray-200 */
+  .dark .text-gray-700 { color: #e5e7eb !important; } /* gray-200 */
+  .dark .text-gray-600 { color: #d1d5db !important; } /* gray-300 */
+  .dark .text-gray-500 { color: #9ca3af !important; } /* gray-400 */
 }
 
 /* Custom scrollbar */

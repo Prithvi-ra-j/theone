@@ -12,7 +12,7 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { 
   careerAPI, 
   habitsAPI, 
@@ -28,9 +28,12 @@ import AnimatedCard from '../components/ui/AnimatedCard';
 import PageTransition from '../components/ui/PageTransition';
 import AnimatedSpinner from '../components/ui/AnimatedSpinner';
 import AIRecommendations from '../components/AIRecommendations';
+import OpportunitiesFeed from '../components/OpportunitiesFeed';
+import { Flame, Award } from 'lucide-react';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const qc = useQueryClient();
   const { theme, isDark } = useTheme();
   const [timedOut, setTimedOut] = useState(false);
 
@@ -96,9 +99,8 @@ const Dashboard = () => {
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
     { id: 'career', label: 'Career', icon: Target },
-    { id: 'habits', label: 'Habits', icon: Calendar },
+    { id: 'wellness', label: 'Wellness', icon: Heart },
     { id: 'finance', label: 'Finance', icon: DollarSign },
-    { id: 'mood', label: 'Mood', icon: Heart },
     { id: 'achievements', label: 'Achievements', icon: Trophy },
   ];
 
@@ -129,6 +131,23 @@ const Dashboard = () => {
   // Render main dashboard unconditionally (dashboardContent used for non-blocking states)
   
   // Otherwise, render the main dashboard
+  const seedDemo = useMutation({
+    mutationFn: async () => {
+      const res = await fetch('/api/v1/demo/seed', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+      if (!res.ok) throw new Error('Failed to seed demo data');
+      return res.json();
+    },
+    onSuccess: async () => {
+      // Refresh key dashboards
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ['career','dashboard'] }),
+        qc.invalidateQueries({ queryKey: ['habits','dashboard'] }),
+        qc.invalidateQueries({ queryKey: ['finance','dashboard'] }),
+        qc.invalidateQueries({ queryKey: ['mood','dashboard'] }),
+        qc.invalidateQueries({ queryKey: ['gamification','user-stats'] }),
+      ]);
+    }
+  });
   return (
     <PageTransition>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
@@ -150,7 +169,16 @@ const Dashboard = () => {
                 Dashboard
               </motion.h1>
               
-              {/* Theme toggle moved to the left sidebar for a single global control */}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => seedDemo.mutate()}
+                  disabled={seedDemo.isPending}
+                  className="px-3 py-2 text-sm rounded-md bg-green-600 text-white hover:bg-green-700 disabled:opacity-60"
+                  title="Populate demo data"
+                >
+                  {seedDemo.isPending ? 'Seeding…' : 'Load Demo Data'}
+                </button>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -197,7 +225,8 @@ const Dashboard = () => {
             animate="visible"
             className="space-y-8"
           >
-            {/* Overall Progress Card */}
+            {/* Overall Progress Card (Overview tab only) */}
+            {activeTab === 'overview' && (
             <AnimatedCard delay={0} className="p-6">
               <motion.div 
                 className="text-center"
@@ -241,8 +270,10 @@ const Dashboard = () => {
                 </div>
               </motion.div>
             </AnimatedCard>
+            )}
 
-            {/* Stats Grid */}
+            {/* Stats Grid (Overview tab only) */}
+            {activeTab === 'overview' && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
                 {
@@ -328,52 +359,151 @@ const Dashboard = () => {
                 </AnimatedCard>
               ))}
             </div>
+            )}
 
-            {/* AI Recommendations */}
-            <AnimatedCard delay={5} className="p-6">
-              <motion.div variants={itemVariants}>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                  AI Career Recommendations
-                </h2>
-                <AIRecommendations />
-              </motion.div>
-            </AnimatedCard>
+            {/* AI Recommendations (Career tab only) */}
+            {activeTab === 'career' && (
+              <AnimatedCard delay={0} className="p-6">
+                <motion.div variants={itemVariants}>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                    AI Career Recommendations
+                  </h2>
+                  <AIRecommendations />
+                </motion.div>
+              </AnimatedCard>
+            )}
 
-            {/* Recent Activity */}
-            <AnimatedCard delay={6} className="p-6">
-              <motion.div variants={itemVariants}>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                  Recent Activity
-                </h2>
-                <div className="space-y-4">
-                  {[
-                    { text: 'Completed daily meditation habit', time: '2 hours ago', icon: CheckCircle, color: 'green' },
-                    { text: 'Updated career goal progress', time: '4 hours ago', icon: Target, color: 'blue' },
-                    { text: 'Logged today\'s expenses', time: '6 hours ago', icon: DollarSign, color: 'purple' },
-                    { text: 'Recorded mood: Excellent', time: '8 hours ago', icon: Heart, color: 'pink' }
-                  ].map((activity, index) => (
-                    <motion.div
-                      key={index}
-                      className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3, delay: 0.7 + index * 0.1 }}
-                      whileHover={{ scale: 1.02, x: 5 }}
-                    >
-                      <activity.icon className={`w-5 h-5 ${activity.color === 'green' ? 'text-green-500' : activity.color === 'blue' ? 'text-blue-500' : activity.color === 'purple' ? 'text-purple-500' : 'text-pink-500'}`} />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          {activity.text}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {activity.time}
-                        </p>
+            {/* Peer Benchmarking + Opportunities (Career tab) */}
+            {activeTab === 'career' && (
+              <AnimatedCard delay={1} className="p-6">
+                <motion.div variants={itemVariants}>
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Peer Benchmarking</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Sample cohort estimate based on your profile.</p>
+                    </div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-200">
+                      <Award className="w-4 h-4" /> Top 15% in DSA (sample)
+                    </div>
+                  </div>
+                  <div className="mt-2">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Opportunities for you</h3>
+                    <OpportunitiesFeed limit={6} />
+                  </div>
+                </motion.div>
+              </AnimatedCard>
+            )}
+
+            {/* Recent Activity (Overview tab only) */}
+            {activeTab === 'overview' && (
+              <AnimatedCard delay={1} className="p-6">
+                <motion.div variants={itemVariants}>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                    Recent Activity
+                  </h2>
+                  <div className="space-y-4">
+                    {[
+                      { text: 'Completed daily meditation habit', time: '2 hours ago', icon: CheckCircle, color: 'green' },
+                      { text: 'Updated career goal progress', time: '4 hours ago', icon: Target, color: 'blue' },
+                      { text: 'Logged today\'s expenses', time: '6 hours ago', icon: DollarSign, color: 'purple' },
+                      { text: 'Recorded mood: Excellent', time: '8 hours ago', icon: Heart, color: 'pink' }
+                    ].map((activity, index) => (
+                      <motion.div
+                        key={index}
+                        className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3, delay: 0.7 + index * 0.1 }}
+                        whileHover={{ scale: 1.02, x: 5 }}
+                      >
+                        <activity.icon className={`w-5 h-5 ${activity.color === 'green' ? 'text-green-500' : activity.color === 'blue' ? 'text-blue-500' : activity.color === 'purple' ? 'text-purple-500' : 'text-pink-500'}`} />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {activity.text}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {activity.time}
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              </AnimatedCard>
+            )}
+
+            {/* Career summary (Career tab) */}
+            {activeTab === 'career' && (
+              <AnimatedCard delay={1} className="p-6">
+                <motion.div variants={itemVariants}>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Career Summary</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Goals completed: {careerData?.completed_goals || 0} / {careerData?.total_goals || 0}</p>
+                    </div>
+                    <button className="px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700" onClick={() => (window.location.href = '/career')}>Go to Career</button>
+                  </div>
+                </motion.div>
+              </AnimatedCard>
+            )}
+
+            {/* Wellness summary (Wellness tab - combines Habits + Mood) */}
+            {activeTab === 'wellness' && (
+              <AnimatedCard delay={0} className="p-6">
+                <motion.div variants={itemVariants}>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Wellness Summary</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        Habits completed today: {habitsData?.completed_habits_today || 0} / {habitsData?.total_habits || 0}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Average mood: {moodData?.average_mood ?? '—'}/10</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Tip: Aim for 2+ key habits daily to boost your mood trend.</p>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatedCard>
+            )}
+
+            {/* Finance summary (Finance tab) */}
+            {activeTab === 'finance' && (
+              <AnimatedCard delay={0} className="p-6">
+                <motion.div variants={itemVariants}>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Finance Summary</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Goals completed: {financeData?.completed_goals || 0} / {financeData?.total_goals || 0}</p>
+                    </div>
+                    <button className="px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700" onClick={() => (window.location.href = '/finance')}>Go to Finance</button>
+                  </div>
+                </motion.div>
+              </AnimatedCard>
+            )}
+
+            {/* (Removed separate Habits/Mood tabs in favor of Wellness) */}
+
+            {/* Achievements summary (Achievements tab) */}
+            {activeTab === 'achievements' && (
+              <AnimatedCard delay={0} className="p-6">
+                <motion.div variants={itemVariants}>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Achievements</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Level: {userStats?.level ?? '—'} • XP: {userStats?.xp ?? 0}</p>
+                      <div className="mt-3 flex flex-wrap items-center gap-3">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-200">
+                          <Flame className="w-4 h-4" /> Streak: {userStats?.streak_days ?? 0} days
+                        </div>
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-200">
+                          <Award className="w-4 h-4" /> {userStats?.badges_earned ?? 0} badges
+                        </div>
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            </AnimatedCard>
+                    </div>
+                    <button className="px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700" onClick={() => (window.location.href = '/achievements')}>View Achievements</button>
+                  </div>
+                </motion.div>
+              </AnimatedCard>
+            )}
           </motion.div>
         </div>
       </div>

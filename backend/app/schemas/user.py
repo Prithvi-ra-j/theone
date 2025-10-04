@@ -17,6 +17,9 @@ class UserCreate(UserBase):
     password: str = Field(..., min_length=8, description="User's password (min 8 characters)")
     bio: Optional[str] = Field(None, max_length=1000, description="User's bio")
     phone_number: Optional[str] = Field(None, max_length=20, description="User's phone number")
+    assistant_avatar: Optional[str] = Field("diya", description="Assistant avatar identifier")
+    assistant_personality: Optional[str] = Field("mentor", description="Assistant personality preset")
+    assistant_language: Optional[str] = Field("english", description="Assistant language style")
 
 
 class UserUpdate(BaseModel):
@@ -26,6 +29,9 @@ class UserUpdate(BaseModel):
     avatar_url: Optional[str] = Field(None, max_length=500)
     phone_number: Optional[str] = Field(None, max_length=20)
     preferences: Optional[dict] = Field(None, description="User preferences as JSON")
+    assistant_avatar: Optional[str] = Field(None, description="Assistant avatar identifier")
+    assistant_personality: Optional[str] = Field(None, description="Assistant personality preset")
+    assistant_language: Optional[str] = Field(None, description="Assistant language style")
 
 
 class UserRead(UserBase):
@@ -39,6 +45,9 @@ class UserRead(UserBase):
     avatar_url: Optional[str]
     bio: Optional[str]
     phone_number: Optional[str]
+    assistant_avatar: Optional[str]
+    assistant_personality: Optional[str]
+    assistant_language: Optional[str]
     
     class Config:
         from_attributes = True

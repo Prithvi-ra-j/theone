@@ -109,7 +109,7 @@ class LearningPathRead(LearningPathBase):
     """Schema for reading a learning path."""
     id: int
     user_id: int
-    skill_id: int
+    skill_id: Optional[int] = None
     started_at: Optional[datetime]
     completed_at: Optional[datetime]
     created_at: datetime
@@ -117,6 +117,35 @@ class LearningPathRead(LearningPathBase):
     
     class Config:
         from_attributes = True
+
+
+class LearningPathMilestone(BaseModel):
+    id: int | None = None
+    title: str
+    description: str | None = None
+    order_index: int | None = None
+    estimated_weeks: int | None = None
+    status: str | None = None
+
+    class Config:
+        from_attributes = True
+
+
+class LearningPathProject(BaseModel):
+    id: int | None = None
+    title: str
+    description: str | None = None
+    order_index: int | None = None
+    est_hours: int | None = None
+    status: str | None = None
+
+    class Config:
+        from_attributes = True
+
+
+class LearningPathDetailRead(LearningPathRead):
+    milestones: list[LearningPathMilestone] = []
+    projects: list[LearningPathProject] = []
 
 
 class CareerDashboard(BaseModel):

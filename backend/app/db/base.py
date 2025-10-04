@@ -11,3 +11,4 @@ from app.models.mood import MoodLog  # noqa
 from app.models.gamification import Badge, UserBadge, Achievement, UserAchievement, UserStats  # noqa
 from app.models.memory import UserMemory, Embedding, Conversation  # noqa
 from app.models.mini_assistant import MiniAssistant, AssistantInteraction  # noqa
+from app.models.journal import JournalEntry, JournalAnalysis  # noqa

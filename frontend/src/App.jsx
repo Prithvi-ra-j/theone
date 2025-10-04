@@ -1,18 +1,22 @@
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import React, { Suspense, lazy } from 'react'
 
 import { useAuth } from './contexts/AuthContext'
 
 import Layout from './components/Layout.jsx'
-import Login from './pages/Login.jsx'
-import Register from './pages/Register.jsx'
-import Dashboard from './pages/Dashboard.jsx'
-import Career from './pages/Career.jsx'
-import Habits from './pages/Habits.jsx'
-import Finance from './pages/Finance.jsx'
-import Mood from './pages/Mood.jsx'
-import Motivation from './pages/Motivation.jsx'
-import Profile from './pages/Profile.jsx'
-import AnimationDemo from './pages/AnimationDemo.jsx'
+const Dashboard = lazy(() => import('./pages/Dashboard.jsx'))
+const Career = lazy(() => import('./pages/Career.jsx'))
+const Habits = lazy(() => import('./pages/Habits.jsx'))
+const Finance = lazy(() => import('./pages/Finance.jsx'))
+// Mood is now consolidated into Journal; keep route for backward-compat
+const Mood = lazy(() => import('./pages/Mood.jsx'))
+const Journal = lazy(() => import('./pages/Journal.jsx'))
+const Motivation = lazy(() => import('./pages/Motivation.jsx'))
+const Profile = lazy(() => import('./pages/Profile.jsx'))
+const AssistantBuilder = lazy(() => import('./pages/AssistantBuilder.jsx'))
+const RealityCheck = lazy(() => import('./pages/RealityCheck.jsx'))
+const Onboarding = lazy(() => import('./pages/Onboarding.jsx'))
+const Assistant = lazy(() => import('./pages/Assistant.jsx'))
 
 function App() {
   const { user, loading } = useAuth()
@@ -33,14 +37,19 @@ function App() {
       {/* No auth gating - render Layout and all pages directly for prototype */}
       <Route element={<Layout />}>
         <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="career" element={<Career />} />
-        <Route path="habits" element={<Habits />} />
-        <Route path="finance" element={<Finance />} />
-        <Route path="mood" element={<Mood />} />
-        <Route path="motivation" element={<Motivation />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="demo" element={<AnimationDemo />} />
+        <Route path="dashboard" element={<Suspense fallback={<div className="p-6">Loading…</div>}><Dashboard /></Suspense>} />
+        <Route path="career" element={<Suspense fallback={<div className="p-6">Loading…</div>}><Career /></Suspense>} />
+        <Route path="habits" element={<Suspense fallback={<div className="p-6">Loading…</div>}><Habits /></Suspense>} />
+        <Route path="finance" element={<Suspense fallback={<div className="p-6">Loading…</div>}><Finance /></Suspense>} />
+  <Route path="mood" element={<Navigate to="/journal" replace />} />
+  <Route path="journal" element={<Suspense fallback={<div className="p-6">Loading…</div>}><Journal /></Suspense>} />
+        <Route path="motivation" element={<Suspense fallback={<div className="p-6">Loading…</div>}><Motivation /></Suspense>} />
+        <Route path="profile" element={<Suspense fallback={<div className="p-6">Loading…</div>}><Profile /></Suspense>} />
+        <Route path="assistant-builder" element={<Suspense fallback={<div className="p-6">Loading…</div>}><AssistantBuilder /></Suspense>} />
+        <Route path="reality-check" element={<Suspense fallback={<div className="p-6">Loading…</div>}><RealityCheck /></Suspense>} />
+  <Route path="assistant" element={<Suspense fallback={<div className="p-6">Loading…</div>}><Assistant /></Suspense>} />
+  <Route path="onboarding" element={<Suspense fallback={<div className="p-6">Loading…</div>}><Onboarding /></Suspense>} />
+  {/** Animation Demo route removed */}
       </Route>
 
       {/* Fallback - always go to dashboard for prototype */}
