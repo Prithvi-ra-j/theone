@@ -1,8 +1,8 @@
 from celery import shared_task
 from sqlalchemy.orm import Session
 from app.db.session import SessionLocal
-from app.models.finance import Expense, Budget, FinancialGoal
-from app.models.user import User
+from ..models.finance import Expense, Budget, FinancialGoal
+from ..models.user import User
 from sqlalchemy import func
 from datetime import datetime, timedelta
 import logging

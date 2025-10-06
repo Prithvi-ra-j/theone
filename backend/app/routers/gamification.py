@@ -7,8 +7,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.models.user import User
-from app.models.gamification import Badge, UserBadge, UserStats, Achievement
+from ..models.user import User
+from ..models.gamification import Badge, UserBadge, UserStats, Achievement
 from app.routers.auth import get_current_user, get_optional_current_user
 
 router = APIRouter()
@@ -242,7 +242,7 @@ async def get_leaderboard(
     limit: int = 10
 ) -> Any:
     """Get leaderboard of top users based on total points."""
-    from app.models.gamification import UserStats
+    from ..models.gamification import UserStats
     from sqlalchemy import desc
     
     # Query UserStats ordered by total_points
@@ -283,9 +283,9 @@ async def get_available_challenges(
         return {"daily_challenges": [], "weekly_challenges": []}
     
     from datetime import datetime, timedelta
-    from app.models.habits import Habit, HabitCompletion
-    from app.models.career import CareerGoal, UserSkill
-    from app.models.finance import FinancialGoal, Expense
+    from ..models.habits import Habit, HabitCompletion
+    from ..models.career import CareerGoal, UserSkill
+    from ..models.finance import FinancialGoal, Expense
     
     today = datetime.utcnow().date()
     yesterday = today - timedelta(days=1)

@@ -129,7 +129,7 @@ class MemoryService:
             try:
                 from sqlalchemy.orm import Session
                 from app.db.session import SessionLocal
-                from app.models.memory import Memory
+                from ..models.memory import Memory
                 
                 # Create database session
                 db = SessionLocal()
@@ -174,10 +174,10 @@ class MemoryService:
         try:
             from sqlalchemy.orm import Session
             from app.db.session import SessionLocal
-            from app.models.memory import Memory
-            from app.models.career import CareerGoal, UserSkill
-            from app.models.habits import Habit
-            from app.models.finance import Expense, FinancialGoal
+            from ..models.memory import Memory
+            from ..models.career import CareerGoal, UserSkill
+            from ..models.habits import Habit
+            from ..models.finance import Expense, FinancialGoal
 
             db = SessionLocal()
             results: List[Dict[str, Any]] = []
@@ -401,12 +401,12 @@ class MemoryService:
         try:
             from sqlalchemy.orm import Session
             from app.db.session import SessionLocal
-            from app.models.career import CareerGoal
-            from app.models.habits import Habit, HabitLog
-            from app.models.finance import Budget, Expense, FinancialGoal
-            from app.models.mood import MoodLog
-            from app.models.user import User
-            from app.models.career import Skill as UserSkill
+            from ..models.career import CareerGoal
+            from ..models.habits import Habit, HabitLog
+            from ..models.finance import Budget, Expense, FinancialGoal
+            from ..models.mood import MoodLog
+            from ..models.user import User
+            from ..models.career import Skill as UserSkill
             
             # Create database session
             db = SessionLocal()
@@ -582,9 +582,9 @@ class MemoryService:
         try:
             from sqlalchemy.orm import Session
             from app.db.session import SessionLocal
-            from app.models.career import CareerGoal, UserSkill
-            from app.models.habits import Habit, HabitLog
-            from app.models.finance import Budget, Expense, FinancialGoal
+            from ..models.career import CareerGoal, UserSkill
+            from ..models.habits import Habit, HabitLog
+            from ..models.finance import Budget, Expense, FinancialGoal
             
             # Create database session
             db = SessionLocal()
@@ -709,7 +709,7 @@ class MemoryService:
             distances, indices = self.faiss_index.search(query_embedding, top_k)
 
             from app.db.session import SessionLocal
-            from app.models.memory import Memory
+            from ..models.memory import Memory
 
             db = SessionLocal()
             results: List[Dict[str, Any]] = []

@@ -7,13 +7,13 @@ from datetime import datetime, timedelta
 
 from app.db.session import get_db
 from app.routers.auth import get_current_user
-from app.models.user import User
-from app.models.career import CareerGoal, Skill, LearningPath, LearningPathMilestone, LearningPathProject
-from app.models.habits import Habit, Task as HabitTask
-from app.models.finance import FinancialGoal
-from app.models.mood import MoodLog
-from app.models.gamification import UserStats
-from app.models.mini_assistant import MiniAssistant, AssistantInteraction
+from ..models.user import User
+from ..models.career import CareerGoal, Skill, LearningPath, LearningPathMilestone, LearningPathProject
+from ..models.habits import Habit, Task as HabitTask
+from ..models.finance import FinancialGoal
+from ..models.mood import MoodLog
+from ..models.gamification import UserStats
+from ..models.mini_assistant import MiniAssistant, AssistantInteraction
 
 router = APIRouter(prefix="/demo", tags=["demo"])
 

@@ -7,8 +7,8 @@ from fastapi import APIRouter, Depends, HTTPException, status, Body
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.models.user import User
-from app.models.habits import Habit, HabitCompletion, Task, CalendarEvent
+from ..models.user import User
+from ..models.habits import Habit, HabitCompletion, Task, CalendarEvent
 from app.routers.auth import get_current_user, get_optional_current_user
 
 router = APIRouter()

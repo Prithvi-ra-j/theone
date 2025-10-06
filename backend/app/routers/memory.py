@@ -7,8 +7,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.models.user import User
-from app.models.memory import UserMemory, Embedding, Conversation
+from ..models.user import User
+from ..models.memory import UserMemory, Embedding, Conversation
 from app.services.memory_service import MemoryService
 from app.routers.auth import get_current_user, get_optional_current_user
 

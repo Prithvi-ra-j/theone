@@ -1,9 +1,10 @@
 from celery import shared_task
 from app.db.session import SessionLocal
-from app.models.mood import MoodLog
-from app.models.habits import HabitCompletion
-from app.models.finance import Expense
-from app.models.memory import Conversation, Embedding
+from ..models.mood import MoodLog
+from ..models.habits import HabitCompletion, Habit
+from ..models.finance import Expense
+from ..models.memory import Conversation, Embedding
+from ..models.user import User
 from sqlalchemy import func
 from datetime import datetime, timedelta
 import logging

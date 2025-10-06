@@ -1,8 +1,8 @@
 from celery import shared_task
 from app.services.ai_service import AIService
 from app.db.session import SessionLocal
-from app.models.user import User
-from app.models.mood import MoodLog
+from ..models.user import User
+from ..models.mood import MoodLog
 from sqlalchemy import func
 from datetime import datetime, timedelta
 import logging
@@ -47,7 +47,8 @@ def send_daily_motivation():
                         "motivation_type": motivation_type
                     }
                     
-                    motivation = await ai_service.motivation_nudge(user_context)
+                    # AIService.motivation_nudge is synchronous in task context
+                    motivation = ai_service.motivation_nudge(user_context)  # type: ignore
                     logger.info(f"Sending daily motivation to user {user.id}")
                     
                     # TODO: Implement actual notification sending
@@ -69,6 +70,14 @@ def send_achievement_celebrations():
         
         # Get recent achievements (last 24 hours)
         day_ago = datetime.now() - timedelta(days=1)
+        # Optional: achievements model may not exist in all deployments; guard import
+        try:
+            from ..models.gamification import Achievement  # type: ignore
+        except Exception:
+            Achievement = None  # type: ignore
+        if Achievement is None:
+            logger.info("Gamification Achievement model not available; skipping celebrations task")
+            return
         recent_achievements = db.query(Achievement).filter(
             Achievement.achieved_at >= day_ago
         ).all()

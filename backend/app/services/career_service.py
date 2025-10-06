@@ -5,7 +5,7 @@ import re
 from loguru import logger
 
 from sqlalchemy.orm import Session
-from app.models.user import User
+from ..models.user import User
 
 
 class CareerService:
@@ -64,7 +64,7 @@ class CareerService:
         user_context: Dict[str, Any] = {"user_id": effective_user.id if effective_user else None}
         try:
             if effective_user:
-                from app.models.career import CareerGoal, Skill  # local import
+                from ..models.career import CareerGoal, Skill  # local import
                 goals = self.db.query(CareerGoal).filter(CareerGoal.user_id == effective_user.id).all()
                 skills = self.db.query(Skill).filter(Skill.user_id == effective_user.id).all()
                 user_context["goals"] = [{"id": g.id, "title": g.title, "description": getattr(g, 'description', None), "status": g.status} for g in goals]
@@ -145,7 +145,7 @@ class CareerService:
         if self.ai_service is None:
             try:
                 if effective_user:
-                    from app.models.career import CareerGoal
+                    from ..models.career import CareerGoal
                     active = self.db.query(CareerGoal).filter(CareerGoal.user_id == effective_user.id, CareerGoal.status == 'active').order_by(CareerGoal.created_at.desc()).first()
                 else:
                     active = None

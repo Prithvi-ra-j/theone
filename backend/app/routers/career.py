@@ -11,8 +11,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from app.db.session import get_db
-from app.models.user import User
-from app.models.career import CareerGoal, Skill, LearningPath, LearningPathMilestone, LearningPathProject
+from ..models.user import User
+from ..models.career import CareerGoal, Skill, LearningPath, LearningPathMilestone, LearningPathProject
 from app.schemas.career import (
     CareerGoalCreate, CareerGoalRead, CareerGoalUpdate,
     SkillCreate, SkillRead, SkillUpdate,
@@ -153,7 +153,7 @@ async def get_career_feedback(
             "feedback": "No active career goal found. Create a goal and mark it active to receive personalized AI feedback.",
         }
     # Find completed tasks for this goal
-    from app.models.career import Task
+    from ..models.career import Task
     completed_tasks = db.query(Task).filter(
         Task.user_id == effective_user.id,
         Task.career_goal_id == goal.id,
@@ -179,7 +179,7 @@ async def complete_task(
 ) -> Any:
     """Mark a task as completed for the user."""
     # For demo: assume tasks are stored in a Task model (or as part of CareerGoal)
-    from app.models.career import Task
+    from ..models.career import Task
     task = db.query(Task).filter(Task.id == task_id, Task.user_id == current_user.id).first()
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")

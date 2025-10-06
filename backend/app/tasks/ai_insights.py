@@ -2,10 +2,10 @@ from celery import shared_task
 from app.services.ai_service import AIService
 from app.services.memory_service import MemoryService
 from app.db.session import SessionLocal
-from app.models.user import User
-from app.models.mood import MoodLog
-from app.models.habits import Habit, HabitCompletion
-from app.models.finance import Expense
+from ..models.user import User
+from ..models.mood import MoodLog
+from ..models.habits import Habit, HabitCompletion
+from ..models.finance import Expense
 from sqlalchemy import func
 from datetime import datetime, timedelta
 import logging
@@ -55,7 +55,7 @@ def generate_weekly_insights():
                     "insight_type": "weekly_summary"
                 }
                 
-                insights = await ai_service.personalized_insight(user_context)
+                insights = ai_service.personalized_insight(user_context)  # type: ignore
                 logger.info(f"Generated weekly insights for user {user.id}")
                 
                 # Store insights in memory
@@ -113,7 +113,7 @@ def generate_personalized_recommendations():
                     "recommendation_type": "behavior_analysis"
                 }
                 
-                recommendations = await ai_service.personalized_insight(user_context)
+                recommendations = ai_service.personalized_insight(user_context)  # type: ignore
                 logger.info(f"Generated personalized recommendations for user {user.id}")
                 
                 # Store recommendations
@@ -168,7 +168,7 @@ def analyze_user_patterns():
                     "insight_type": "long_term_analysis"
                 }
                 
-                long_term_insights = await ai_service.personalized_insight(user_context)
+                long_term_insights = ai_service.personalized_insight(user_context)  # type: ignore
                 logger.info(f"Generated long-term insights for user {user.id}")
                 
                 # Store long-term insights

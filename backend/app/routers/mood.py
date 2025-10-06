@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from app.db.session import get_db
-from app.models.user import User
-from app.models.mood import MoodLog
+from ..models.user import User
+from ..models.mood import MoodLog
 from app.routers.auth import get_current_user, get_optional_current_user
 
 router = APIRouter()

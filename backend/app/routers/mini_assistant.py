@@ -8,8 +8,8 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.models.user import User
-from app.models.mini_assistant import MiniAssistant, AssistantInteraction
+from ..models.user import User
+from ..models.mini_assistant import MiniAssistant, AssistantInteraction
 from app.routers.auth import get_current_user, get_optional_current_user
 from pydantic import BaseModel, Field
 
@@ -600,7 +600,7 @@ async def execute_tool(
     """Execute a whitelisted tool on behalf of the user. Keep scope narrow and auditable."""
     try:
         if req.tool == "career.create_goal":
-            from app.models.career import CareerGoal
+            from ..models.career import CareerGoal
             title = (req.params or {}).get("title")
             if not title:
                 raise HTTPException(status_code=422, detail="title is required")
@@ -627,7 +627,7 @@ async def execute_tool(
             return ToolExecuteResponse(ok=True, tool=req.tool, result={"goal_id": goal.id, "title": goal.title})
 
         if req.tool == "career.add_skill":
-            from app.models.career import Skill
+            from ..models.career import Skill
             name = (req.params or {}).get("name")
             if not name:
                 raise HTTPException(status_code=422, detail="name is required")
@@ -652,7 +652,7 @@ async def execute_tool(
 
         if req.tool == "career.start_learning_path":
             from datetime import datetime as _dt
-            from app.models.career import LearningPath
+            from ..models.career import LearningPath
             lp_id = (req.params or {}).get("learning_path_id")
             start_raw = (req.params or {}).get("start_date")
             start_dt = None
@@ -687,7 +687,7 @@ async def execute_tool(
 
         if req.tool == "habits.complete_today":
             from datetime import date as _date
-            from app.models.habits import Habit, HabitCompletion
+            from ..models.habits import Habit, HabitCompletion
             habit_id = (req.params or {}).get("habit_id")
             if not habit_id:
                 raise HTTPException(status_code=422, detail="habit_id is required")
@@ -712,7 +712,7 @@ async def execute_tool(
             return ToolExecuteResponse(ok=True, tool=req.tool, result={"current_streak": habit.current_streak})
 
         if req.tool == "habits.create_habit":
-            from app.models.habits import Habit
+            from ..models.habits import Habit
             name = (req.params or {}).get("name")
             if not name:
                 raise HTTPException(status_code=422, detail="name is required")
@@ -738,7 +738,7 @@ async def execute_tool(
             return ToolExecuteResponse(ok=True, tool=req.tool, result={"habit_id": hb.id})
 
         if req.tool == "finance.add_expense":
-            from app.models.finance import Expense
+            from ..models.finance import Expense
             try:
                 amount = float((req.params or {}).get("amount"))
             except Exception:
@@ -760,7 +760,7 @@ async def execute_tool(
 
         if req.tool == "finance.create_budget":
             from datetime import datetime as _dt
-            from app.models.finance import Budget
+            from ..models.finance import Budget
             name = (req.params or {}).get("name") or "Budget"
             try:
                 amount = float((req.params or {}).get("amount"))
@@ -796,7 +796,7 @@ async def execute_tool(
 
         if req.tool == "mood.log":
             from datetime import datetime as _dt
-            from app.models.mood import MoodLog
+            from ..models.mood import MoodLog
             params = req.params or {}
             mood_score = params.get("mood_score")
             if mood_score is None:
@@ -835,7 +835,7 @@ async def execute_tool(
 
         if req.tool == "finance.create_income":
             from datetime import datetime as _dt
-            from app.models.finance import Income
+            from ..models.finance import Income
             params = req.params or {}
             try:
                 amount = float(params.get("amount"))
@@ -890,7 +890,7 @@ async def execute_tool(
             user_mood = params.get("user_mood")
             is_private = bool(params.get("is_private", True))
 
-            from app.models.journal import JournalEntry, JournalAnalysis
+            from ..models.journal import JournalEntry, JournalAnalysis
             entry = JournalEntry(
                 user_id=current_user.id,
                 content=content,
@@ -1142,7 +1142,7 @@ async def stream_assistant_response(
                     return
                 # Create expense directly
                 try:
-                    from app.models.finance import Expense
+                    from ..models.finance import Expense
                     exp = Expense(user_id=current_user.id, amount=amt, category=cat, description=desc)
                     db.add(exp)
                     db.commit()

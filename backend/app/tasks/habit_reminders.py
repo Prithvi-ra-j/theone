@@ -1,8 +1,8 @@
 from celery import shared_task
 from sqlalchemy.orm import Session
 from app.db.session import SessionLocal
-from app.models.habits import Habit
-from app.models.user import User
+from ..models.habits import Habit
+from ..models.user import User
 from app.services.ai_service import AIService
 from datetime import datetime, timedelta
 import logging
