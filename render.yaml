@@ -2,7 +2,7 @@
 
 services:
   - type: web
-    name: dristhi-backend
+    name: dristhi-backend-311
     runtime: docker
     plan: free
     rootDir: backend
