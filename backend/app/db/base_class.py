@@ -5,6 +5,6 @@ use `base_class.py` to provide the declarative base. The project currently
 defines Base in `app.db.session`. This shim re-exports it to avoid import
 errors.
 """
-from app.db.session import Base  # noqa: F401
+from .session import Base  # noqa: F401
 
 __all__ = ["Base"]
