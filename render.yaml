@@ -3,13 +3,11 @@
 services:
   - type: web
     name: dristhi-backend
-    env: python
+    env: docker
     plan: free
     rootDir: backend
     region: oregon
-    buildCommand: |
-      pip install -r requirements.txt
-  startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers
+    dockerfilePath: Dockerfile
     healthCheckPath: /health
     autoDeploy: true
     envVars:
@@ -43,7 +41,7 @@ services:
       # Optional: dynamic CORS for debugging only (do not enable in prod)
       - key: ALLOW_CORS_FROM_REQUEST
         value: "0"
-    postdeploy: alembic upgrade head
+  postdeploy: alembic upgrade head
 
   - type: redis
     name: dristhi-redis
