@@ -4,6 +4,7 @@
   "outputDirectory": "dist",
   "routes": [
     { "handle": "filesystem" },
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "src": "/api/(.*)", "dest": "https://dristhi-backend.onrender.com/api/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ],
