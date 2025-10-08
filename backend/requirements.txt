@@ -12,7 +12,9 @@ bcrypt==4.1.2
 # Bump to a Python 3.13-compatible release while staying in 2.0.x series.
 sqlalchemy>=2.0.36,<2.1
 alembic==1.12.1
-psycopg2-binary==2.9.9
+# psycopg2-binary 2.9.9 fails on Python 3.13 with undefined symbol _PyInterpreterState_Get
+# Bump to a 3.13-compatible release.
+psycopg2-binary>=2.9.10
 
 redis==5.0.1
 # langchain-openrouter optional; pinned versions not available on all platforms. Enable when needed.
