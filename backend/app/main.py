@@ -14,6 +14,17 @@ import os
 import uuid
 import sys
 import platform
+from pathlib import Path
+
+# Ensure the 'backend' directory is on sys.path so 'app' package imports work
+# when running from the repo root (e.g., Render native runtime).
+try:
+    _backend_root = Path(__file__).resolve().parents[1]
+    if str(_backend_root) not in sys.path:
+        sys.path.insert(0, str(_backend_root))
+except Exception:
+    # Don't fail startup if sys.path adjustment fails
+    pass
 
 from app.core.config import settings
 from app.routers import auth, career, habits, finance, mood, gamification, memory, mini_assistant
