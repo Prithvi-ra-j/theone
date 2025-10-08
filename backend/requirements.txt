@@ -8,7 +8,9 @@ passlib[bcrypt]==1.7.4
 bcrypt==4.1.2
 
 # Database and ORM
-sqlalchemy==2.0.23
+# SQLAlchemy 2.0.23 is not compatible with Python 3.13 used by Render's native runtime.
+# Bump to a Python 3.13-compatible release while staying in 2.0.x series.
+sqlalchemy>=2.0.36,<2.1
 alembic==1.12.1
 psycopg2-binary==2.9.9
 
