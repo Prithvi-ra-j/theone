@@ -12,6 +12,8 @@ from fastapi import HTTPException
 from loguru import logger
 import os
 import uuid
+import sys
+import platform
 
 from app.core.config import settings
 from app.routers import auth, career, habits, finance, mood, gamification, memory, mini_assistant
@@ -35,6 +37,22 @@ async def lifespan(app: FastAPI):
     """Application lifespan manager."""
     # Startup
     logger.info("🚀 Starting Dristhi backend...")
+    # Runtime diagnostics to identify environment during startup
+    try:
+        docker_env = os.path.exists("/.dockerenv") or os.path.exists("/run/.containerenv")
+        render_native = os.getenv("RENDER") or "/opt/render" in os.getcwd()
+        logger.info(
+            "Runtime: python={pyver} exec={exe} platform={plat} cwd={cwd} docker={docker} render_native={render}",
+            pyver=sys.version.split(" ")[0],
+            exe=sys.executable,
+            plat=platform.platform(),
+            cwd=os.getcwd(),
+            docker=bool(docker_env),
+            render=bool(render_native),
+        )
+    except Exception:
+        # Do not fail startup on diagnostics
+        pass
     # Log configured CORS origins for debugging CORS preflight issues
     try:
         logger.info("Configured BACKEND_CORS_ORIGINS: %s", settings.BACKEND_CORS_ORIGINS)
