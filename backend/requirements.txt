@@ -8,7 +8,7 @@ passlib[bcrypt]==1.7.4
 bcrypt==4.1.2
 
 # Database and ORM
-sqlalchemy==2.0.23
+sqlalchemy>=2.0.36,<2.1
 alembic==1.12.1
 psycopg2-binary==2.9.9
 
@@ -25,6 +25,7 @@ ollama
 # Data Validation and Serialization
 pydantic>=2.6
 pydantic-core>=2.20
+pydantic-settings>=2.1.0
 
 # Background Tasks and Scheduling
 celery==5.3.4
