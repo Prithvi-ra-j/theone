@@ -5,6 +5,17 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
+import os, sys
+from pathlib import Path
+
+# Ensure backend root is on path when alembic runs from /app
+try:
+    here = Path(__file__).resolve()
+    backend_root = here.parents[1]
+    if str(backend_root) not in sys.path:
+        sys.path.insert(0, str(backend_root))
+except Exception:
+    pass
 
 # Import your app's models metadata
 from app.db.base import Base

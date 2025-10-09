@@ -15,7 +15,7 @@ Prereqs (recommended)
 
    pip install -r requirements.txt
 
-3) Ensure DB schema is updated
+3) Ensure DB schema is updated (SQLite default)
 
 Option A (recommended): run alembic upgrade
 
@@ -37,4 +37,5 @@ Option B (quick fix): run the provided script to ALTER the table directly
 Notes & troubleshooting
 - If you see NotNullViolation on careergoal.category during POST, run the DB fix (step 3) and restart the server.
 - If CORS preflight (OPTIONS) returns 400, ensure BACKEND_CORS_ORIGINS in `backend/.env` contains your frontend origin (e.g. http://localhost:5173) and restart the server.
+- By default the app uses SQLite at `backend/data/app.db`. To use Postgres, set `DATABASE_URL` accordingly in env and redeploy.
 - Use the endpoint checker to quickly validate which endpoints are reachable.

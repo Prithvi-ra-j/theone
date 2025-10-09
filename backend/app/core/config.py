@@ -3,7 +3,7 @@
 import os
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import AnyHttpUrl, PostgresDsn, field_validator
+from pydantic import AnyHttpUrl, AnyUrl, field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -39,7 +39,8 @@ class Settings(BaseSettings):
         raise ValueError(v)
 
     # Database
-    DATABASE_URL: PostgresDsn = "postgresql://postgres:password@localhost:5432/dristhi"
+    # Use AnyUrl to support both Postgres and SQLite URLs
+    DATABASE_URL: AnyUrl = "sqlite:///./data/app.db"
     DATABASE_POOL_SIZE: int = 20
     DATABASE_MAX_OVERFLOW: int = 30
     DATABASE_POOL_TIMEOUT: int = 30
