@@ -36,7 +36,14 @@ target_metadata = Base.metadata
 
 def get_url():
     """Get database URL from settings."""
-    return str(settings.DATABASE_URL)
+    try:
+        url = str(settings.DATABASE_URL)
+        if not url:
+            return "sqlite:////app/data/app.db"
+        return url
+    except Exception:
+        # Fallback to container path for SQLite
+        return "sqlite:////app/data/app.db"
 
 
 def run_migrations_offline() -> None:

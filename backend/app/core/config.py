@@ -98,6 +98,16 @@ class Settings(BaseSettings):
         env_file = ".env"
         extra = "allow"   
 
+    # Normalize DATABASE_URL: if env var is set but empty, fallback to default SQLite
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def _default_db_if_empty(cls, v: Any) -> Any:
+        if v is None:
+            return "sqlite:///./data/app.db"
+        if isinstance(v, str) and v.strip() == "":
+            return "sqlite:///./data/app.db"
+        return v
+
 
 # Create settings instance
 settings = Settings()

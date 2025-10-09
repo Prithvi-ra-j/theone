@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker, Session
 from app.core.config import settings
 
 # Create SQLAlchemy engine with connection pool settings
-db_url = str(settings.DATABASE_URL)
+db_url = str(settings.DATABASE_URL) or "sqlite:///./data/app.db"
 url_obj = make_url(db_url)
 
 engine_kwargs = {"pool_pre_ping": True}
