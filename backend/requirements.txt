@@ -1,4 +1,4 @@
-# Python 3.13
+# Python 3.11
 # Core FastAPI and Web Framework
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
