@@ -15,10 +15,11 @@ depends_on = None
 
 
 def upgrade() -> None:
-    # Make the careergoal.category column nullable
-    op.alter_column('careergoal', 'category', existing_type=sa.String(length=100), nullable=True)
+    # SQLite doesn't support ALTER COLUMN directly; use batch_alter_table
+    with op.batch_alter_table('careergoal') as batch_op:
+        batch_op.alter_column('category', existing_type=sa.String(length=100), nullable=True)
 
 
 def downgrade() -> None:
-    # Revert to not nullable (be careful: existing NULLs will cause failure)
-    op.alter_column('careergoal', 'category', existing_type=sa.String(length=100), nullable=False)
+    with op.batch_alter_table('careergoal') as batch_op:
+        batch_op.alter_column('category', existing_type=sa.String(length=100), nullable=False)
