@@ -134,7 +134,10 @@ dmypy.json
 *.pkl
 *.pickle
 *.joblib
+# Global model artifacts (e.g., ML) are ignored, but keep application models
 models/
+!backend/app/models/
+!backend/app/models/**
 embeddings/
 vectorstore/
 
