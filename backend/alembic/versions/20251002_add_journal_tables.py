@@ -26,8 +26,18 @@ def upgrade() -> None:
         sa.Column('created_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
         sa.Column('updated_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
     )
-    op.create_index('ix_journal_entry_id', 'journal_entry', ['id'])
-    op.create_index('ix_journal_entry_user_id', 'journal_entry', ['user_id'])
+    # Create indexes idempotently (skip if index already exists)
+    try:
+        bind = op.get_bind()
+        inspector = sa.inspect(bind)
+        existing_indexes = {idx['name'] for idx in inspector.get_indexes('journal_entry')}
+    except Exception:
+        existing_indexes = set()
+
+    if 'ix_journal_entry_id' not in existing_indexes:
+        op.create_index('ix_journal_entry_id', 'journal_entry', ['id'])
+    if 'ix_journal_entry_user_id' not in existing_indexes:
+        op.create_index('ix_journal_entry_user_id', 'journal_entry', ['user_id'])
 
     op.create_table(
         'journal_analysis',
@@ -46,8 +56,15 @@ def upgrade() -> None:
         sa.Column('created_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
         sa.Column('updated_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
     )
-    op.create_index('ix_journal_analysis_id', 'journal_analysis', ['id'])
-    op.create_index('ix_journal_analysis_journal_id', 'journal_analysis', ['journal_id'])
+    try:
+        existing_indexes = {idx['name'] for idx in inspector.get_indexes('journal_analysis')}
+    except Exception:
+        existing_indexes = set()
+
+    if 'ix_journal_analysis_id' not in existing_indexes:
+        op.create_index('ix_journal_analysis_id', 'journal_analysis', ['id'])
+    if 'ix_journal_analysis_journal_id' not in existing_indexes:
+        op.create_index('ix_journal_analysis_journal_id', 'journal_analysis', ['journal_id'])
 
 
 def downgrade() -> None:
