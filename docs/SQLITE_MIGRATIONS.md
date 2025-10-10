@@ -68,3 +68,17 @@ Troubleshooting
 Notes
 
 - These changes are intended to make local dev and CI easier. They do not change the intended Postgres schema; always validate on Postgres before deploying to production.
+
+Running tests locally
+---------------------
+- Use Python 3.11 for running the backend code and tests to match Render and avoid compatibility issues seen with Python 3.12/3.13.
+- From the repository root set PYTHONPATH so tests can import the `app` package:
+
+```bash
+cd backend
+export PYTHONPATH=$(pwd)
+python -V  # should show Python 3.11.x
+pytest -q -m "not integration"
+```
+
+If you don't have Python 3.11 installed locally, use `pyenv`, `asdf`, or run tests inside the provided Docker image.

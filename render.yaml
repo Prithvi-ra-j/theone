@@ -3,12 +3,12 @@
 services:
   - type: web
     name: dristhi-backend-311
-    runtime: docker
+    runtime: python
     plan: free
     rootDir: backend
     region: oregon
-    dockerfilePath: Dockerfile
-    dockerContext: backend
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: bash ./entrypoint.sh
     healthCheckPath: /health
     autoDeploy: true
     envVars:
