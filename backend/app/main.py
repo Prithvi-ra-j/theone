@@ -357,6 +357,14 @@ if settings.ENABLE_MOCK_ENDPOINTS:
         # Don't block startup if mock router fails to import
         logger.warning(f"Failed to include mock endpoints: {e}")
 
+# Debug routes (safe to expose in non-production or temporarily)
+try:
+    from app.routers.debug import router as debug_router
+
+    app.include_router(debug_router, prefix=settings.API_V1_STR, tags=["debug"])
+except Exception:
+    logger.debug("Debug router not available")
+
 # Compatibility router (development only): placed after real routers so it
 # only handles requests that would otherwise 404. Returns 501 with details.
 if settings.ENABLE_COMPATIBILITY_STUBS:
