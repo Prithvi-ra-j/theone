@@ -11,7 +11,7 @@ export const API_CONFIG = {
   // local development when no env var is provided.
   BASE_URL: (() => {
     const envBase = import.meta.env.VITE_API_BASE_URL;
-    const devDefault = 'http://localhost:8000';
+    
     if (envBase) return envBase;
     return import.meta.env.MODE === 'production' ? '/' : devDefault;
   })(),
