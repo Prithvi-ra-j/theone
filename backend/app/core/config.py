@@ -4,6 +4,7 @@ import os
 from typing import Any, Dict, List, Optional, Union
 
 from pydantic import AnyHttpUrl, AnyUrl, field_validator
+from loguru import logger
 from pydantic_settings import BaseSettings
 
 
@@ -132,9 +133,12 @@ class Settings(BaseSettings):
                 if str(frontend) not in existing:
                     # Append the parsed AnyHttpUrl object so types remain consistent
                     self.BACKEND_CORS_ORIGINS.append(frontend)
+                    logger.info("Configured FRONTEND_URL appended to BACKEND_CORS_ORIGINS: {}", str(frontend))
+                else:
+                    logger.debug("FRONTEND_URL already present in BACKEND_CORS_ORIGINS: {}", str(frontend))
         except Exception:
             # Defensive: do not break startup if post-init logic fails
-            pass
+            logger.exception("Error while appending FRONTEND_URL to BACKEND_CORS_ORIGINS")
 
 
 # Create settings instance
