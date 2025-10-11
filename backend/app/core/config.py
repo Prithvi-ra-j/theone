@@ -40,9 +40,27 @@ class Settings(BaseSettings):
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
         """Parse CORS origins from string or list."""
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
-        elif isinstance(v, (list, str)):
+        # Defensive parsing: env var may be provided as a comma-separated string,
+        # may include the key name (e.g. "BACKEND_CORS_ORIGINS=..."), or be
+        # wrapped in quotes. Normalize these cases to a clean list of origins.
+        if isinstance(v, str):
+            s = v.strip()
+            # If the string looks like an env assignment, strip the prefix
+            if "=" in s and not s.startswith("[") and not s.startswith("http"):
+                # handle cases like 'BACKEND_CORS_ORIGINS=https://a,https://b'
+                parts = s.split("=", 1)
+                if len(parts) == 2 and parts[1].strip():
+                    s = parts[1].strip()
+            # Strip surrounding quotes if present
+            if (s.startswith('"') and s.endswith('"')) or (s.startswith("'") and s.endswith("'")):
+                s = s[1:-1]
+            if s.startswith("["):
+                # Let pydantic parse a JSON-style list
+                return s
+            # Split on commas and remove empty entries
+            return [i.strip() for i in s.split(",") if i.strip()]
+        elif isinstance(v, list):
+            # Already a list; return as-is
             return v
         raise ValueError(v)
 
@@ -128,14 +146,24 @@ class Settings(BaseSettings):
         try:
             frontend = getattr(self, "FRONTEND_URL", None)
             if frontend:
-                # Normalize to string for comparison and avoid duplicates
-                existing = {str(u) for u in (self.BACKEND_CORS_ORIGINS or [])}
-                if str(frontend) not in existing:
-                    # Append the parsed AnyHttpUrl object so types remain consistent
-                    self.BACKEND_CORS_ORIGINS.append(frontend)
-                    logger.info("Configured FRONTEND_URL appended to BACKEND_CORS_ORIGINS: {}", str(frontend))
+                # Normalize existing BACKEND_CORS_ORIGINS entries (strip trailing
+                # slashes) to avoid exact-match mismatches against the browser's
+                # Origin header (which never includes a trailing slash).
+                try:
+                    normalized = [str(u).rstrip("/") for u in (self.BACKEND_CORS_ORIGINS or [])]
+                    self.BACKEND_CORS_ORIGINS = normalized
+                except Exception:
+                    # Fall back to original if normalization fails
+                    pass
+
+                # Normalize FRONTEND_URL value and append if not present
+                fr_str = str(frontend).rstrip("/")
+                existing = {str(u).rstrip("/") for u in (self.BACKEND_CORS_ORIGINS or [])}
+                if fr_str not in existing:
+                    self.BACKEND_CORS_ORIGINS.append(fr_str)
+                    logger.info("Configured FRONTEND_URL appended to BACKEND_CORS_ORIGINS: {}", fr_str)
                 else:
-                    logger.debug("FRONTEND_URL already present in BACKEND_CORS_ORIGINS: {}", str(frontend))
+                    logger.debug("FRONTEND_URL already present in BACKEND_CORS_ORIGINS: {}", fr_str)
         except Exception:
             # Defensive: do not break startup if post-init logic fails
             logger.exception("Error while appending FRONTEND_URL to BACKEND_CORS_ORIGINS")

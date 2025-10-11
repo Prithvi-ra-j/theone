@@ -155,24 +155,41 @@ async def dynamic_cors_middleware(request: Request, call_next):
     request.state.request_id = req_id
     # Simple request/latency metrics collection
     start = perf_counter()
+    response = None
     try:
+        # Call the next handler and capture the response; do not return here so
+        # that we can run metrics and dynamic CORS header logic afterward.
         response = await call_next(request)
+        if response is None:
+            # Defensive fallback
+            from fastapi.responses import JSONResponse
+
+            response = JSONResponse(status_code=500, content={"detail": "No response from downstream"})
+        # Ensure correlation id header is present
         response.headers.setdefault("X-Request-ID", req_id)
-        return response
-    finally:
+    except Exception as exc:
+        # If downstream raised, still update metrics and re-raise after
         duration_ms = (perf_counter() - start) * 1000.0
         try:
             _metrics["total_requests"] += 1
             _metrics["total_latency_ms"] += duration_ms
-            if hasattr(response, "status_code") and int(getattr(response, "status_code", 500)) >= 500:
-                _metrics["total_errors"] += 1
-            # Emit a structured access log line
+            _metrics["total_errors"] += 1
+        except Exception:
+            pass
+        logger.exception("Error while handling request: %s", exc)
+        raise
+    finally:
+        # Metrics collection runs regardless of success/failure above
+        duration_ms = (perf_counter() - start) * 1000.0
+        try:
+            _metrics["total_requests"] += 0  # already counted on success; keep stable
+            _metrics["total_latency_ms"] += duration_ms
             try:
                 bound_logger.info(
                     "access: {method} {path} -> {status} in {ms:.1f}ms",
                     method=request.method,
                     path=request.url.path,
-                    status=getattr(response, "status_code", 0),
+                    status=getattr(response, "status_code", 0) if response is not None else 0,
                     ms=duration_ms,
                 )
             except Exception:
@@ -180,11 +197,15 @@ async def dynamic_cors_middleware(request: Request, call_next):
         except Exception:
             # never break request flow due to metrics errors
             pass
+
+    # After downstream handling and metrics, set dynamic CORS headers when allowed
     try:
         origin = request.headers.get("origin")
         # Only set dynamic CORS in debug or when explicitly allowed via env
         allow_dynamic = bool(settings.DEBUG) or os.getenv("ALLOW_CORS_FROM_REQUEST", "0") == "1"
-        if origin and allow_dynamic and "access-control-allow-origin" not in (k.lower() for k in response.headers.keys()):
+        if response is not None and origin and allow_dynamic and "access-control-allow-origin" not in (
+            k.lower() for k in response.headers.keys()
+        ):
             response.headers["Access-Control-Allow-Origin"] = origin
             # Ensure Vary so caches know responses vary by Origin
             response.headers["Vary"] = response.headers.get("Vary", "Origin")
@@ -194,6 +215,7 @@ async def dynamic_cors_middleware(request: Request, call_next):
     except Exception:
         # Be defensive: do not break request flow on middleware errors
         logger.exception("Error in dynamic CORS middleware")
+
     return response
 
 # Global exception handler
