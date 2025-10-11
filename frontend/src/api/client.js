@@ -6,7 +6,8 @@
 import axios from 'axios';
 
 // Ensure the base URL always points to the API v1 prefix.
-const rawBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+// Prefer a relative base ('/') in production when no VITE_API_BASE_URL is set.
+const rawBase = import.meta.env.VITE_API_BASE_URL || (import.meta.env.MODE === 'production' ? '/' : 'http://localhost:8000');
 const normalizedBase = rawBase.replace(/\/+$/, ''); // remove trailing slash
 const API_BASE_URL = normalizedBase.endsWith('/api/v1') ? normalizedBase : `${normalizedBase}/api/v1`;
 

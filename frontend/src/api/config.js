@@ -6,9 +6,21 @@
 // API Configuration Constants
 export const API_CONFIG = {
   // Base URLs
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
+  // In production prefer a relative base ('/') so deployed assets call the host's
+  // /api/* route (Vercel -> proxy to Render). Only fall back to localhost for
+  // local development when no env var is provided.
+  BASE_URL: (() => {
+    const envBase = import.meta.env.VITE_API_BASE_URL;
+    const devDefault = 'http://localhost:8000';
+    if (envBase) return envBase;
+    return import.meta.env.MODE === 'production' ? '/' : devDefault;
+  })(),
   API_VERSION: 'v1',
-  FULL_BASE_URL: `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/v1`,
+  FULL_BASE_URL: (() => {
+    const base = import.meta.env.VITE_API_BASE_URL || (import.meta.env.MODE === 'production' ? '/' : 'http://localhost:8000');
+    // Ensure no trailing slash
+    return `${base.replace(/\/+$/, '')}/api/v1`;
+  })(),
   
   // Timeouts
   REQUEST_TIMEOUT: 30000, // 30 seconds

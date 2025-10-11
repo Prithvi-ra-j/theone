@@ -121,13 +121,15 @@ class AIService:
                 try:
                     self.llm = ChatOpenAI(
                         api_key=settings.API_LLM_API_KEY,
-                        base_url="https://openrouter.ai/api/v1",
+                        base_url=getattr(settings, "API_LLM_BASE_URL", "https://openrouter.ai/api/v1"),
                         model=settings.API_LLM_MODEL,
                         temperature=0.7,
-                        default_headers={"Authorization": f"Bearer {settings.API_LLM_API_KEY}",
-                                     "HTTP-Referer":"http://127.0.0.1:8000",
-                                     "X-Title": settings.PROJECT_NAME or "Dristhi AI"},
-                    
+                        default_headers={
+                            "Authorization": f"Bearer {settings.API_LLM_API_KEY}",
+                            "HTTP-Referer": "http://127.0.0.1:8000",
+                            "X-Title": settings.PROJECT_NAME or "Dristhi AI",
+                        },
+                    )
                     )
                     # Test the connection with a simple query
                     _ = self.llm.invoke("Test connection")
