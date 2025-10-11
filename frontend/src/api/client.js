@@ -11,6 +11,9 @@ const normalizedBase = rawBase.replace(/\/+$/, ''); // remove trailing slash
 const API_BASE_URL = normalizedBase.endsWith('/api/v1') ? normalizedBase : `${normalizedBase}/api/v1`;
 
 // Create axios instance with base configuration
+// Log the resolved API base early so devs can confirm which host the frontend will call.
+// This helps diagnose localhost vs deployed-backend issues (seen as ERR_BLOCKED_BY_CLIENT or 401s).
+console.info('Resolved API_BASE_URL:', API_BASE_URL);
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000, // 30 seconds
