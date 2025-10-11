@@ -29,6 +29,13 @@ class Settings(BaseSettings):
         "http://localhost:8000",
     ]
 
+    # Optional canonical frontend URL (set per-deployment in environment)
+    # Use this to advertise or validate the expected frontend origin in logs
+    # and health endpoints. Do not hard-code sensitive or preview URLs in
+    # source control; set them via environment variables in your hosting
+    # provider (Vercel / Render) instead.
+    FRONTEND_URL: Optional[AnyHttpUrl] = None
+
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
         """Parse CORS origins from string or list."""
@@ -107,6 +114,27 @@ class Settings(BaseSettings):
         if isinstance(v, str) and v.strip() == "":
             return "sqlite:///./data/app.db"
         return v
+
+    def model_post_init(self, __context: Any) -> None:
+        """Post-init hook to append FRONTEND_URL into CORS origins when set.
+
+        This is a convenience: if a deployment sets FRONTEND_URL in the
+        environment (for example, the public Vercel frontend URL), the
+        value will be appended to BACKEND_CORS_ORIGINS so it will be
+        accepted by the FastAPI CORS middleware without requiring manual
+        duplication of the origin list in environment variables.
+        """
+        try:
+            frontend = getattr(self, "FRONTEND_URL", None)
+            if frontend:
+                # Normalize to string for comparison and avoid duplicates
+                existing = {str(u) for u in (self.BACKEND_CORS_ORIGINS or [])}
+                if str(frontend) not in existing:
+                    # Append the parsed AnyHttpUrl object so types remain consistent
+                    self.BACKEND_CORS_ORIGINS.append(frontend)
+        except Exception:
+            # Defensive: do not break startup if post-init logic fails
+            pass
 
 
 # Create settings instance

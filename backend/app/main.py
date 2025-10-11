@@ -224,6 +224,8 @@ async def health_check() -> dict[str, Any]:
         "version": settings.VERSION,
         "ai_enabled": settings.ENABLE_AI_FEATURES,
         "ai_service_status": "available" if ai_service else "unavailable",
+        # Expose configured frontend URL for debugging (if provided via env)
+        **({"frontend_url": str(settings.FRONTEND_URL)} if getattr(settings, "FRONTEND_URL", None) else {}),
     }
 
 
@@ -236,6 +238,7 @@ async def root() -> dict[str, Any]:
         "version": settings.VERSION,
         "docs": f"{settings.API_V1_STR}/docs",
         "health": "/health",
+        **({"frontend_url": str(settings.FRONTEND_URL)} if getattr(settings, "FRONTEND_URL", None) else {}),
     }
 
 
