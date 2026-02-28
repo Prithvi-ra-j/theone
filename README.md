@@ -6,20 +6,20 @@
 
 ## Recent Premium Upgrades
 
-*   ** Site-Wide Contextual AI** The AI Assistant is now "conscious" of your entire platform progress. It aggregates data from your habit streaks, financial goals, and career milestones to provide hyper-personalized advice.
+*   Site-Wide Contextual AI: The AI Assistant is now "conscious" of your entire platform progress. It aggregates data from your habit streaks, financial goals, and career milestones to provide hyper-personalized advice.
 *   **🇮🇳 Hyper-Localization (Multilingual):** Official support for **English**, **Hindi**, and **Hinglish**. The AI Assistant adapts its tone and culturally relevant cues to match the Indian college experience.
-*   ** State-of-the-Art UI/UX:** A complete frontend overhaul using **Premium Glassmorphism**. Experience a sleek, translucent, and blurred aesthetic with smooth micro-animations.
-*   ** "Slide & Summarize" Memory:** A robust memory system that maintains long-term conversation context without hitting token limits, ensuring the AI never forgets your journey.
-*   ** Python 3.13 Core:** Optimized for the latest Python release (3.13.2) with pinned dependencies for seamless deployment on Render.
+*    State-of-the-Art UI/UX: A complete frontend overhaul using **Premium Glassmorphism**. Experience a sleek, translucent, and blurred aesthetic with smooth micro-animations.
+*   "Slide & Summarize" Memory: A robust memory system that maintains long-term conversation context without hitting token limits, ensuring the AI never forgets your journey.
+*    Python 3.13 Core: Optimized for the latest Python release (3.13.2) with pinned dependencies for seamless deployment on Render.
 
 ---
 
 ##  Features at a Glance
 
-*   ** Smart Career Advisor:** Personalized roadmaps, skill gap analysis, and "Reality Checks" for parallel career planning.
-*   ** Financial Intelligence:** Budgeting, ROI analysis for education, and financial goal tracking.
-*   ** Dynamic Habit Lab:** Gamified habit tracking with streak-based rewards and analytics.
-*   ** Intelligence Dashboard:** Proactive "Nudge" system that identifies where you need focus today.
+*    Smart Career Advisor: Personalized roadmaps, skill gap analysis, and "Reality Checks" for parallel career planning.
+*    Financial Intelligence: Budgeting, ROI analysis for education, and financial goal tracking.
+*    Dynamic Habit Lab: Gamified habit tracking with streak-based rewards and analytics.
+*    Intelligence Dashboard: Proactive "Nudge" system that identifies where you need focus today.
 
 ---
 
