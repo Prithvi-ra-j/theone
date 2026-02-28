@@ -1,41 +1,62 @@
-# Backend - Quick run & debugging guide
+# Dristhi Backend: Core API & AI Orchestration
 
-This file contains short instructions to get the backend running locally for development and to help verify the API endpoints.
+This is the FastAPI-powered engine for the Dristhi platform, responsible for multilingual AI recommendations, site-wide context awareness, and core business logic.
 
-Prereqs (recommended)
-- Python 3.11 (3.11.x)
-- PostgreSQL running and accessible via DATABASE_URL in `backend/.env` or environment
-- A virtualenv (see below)
+---
 
-1) Create and activate a venv (PowerShell)
+## 🛠️ Tech Stack & Requirements
+- **Runtime:** Python 3.13.2+
+- **Framework:** FastAPI
+- **Database:** SQLite (Local) / PostgreSQL (managed via Render)
+- **AI:** LangChain + Multi-Agent Architecture
+- **Cache:** Redis (for session management and background tasks)
 
-   python -m venv .venv311; .\.venv311\Scripts\Activate.ps1
+---
 
-2) Install dependencies
+## 🚀 Local Development
 
-   pip install -r requirements.txt
+### 1. Setup Virtual Environment
+```bash
+python -m venv .venv
+# Activate:
+# Windows: .\.venv\Scripts\activate
+# Linux/Mac: source .venv/bin/activate
+```
 
-3) Ensure DB schema is updated (SQLite default)
+### 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
 
-Option A (recommended): run alembic upgrade
+### 3. Environment Variables
+Create a `.env` file based on `env.example`. Ensure you set:
+- `API_LLM_API_KEY`: Your OpenRouter or LLM provider key.
+- `SECRET_KEY`: A secure string for JWT tokens.
 
-   cd backend
-   .\.venv311\Scripts\python.exe -m alembic upgrade head
+### 4. Database Migrations
+We use Alembic for schema management:
+```bash
+alembic upgrade head
+```
 
-Option B (quick fix): run the provided script to ALTER the table directly
+### 5. Run the Server
+```bash
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-   python backend\tools\ensure_career_category_nullable.py
+---
 
-4) Start the backend (from workspace root)
+## 🏗️ Architecture Note
+The backend uses a **Multi-Agent** approach. Requests are routed via the `AIService` to specialized agents (**Career**, **Finance**, **Wellness**) based on user intent. It also integrates a `ContextService` that feeds site-wide user data into the AI prompts for "conscious" responses.
 
-   .\.venv311\Scripts\python.exe -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+---
 
-5) Verify endpoints
+## 📡 Essential Endpoints
+- **Swagger UI:** `/docs`
+- **Health Check:** `/health`
+- **AI Assist:** `/api/v1/mini-assistant/stream` (Streaming support)
 
-   python backend\tools\endpoint_checker.py --base http://localhost:8000/api/v1
+---
 
-Notes & troubleshooting
-- If you see NotNullViolation on careergoal.category during POST, run the DB fix (step 3) and restart the server.
-- If CORS preflight (OPTIONS) returns 400, ensure BACKEND_CORS_ORIGINS in `backend/.env` contains your frontend origin (e.g. http://localhost:5173) and restart the server.
-- By default the app uses SQLite at `backend/data/app.db`. To use Postgres, set `DATABASE_URL` accordingly in env and redeploy.
-- Use the endpoint checker to quickly validate which endpoints are reachable.
+## ⚖️ License
+MIT

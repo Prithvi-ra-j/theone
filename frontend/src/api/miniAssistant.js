@@ -33,6 +33,9 @@ const miniAssistantAPI = {
   // Tools
   listTools: () => api.get('/mini-assistant/tools'),
   executeTool: (tool, params) => api.post('/mini-assistant/tools/execute', { tool, params }),
+
+  // Nudge
+  getNudge: () => api.get('/mini-assistant/nudge'),
 };
 
 export default miniAssistantAPI;

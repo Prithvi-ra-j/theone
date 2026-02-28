@@ -18,16 +18,22 @@ class Settings(BaseSettings):
     
 
     # Security
-    SECRET_KEY: str = "your-super-secret-key-change-in-production"
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "your-super-secret-key-change-in-production")
+    
+    def __init__(self, **values):
+        super().__init__(**values)
+        if self.SECRET_KEY == "your-super-secret-key-change-in-production":
+            logger.warning("🚨 Using default SECRET_KEY. Change this in production for security!")
+            
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     JWT_ALGORITHM: str = "HS256"
 
     # CORS
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
-        "http://localhost:3000",
         "http://localhost:5173",
         "http://localhost:8000",
+        "https://dristhi-frontend.vercel.app", # Placeholder for your production URL
     ]
 
     # Optional canonical frontend URL (set per-deployment in environment)

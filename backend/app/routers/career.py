@@ -124,6 +124,7 @@ async def career_reality_check(
 # --- AI-backed career endpoints (moved here so `router` is defined before use) ---
 @router.get("/feedback", response_model=dict)
 async def get_career_feedback(
+    language: str = "english",
     current_user: Optional[User] = Depends(get_optional_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
@@ -162,7 +163,14 @@ async def get_career_feedback(
     completed_titles = [t.title for t in completed_tasks]
     prompt = f"User's goal: {goal.title}. Completed tasks: {completed_titles}. Provide feedback and next steps." 
     try:
-        feedback = ai_service.generate_feedback(goal.title, completed_titles)
+        feedback_data = await ai_service.career_advisor(
+            user_context={"goal": goal.title},
+            question=f"Provide feedback and next steps based on these completed tasks: {completed_titles}",
+            user_id=effective_user.id,
+            language=language,
+            db=db
+        )
+        feedback = feedback_data.get("advice", "Keep going!")
     except Exception:
         from loguru import logger
         logger.exception("Error generating AI feedback; using fallback")
@@ -192,6 +200,7 @@ async def complete_task(
 
 @router.get("/tasks", response_model=List[dict])
 async def get_career_tasks(
+    language: str = "english",
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ) -> Any:
@@ -208,7 +217,25 @@ async def get_career_tasks(
     # Generate tasks using AI
     prompt = f"Generate a list of actionable tasks to help achieve the following career goal: {goal.title}. Context: {goal.description}"
     try:
-        tasks = ai_service.generate_tasks_for_goal(goal.title, goal.description)
+        # We'll use the career_advisor for task generation too, as it's more robust
+        task_data = await ai_service.career_advisor(
+            user_context={"goal": goal.title, "description": goal.description},
+            question="Generate a list of 5 actionable tasks to help achieve this career goal. Return as a JSON list of objects with 'title' and 'description'.",
+            user_id=current_user.id,
+            language=language,
+            db=db
+        )
+        advice = task_data.get("advice", "")
+        # Try to extract JSON from advice
+        try:
+            # Simple regex search for JSON list
+            match = re.search(r'\[\s*{.*}\s*\]', advice, re.DOTALL)
+            if match:
+                tasks = json.loads(match.group(0))
+            else:
+                tasks = ai_service.generate_tasks_for_goal(goal.title, goal.description)
+        except Exception:
+            tasks = ai_service.generate_tasks_for_goal(goal.title, goal.description)
     except Exception:
         from loguru import logger
         logger.exception("Error generating tasks via AIService; using fallback tasks")

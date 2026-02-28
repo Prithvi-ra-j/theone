@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  TrendingUp, 
-  Target, 
-  Calendar, 
-  DollarSign, 
-  Heart, 
+import {
+  TrendingUp,
+  Target,
+  Calendar,
+  DollarSign,
+  Heart,
   Trophy,
   BarChart3,
   Clock,
@@ -13,12 +13,10 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { 
-  careerAPI, 
-  habitsAPI, 
-  financeAPI, 
-  moodAPI, 
-  gamificationAPI 
+import {
+  moodAPI,
+  gamificationAPI,
+  miniAssistantAPI
 } from '../api';
 import ProgressBar from '../components/ui/ProgressBar';
 import TaskCard from '../components/ui/TaskCard';
@@ -39,28 +37,34 @@ const Dashboard = () => {
 
   // Fetch dashboard data
   const { data: careerData, isLoading: careerLoading, isError: careerError, error: careerErrObj } = useQuery({
-    queryKey: ['career','dashboard'],
+    queryKey: ['career', 'dashboard'],
     queryFn: () => careerAPI.getCareerDashboard(),
   });
 
   const { data: habitsData, isLoading: habitsLoading, isError: habitsError, error: habitsErrObj } = useQuery({
-    queryKey: ['habits','dashboard'],
+    queryKey: ['habits', 'dashboard'],
     queryFn: () => habitsAPI.getHabitsDashboard(),
   });
 
   const { data: financeData, isLoading: financeLoading, isError: financeError, error: financeErrObj } = useQuery({
-    queryKey: ['finance','dashboard'],
+    queryKey: ['finance', 'dashboard'],
     queryFn: () => financeAPI.getFinanceDashboard(),
   });
 
   const { data: moodData, isLoading: moodLoading, isError: moodError, error: moodErrObj } = useQuery({
-    queryKey: ['mood','dashboard'],
+    queryKey: ['mood', 'dashboard'],
     queryFn: () => moodAPI.getMoodDashboard(),
   });
 
   const { data: userStats, isLoading: statsLoading, isError: statsError, error: statsErrObj } = useQuery({
-    queryKey: ['gamification','user-stats'],
+    queryKey: ['gamification', 'user-stats'],
     queryFn: () => gamificationAPI.getUserStats(),
+  });
+
+  const { data: nudgeData, isLoading: nudgeLoading } = useQuery({
+    queryKey: ['miniAssistant', 'nudge'],
+    queryFn: () => miniAssistantAPI.getNudge(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   // Prepare UI elements; no blocking timeout/error early returns so dashboard always renders
@@ -71,19 +75,19 @@ const Dashboard = () => {
   // Calculate overall progress
   const overallProgress = React.useMemo(() => {
     if (!careerData || !habitsData || !financeData || !moodData) return 0;
-    
-    const careerProgress = careerData.total_goals > 0 
-      ? (careerData.completed_goals / careerData.total_goals) * 100 
+
+    const careerProgress = careerData.total_goals > 0
+      ? (careerData.completed_goals / careerData.total_goals) * 100
       : 0;
-    
-    const habitsProgress = habitsData.total_habits > 0 
-      ? (habitsData.completed_habits_today / habitsData.total_habits) * 100 
+
+    const habitsProgress = habitsData.total_habits > 0
+      ? (habitsData.completed_habits_today / habitsData.total_habits) * 100
       : 0;
-    
-    const financeProgress = financeData.total_goals > 0 
-      ? (financeData.completed_goals / financeData.total_goals) * 100 
+
+    const financeProgress = financeData.total_goals > 0
+      ? (financeData.completed_goals / financeData.total_goals) * 100
       : 0;
-    
+
     return Math.round((careerProgress + habitsProgress + financeProgress) / 3);
   }, [careerData, habitsData, financeData, moodData]);
 
@@ -117,9 +121,9 @@ const Dashboard = () => {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20, scale: 0.95 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
+    visible: {
+      opacity: 1,
+      y: 0,
       scale: 1,
       transition: {
         duration: 0.5,
@@ -129,7 +133,7 @@ const Dashboard = () => {
   };
 
   // Render main dashboard unconditionally (dashboardContent used for non-blocking states)
-  
+
   // Otherwise, render the main dashboard
   const seedDemo = useMutation({
     mutationFn: async () => {
@@ -140,11 +144,11 @@ const Dashboard = () => {
     onSuccess: async () => {
       // Refresh key dashboards
       await Promise.all([
-        qc.invalidateQueries({ queryKey: ['career','dashboard'] }),
-        qc.invalidateQueries({ queryKey: ['habits','dashboard'] }),
-        qc.invalidateQueries({ queryKey: ['finance','dashboard'] }),
-        qc.invalidateQueries({ queryKey: ['mood','dashboard'] }),
-        qc.invalidateQueries({ queryKey: ['gamification','user-stats'] }),
+        qc.invalidateQueries({ queryKey: ['career', 'dashboard'] }),
+        qc.invalidateQueries({ queryKey: ['habits', 'dashboard'] }),
+        qc.invalidateQueries({ queryKey: ['finance', 'dashboard'] }),
+        qc.invalidateQueries({ queryKey: ['mood', 'dashboard'] }),
+        qc.invalidateQueries({ queryKey: ['gamification', 'user-stats'] }),
       ]);
     }
   });
@@ -152,7 +156,7 @@ const Dashboard = () => {
     <PageTransition>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
         {/* Header */}
-        <motion.div 
+        <motion.div
           className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -160,7 +164,7 @@ const Dashboard = () => {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="py-6 flex items-center justify-between">
-              <motion.h1 
+              <motion.h1
                 className="text-3xl font-bold text-gray-900 dark:text-white"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -168,7 +172,7 @@ const Dashboard = () => {
               >
                 Dashboard
               </motion.h1>
-              
+
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => seedDemo.mutate()}
@@ -184,7 +188,7 @@ const Dashboard = () => {
         </motion.div>
 
         {/* Tab Navigation */}
-        <motion.div 
+        <motion.div
           className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
           initial={{ y: -10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -196,11 +200,10 @@ const Dashboard = () => {
                 <motion.button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-all duration-200 ${
-                    activeTab === tab.id
+                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-all duration-200 ${activeTab === tab.id
                       ? 'border-blue-500 text-blue-600 dark:text-blue-400'
                       : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
-                  }`}
+                    }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, y: -10 }}
@@ -225,140 +228,171 @@ const Dashboard = () => {
             animate="visible"
             className="space-y-8"
           >
-            {/* Overall Progress Card (Overview tab only) */}
-            {activeTab === 'overview' && (
-            <AnimatedCard delay={0} className="p-6">
-              <motion.div 
-                className="text-center"
-                variants={itemVariants}
-              >
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  Overall Progress
-                </h2>
-                <div className="relative">
-                  <div className="w-32 h-32 mx-auto relative">
-                    <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 36 36">
-                      <path
-                        className="text-gray-200 dark:text-gray-700"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        fill="none"
-                        d="M18 2.0845
-                          a 15.9155 15.9155 0 0 1 0 31.831
-                          a 15.9155 15.9155 0 0 1 0 -31.831"
-                      />
-                      <motion.path
-                        className="text-blue-500 dark:text-blue-400"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        fill="none"
-                        strokeLinecap="round"
-                        d="M18 2.0845
-                          a 15.9155 15.9155 0 0 1 0 31.831
-                          a 15.9155 15.9155 0 0 1 0 -31.831"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: overallProgress / 100 }}
-                        transition={{ duration: 1, delay: 0.5 }}
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {overallProgress}%
-                      </span>
-                    </div>
+            {/* Dristhi Intelligence Card */}
+            {activeTab === 'overview' && nudgeData && (
+              <motion.div variants={itemVariants}>
+                <div className="glass-card p-6 border-l-4 border-l-blue-500 overflow-hidden relative">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                    <Bot className="w-24 h-24" />
                   </div>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50">
+                      <Bot className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Dristhi Intelligence</h2>
+                  </div>
+                  <p className="text-lg text-gray-800 dark:text-gray-200 leading-relaxed mb-4">
+                    {nudgeData.message}
+                  </p>
+                  {nudgeData.action_suggestion && (
+                    <button
+                      onClick={() => {
+                        if (nudgeData.related_feature === 'career') window.location.href = '/career';
+                        else if (nudgeData.related_feature === 'habits') window.location.href = '/habits';
+                        else if (nudgeData.related_feature === 'finance') window.location.href = '/finance';
+                      }}
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      <TrendingUp className="w-4 h-4" />
+                      {nudgeData.action_suggestion}
+                    </button>
+                  )}
                 </div>
               </motion.div>
-            </AnimatedCard>
+            )}
+
+            {/* Overall Progress Card (Overview tab only) */}
+            {activeTab === 'overview' && (
+              <AnimatedCard delay={0} className="p-6">
+                <motion.div
+                  className="text-center"
+                  variants={itemVariants}
+                >
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                    Overall Progress
+                  </h2>
+                  <div className="relative">
+                    <div className="w-32 h-32 mx-auto relative">
+                      <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 36 36">
+                        <path
+                          className="text-gray-200 dark:text-gray-700"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          fill="none"
+                          d="M18 2.0845
+                          a 15.9155 15.9155 0 0 1 0 31.831
+                          a 15.9155 15.9155 0 0 1 0 -31.831"
+                        />
+                        <motion.path
+                          className="text-blue-500 dark:text-blue-400"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          fill="none"
+                          strokeLinecap="round"
+                          d="M18 2.0845
+                          a 15.9155 15.9155 0 0 1 0 31.831
+                          a 15.9155 15.9155 0 0 1 0 -31.831"
+                          initial={{ pathLength: 0 }}
+                          animate={{ pathLength: overallProgress / 100 }}
+                          transition={{ duration: 1, delay: 0.5 }}
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                          {overallProgress}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatedCard>
             )}
 
             {/* Stats Grid (Overview tab only) */}
             {activeTab === 'overview' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                {
-                  title: 'Career Goals',
-                  value: careerData?.total_goals || 0,
-                  completed: careerData?.completed_goals || 0,
-                  icon: Target,
-                  color: 'blue'
-                },
-                {
-                  title: 'Daily Habits',
-                  value: habitsData?.total_habits || 0,
-                  completed: habitsData?.completed_habits_today || 0,
-                  icon: Calendar,
-                  color: 'green'
-                },
-                {
-                  title: 'Financial Goals',
-                  value: financeData?.total_goals || 0,
-                  completed: financeData?.completed_goals || 0,
-                  icon: DollarSign,
-                  color: 'purple'
-                },
-                {
-                  title: 'Mood Score',
-                  value: moodData?.average_mood || 0,
-                  completed: moodData?.average_mood || 0,
-                  icon: Heart,
-                  color: 'pink'
-                }
-              ].map((stat, index) => (
-                <AnimatedCard 
-                  key={stat.title} 
-                  delay={index + 1}
-                  className="p-6 text-center hover-lift"
-                >
-                  <motion.div
-                    className="flex flex-col items-center"
-                    variants={itemVariants}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  {
+                    title: 'Career Goals',
+                    value: careerData?.total_goals || 0,
+                    completed: careerData?.completed_goals || 0,
+                    icon: Target,
+                    color: 'blue'
+                  },
+                  {
+                    title: 'Daily Habits',
+                    value: habitsData?.total_habits || 0,
+                    completed: habitsData?.completed_habits_today || 0,
+                    icon: Calendar,
+                    color: 'green'
+                  },
+                  {
+                    title: 'Financial Goals',
+                    value: financeData?.total_goals || 0,
+                    completed: financeData?.completed_goals || 0,
+                    icon: DollarSign,
+                    color: 'purple'
+                  },
+                  {
+                    title: 'Mood Score',
+                    value: moodData?.average_mood || 0,
+                    completed: moodData?.average_mood || 0,
+                    icon: Heart,
+                    color: 'pink'
+                  }
+                ].map((stat, index) => (
+                  <AnimatedCard
+                    key={stat.title}
+                    delay={index + 1}
+                    className="p-6 text-center hover-lift"
                   >
-                    {/* Fixed color classes to use hardcoded values instead of template literals */}
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${
-                      stat.color === 'blue' ? 'bg-blue-100 dark:bg-blue-900' :
-                      stat.color === 'green' ? 'bg-green-100 dark:bg-green-900' :
-                      stat.color === 'purple' ? 'bg-purple-100 dark:bg-purple-900' :
-                      'bg-pink-100 dark:bg-pink-900'
-                    }`}>
-                      <stat.icon className={`w-6 h-6 ${
-                        stat.color === 'blue' ? 'text-blue-600 dark:text-blue-400' :
-                        stat.color === 'green' ? 'text-green-600 dark:text-green-400' :
-                        stat.color === 'purple' ? 'text-purple-600 dark:text-purple-400' :
-                        'text-pink-600 dark:text-pink-400'
-                      }`} />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                      {stat.title}
-                    </h3>
-                    <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                      {stat.title === 'Mood Score' ? `${stat.value}/10` : stat.completed}
-                    </p>
-                    {stat.title !== 'Mood Score' && (
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        of {stat.value} completed
+                    <motion.div
+                      className="flex flex-col items-center"
+                      variants={itemVariants}
+                    >
+                      {/* Fixed color classes to use hardcoded values instead of template literals */}
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${stat.color === 'blue' ? 'bg-blue-100 dark:bg-blue-900' :
+                          stat.color === 'green' ? 'bg-green-100 dark:bg-green-900' :
+                            stat.color === 'purple' ? 'bg-purple-100 dark:bg-purple-900' :
+                              'bg-pink-100 dark:bg-pink-900'
+                        }`}>
+                        <stat.icon className={`w-6 h-6 ${stat.color === 'blue' ? 'text-blue-600 dark:text-blue-400' :
+                            stat.color === 'green' ? 'text-green-600 dark:text-green-400' :
+                              stat.color === 'purple' ? 'text-purple-600 dark:text-purple-400' :
+                                'text-pink-600 dark:text-pink-400'
+                          }`} />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                        {stat.title}
+                      </h3>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                        {stat.title === 'Mood Score' ? `${stat.value}/10` : stat.completed}
                       </p>
-                    )}
+                      {stat.title !== 'Mood Score' && (
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          of {stat.value} completed
+                        </p>
+                      )}
 
-                    {/* Navigation button for each card */}
-                    <div className="mt-4">
-                      <button
-                        onClick={() => {
-                          // navigate to the appropriate page
-                          if (stat.title === 'Career Goals') window.location.href = '/career';
-                          if (stat.title === 'Daily Habits') window.location.href = '/habits';
-                          if (stat.title === 'Financial Goals') window.location.href = '/finance';
-                          if (stat.title === 'Mood Score') window.location.href = '/mood';
-                        }}
-                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                      >
-                        View
-                      </button>
-                    </div>
-                  </motion.div>
-                </AnimatedCard>
-              ))}
-            </div>
+                      {/* Navigation button for each card */}
+                      <div className="mt-4">
+                        <button
+                          onClick={() => {
+                            // navigate to the appropriate page
+                            if (stat.title === 'Career Goals') window.location.href = '/career';
+                            if (stat.title === 'Daily Habits') window.location.href = '/habits';
+                            if (stat.title === 'Financial Goals') window.location.href = '/finance';
+                            if (stat.title === 'Mood Score') window.location.href = '/mood';
+                          }}
+                          className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                        >
+                          View
+                        </button>
+                      </div>
+                    </motion.div>
+                  </AnimatedCard>
+                ))}
+              </div>
             )}
 
             {/* AI Recommendations (Career tab only) */}

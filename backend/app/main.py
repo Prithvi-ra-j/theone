@@ -27,10 +27,11 @@ except Exception:
     pass
 
 from app.core.config import settings
-from app.routers import auth, career, habits, finance, mood, gamification, memory, mini_assistant
-from app.routers.journal import router as journal_router
-from app.routers.opportunities import router as opportunities_router
-from app.routers.users import router as users_router
+from app.routers import (
+    auth, career, habits, finance, mood, 
+    gamification, memory, mini_assistant,
+    journal, opportunities, users, ai
+)
 
 # Global variables for lifespan management
 ai_service = None
@@ -332,29 +333,19 @@ async def metrics() -> dict[str, Any]:
     }
 
 
-# Include API routers
+# Include API routers sequentially
 app.include_router(auth.router, prefix=settings.API_V1_STR, tags=["authentication"])
+app.include_router(users.router, prefix=settings.API_V1_STR, tags=["users"])
 app.include_router(career.router, prefix=f"{settings.API_V1_STR}/career", tags=["career"])
-# Register habits under /api/v1/habits so frontend paths like /api/v1/habits/dashboard
-# and /api/v1/habits/tasks resolve correctly.
 app.include_router(habits.router, prefix=f"{settings.API_V1_STR}/habits", tags=["habits"])
 app.include_router(finance.router, prefix=f"{settings.API_V1_STR}/finance", tags=["finance"])
-# Mount AI router under /api/v1/ai so endpoints like /api/v1/ai/status resolve
-app.include_router(__import__("app.routers.ai", fromlist=["router"]).router, prefix=f"{settings.API_V1_STR}/ai", tags=["ai"])
-# Register mood and gamification under their own subpaths so routes
-# are reachable at /api/v1/mood/* and /api/v1/gamification/* respectively.
+app.include_router(ai.router, prefix=f"{settings.API_V1_STR}/ai", tags=["ai"])
 app.include_router(mood.router, prefix=f"{settings.API_V1_STR}/mood", tags=["mood"])
 app.include_router(gamification.router, prefix=f"{settings.API_V1_STR}/gamification", tags=["gamification"])
-# Mount memory router under /api/v1/memory to match frontend paths
 app.include_router(memory.router, prefix=f"{settings.API_V1_STR}/memory", tags=["memory"])
-# Mini Assistant router
-from app.routers.mini_assistant import router as mini_assistant_router
-app.include_router(mini_assistant_router, prefix=f"{settings.API_V1_STR}/mini-assistant", tags=["mini-assistant"])
-app.include_router(users_router, prefix=settings.API_V1_STR)
-app.include_router(opportunities_router, prefix=settings.API_V1_STR, tags=["opportunities"])
-app.include_router(journal_router, prefix=f"{settings.API_V1_STR}", tags=["journal"])
-app.include_router(journal_router, prefix=f"{settings.API_V1_STR}")
-app.include_router(opportunities_router, prefix=f"{settings.API_V1_STR}", tags=["opportunities"])
+app.include_router(mini_assistant.router, prefix=f"{settings.API_V1_STR}/mini-assistant", tags=["mini-assistant"])
+app.include_router(opportunities.router, prefix=f"{settings.API_V1_STR}/opportunities", tags=["opportunities"])
+app.include_router(journal.router, prefix=f"{settings.API_V1_STR}/journal", tags=["journal"])
 # Demo data seeding endpoints (for prototype/demo environments)
 try:
     from app.routers.demo_seed import router as demo_seed_router

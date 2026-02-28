@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Target, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  BookOpen, 
+import {
+  Target,
+  Plus,
+  Edit3,
+  Trash2,
+  BookOpen,
   TrendingUp,
   Calendar,
   CheckCircle,
@@ -51,7 +51,7 @@ const Career = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState(null);
   const [modalType, setModalType] = useState('goal'); // 'goal', 'skill', 'learning-path'
-  
+
   // Query hooks need to be defined before they're used in the timeout effect
   const { data: initialCareerData = { recent_goals: [], stats: {}, skills: [] }, isLoading: initialLoading, error: initialCareerError } = useQuery({
     queryKey: ['career', 'dashboard'],
@@ -68,7 +68,7 @@ const Career = () => {
     retryDelay: 1000,
     staleTime: 5 * 60 * 1000 // 5 minutes
   });
-  
+
   const { data: skillsData = { skills: [] }, isLoading: isSkillsLoading, error: skillsQueryError } = useQuery({
     queryKey: ['career', 'skills'],
     queryFn: async () => {
@@ -84,7 +84,7 @@ const Career = () => {
     retryDelay: 1000,
     staleTime: 5 * 60 * 1000 // 5 minutes
   });
-  
+
   const { data: pathsData = { paths: [] }, isLoading: isPathsLoading, error: pathsQueryError } = useQuery({
     queryKey: ['career', 'learning-paths'],
     queryFn: async () => {
@@ -100,7 +100,7 @@ const Career = () => {
     retryDelay: 1000,
     staleTime: 5 * 60 * 1000 // 5 minutes
   });
-  
+
   // Timeout logic
   const [timedOut, setTimedOut] = React.useState(false);
   React.useEffect(() => {
@@ -137,12 +137,12 @@ const Career = () => {
   // Learning Path modal state
   const [pathModalOpen, setPathModalOpen] = useState(false);
   const [selectedPath, setSelectedPath] = useState(null);
-  const [pathStartDate, setPathStartDate] = useState(() => new Date().toISOString().slice(0,10));
+  const [pathStartDate, setPathStartDate] = useState(() => new Date().toISOString().slice(0, 10));
 
   const openPathModal = (path) => {
     setSelectedPath(path);
     // default start date: today or existing started_at
-    const start = path?.started_at ? String(path.started_at).slice(0,10) : new Date().toISOString().slice(0,10);
+    const start = path?.started_at ? String(path.started_at).slice(0, 10) : new Date().toISOString().slice(0, 10);
     setPathStartDate(start);
     setPathModalOpen(true);
   };
@@ -391,14 +391,14 @@ const Career = () => {
 
   const filteredGoals = React.useMemo(() => {
     if (!initialCareerData?.recent_goals) return [];
-    
+
     return initialCareerData.recent_goals.filter(goal => {
       const matchesStatus = filters.status === 'all' || goal.status === filters.status;
       const matchesPriority = filters.priority === 'all' || goal.priority === filters.priority;
-      const matchesSearch = filters.search === '' || 
+      const matchesSearch = filters.search === '' ||
         goal.title.toLowerCase().includes(filters.search.toLowerCase()) ||
         goal.description?.toLowerCase().includes(filters.search.toLowerCase());
-      
+
       return matchesStatus && matchesPriority && matchesSearch;
     });
   }, [careerData?.recent_goals, filters]);
@@ -436,7 +436,7 @@ const Career = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* AI Feedback Button */}
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <Button
           onClick={() => getAIFeedbackMutation.mutate()}
           disabled={getAIFeedbackMutation.isLoading}
@@ -446,14 +446,21 @@ const Career = () => {
         </Button>
 
         {aiFeedback && (
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-900 rounded p-4 mt-2">
-            <h3 className="font-semibold text-blue-800 dark:text-blue-300 mb-2">AI Feedback</h3>
-            <div className="text-sm text-blue-900 dark:text-blue-200 max-h-60 overflow-y-auto pr-2">
-              <ReactMarkdown className="prose prose-sm dark:prose-invert max-w-none">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-card border-l-4 border-l-blue-500 p-6 mt-4"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <h3 className="font-bold text-gray-900 dark:text-white">AI Career Insight</h3>
+            </div>
+            <div className="text-gray-800 dark:text-gray-200 max-h-60 overflow-y-auto pr-2">
+              <ReactMarkdown className="prose prose-sm dark:prose-invert max-w-none leading-relaxed">
                 {String(aiFeedback.feedback || aiFeedback.goal || JSON.stringify(aiFeedback))}
               </ReactMarkdown>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
       {/* Header */}
@@ -490,7 +497,7 @@ const Career = () => {
         </div>
       </div>
 
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-gray-900 dark:text-gray-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-gray-900 dark:text-gray-100">
         {/* Reality Check tip banner */}
         {showRealityTip && (
           <div className="mb-6 p-4 rounded-lg border bg-amber-50 border-amber-200 text-amber-900 dark:bg-amber-900/20 dark:border-amber-800 dark:text-amber-200 flex items-start justify-between gap-4">
@@ -511,43 +518,43 @@ const Career = () => {
         )}
         {/* Progress Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="glass-card p-6 border-b-4 border-b-blue-500">
             <div className="flex items-center">
-              <div className="p-3 bg-blue-50 rounded-lg">
-                <Target className="w-6 h-6 text-blue-600" />
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+                <Target className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Goals</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Goals</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {careerData?.total_goals || 0}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="glass-card p-6 border-b-4 border-b-green-500">
             <div className="flex items-center">
-              <div className="p-3 bg-green-50 rounded-lg">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+              <div className="p-3 bg-green-100 dark:bg-green-900/50 rounded-lg">
+                <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Completed</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Completed</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {careerData?.completed_goals || 0}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="glass-card p-6 border-b-4 border-b-purple-500">
             <div className="flex items-center">
-              <div className="p-3 bg-purple-50 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-purple-600" />
+              <div className="p-3 bg-purple-100 dark:bg-purple-900/50 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Overall Progress</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {careerData?.total_goals > 0 
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Overall Progress</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {careerData?.total_goals > 0
                     ? Math.round((careerData.completed_goals / careerData.total_goals) * 100)
                     : 0}%
                 </p>
@@ -719,7 +726,7 @@ const Career = () => {
                         <ProgressBar progress={path.progress || 0} size="sm" />
                       </div>
                       <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                        {path.estimated_hours ? `${path.estimated_hours} hrs • ${Math.max(1, Math.ceil(path.estimated_hours/20))} weeks` : 'Timeline TBD'}
+                        {path.estimated_hours ? `${path.estimated_hours} hrs • ${Math.max(1, Math.ceil(path.estimated_hours / 20))} weeks` : 'Timeline TBD'}
                       </div>
                     </button>
                   ))}
@@ -738,9 +745,9 @@ const Career = () => {
           setEditingGoal(null);
         }}
         title={
-          editingGoal 
-            ? 'Edit Career Goal' 
-            : modalType === 'goal' 
+          editingGoal
+            ? 'Edit Career Goal'
+            : modalType === 'goal'
               ? 'Create Career Goal'
               : modalType === 'skill'
                 ? 'Add Skill'
@@ -1080,10 +1087,10 @@ const LearningPathModal = ({ isOpen, onClose, path, startDate, onChangeStartDate
           <h4 className="font-semibold mb-2">Timeline</h4>
           <div className="flex flex-wrap gap-2">
             {Array.from({ length: weeks }).map((_, i) => (
-              <span key={i} className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">Week {i+1}</span>
+              <span key={i} className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">Week {i + 1}</span>
             ))}
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Estimated: {path?.estimated_hours || weeks*20} hours • {weeks} weeks</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Estimated: {path?.estimated_hours || weeks * 20} hours • {weeks} weeks</p>
         </div>
 
         <div>

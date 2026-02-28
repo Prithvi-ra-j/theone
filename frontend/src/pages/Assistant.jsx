@@ -31,6 +31,17 @@ const Assistant = () => {
   const [atBottom, setAtBottom] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSessionIndex, setActiveSessionIndex] = useState(null);
+  const [language, setLanguage] = useState('english');
+  const [thinkingMessage, setThinkingMessage] = useState('Assistant is thinking');
+
+  const thinkingMessages = [
+    'Consulting your career path...',
+    'Checking your habit trends...',
+    'Analyzing your finance data...',
+    'Synthesizing platform context...',
+    'Personalizing your advice...',
+    'Reviewing your mood logs...',
+  ];
 
   const abortRef = useRef(null);
   const endRef = useRef(null);
@@ -79,13 +90,21 @@ const Assistant = () => {
     if (endRef.current) endRef.current.scrollIntoView({ behavior: 'smooth' });
   }, [sortedInteractions, typing, streamText]);
 
-  // Typing dots animation
+  // Typing dots and thinking message rotation
   useEffect(() => {
     if (!typing && !isStreaming) return;
-    const iv = setInterval(() => {
+    const dotIv = setInterval(() => {
       setTypingDots((d) => (d.length >= 3 ? '.' : d + '.'));
     }, 400);
-    return () => clearInterval(iv);
+
+    const msgIv = setInterval(() => {
+      setThinkingMessage(thinkingMessages[Math.floor(Math.random() * thinkingMessages.length)]);
+    }, 2500);
+
+    return () => {
+      clearInterval(dotIv);
+      clearInterval(msgIv);
+    };
   }, [typing, isStreaming]);
 
   // Scroll position tracking
@@ -143,7 +162,7 @@ const Assistant = () => {
     if (!message.trim()) return;
     // Add user message first
     await createInteraction.mutateAsync({ content: message, interaction_type: 'user_message' });
-  const prompt = message;
+    const prompt = message;
     setMessage('');
     setTyping(true);
     setStreamText('');
@@ -159,7 +178,13 @@ const Assistant = () => {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ prompt, include_context: useContext, context_type: 'general', route: window.location.pathname }),
+        body: JSON.stringify({
+          prompt,
+          include_context: useContext,
+          context_type: 'general',
+          route: window.location.pathname,
+          language: language
+        }),
         signal: ctrl.signal,
       });
       if (!res.ok || !res.body) throw new Error('Failed to stream response');
@@ -209,7 +234,7 @@ const Assistant = () => {
     if (!lastUser) return toast('No message to regenerate');
     setMessage(lastUser.content);
     setTimeout(() => {
-      const fakeEvent = { preventDefault: () => {} };
+      const fakeEvent = { preventDefault: () => { } };
       onSubmit(fakeEvent);
     }, 50);
   };
@@ -264,11 +289,22 @@ const Assistant = () => {
         <button type="button" className="lg:hidden inline-flex items-center gap-2 px-2 py-1 rounded-md border border-gray-300 dark:border-gray-700" onClick={() => setSidebarOpen((s) => !s)}>
           <Menu className="w-4 h-4" />
         </button>
-        <label className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-          <PlugZap className="w-4 h-4" />
-          <input type="checkbox" checked={useContext} onChange={(e) => setUseContext(e.target.checked)} />
-          Use context
-        </label>
+        <div className="flex items-center gap-3">
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="text-sm rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-2 py-1 outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="english">English</option>
+            <option value="hindi">Hindi</option>
+            <option value="hinglish">Hinglish</option>
+          </select>
+          <label className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+            <PlugZap className="w-4 h-4 text-yellow-500" />
+            <input type="checkbox" checked={useContext} onChange={(e) => setUseContext(e.target.checked)} className="rounded" />
+            Context
+          </label>
+        </div>
       </div>
     </div>
   );
@@ -303,16 +339,16 @@ const Assistant = () => {
                 <Trash className="w-4 h-4" />
               </button>
               <button
-              type="button"
-              className="inline-flex items-center gap-2 px-2 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700"
-              onClick={async () => {
-                await miniAssistantAPI.createInteraction({ interaction_type: 'system', content: 'New chat', metadata: { new_session: true, title: 'New chat' } });
-                qc.invalidateQueries(['miniAssistantInteractions']);
-                setActiveSessionIndex(null); // let effect select latest safely
-                setSidebarOpen(false);
-              }}
-            >
-              <Plus className="w-4 h-4" /> New chat
+                type="button"
+                className="inline-flex items-center gap-2 px-2 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                onClick={async () => {
+                  await miniAssistantAPI.createInteraction({ interaction_type: 'system', content: 'New chat', metadata: { new_session: true, title: 'New chat' } });
+                  qc.invalidateQueries(['miniAssistantInteractions']);
+                  setActiveSessionIndex(null); // let effect select latest safely
+                  setSidebarOpen(false);
+                }}
+              >
+                <Plus className="w-4 h-4" /> New chat
               </button>
             </div>
           </div>
@@ -412,26 +448,26 @@ const Assistant = () => {
               })}
 
               {(typing || isStreaming) && (
-                <div className="mb-3 flex justify-start">
+                <div className="mb-4 flex justify-start">
                   <div className="flex gap-3 max-w-[85%]">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center animate-pulse">
                       <Bot className="w-4 h-4" />
                     </div>
-                    <div className="rounded-lg px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
-                      <div className="text-sm">Thinking{typingDots}</div>
+                    <div className="glass-card px-4 py-2 text-gray-900 dark:text-gray-100">
+                      <div className="text-sm font-medium italic opacity-80">{thinkingMessage}{typingDots}</div>
                     </div>
                   </div>
                 </div>
               )}
 
               {streamText && (
-                <div className="mb-3 flex justify-start">
-                  <div className="flex gap-3 max-w-[85%]">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center justify-center">
+                <div className="mb-4 flex justify-start">
+                  <div className="flex gap-3 max-w-[90%]">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center shrink-0">
                       <Bot className="w-4 h-4" />
                     </div>
-                    <div className="rounded-lg px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
-                      <ReactMarkdown className="prose prose-sm max-w-none dark:prose-invert">{streamText}</ReactMarkdown>
+                    <div className="glass-card px-4 py-3 text-gray-900 dark:text-gray-100 shadow-lg border-l-4 border-l-blue-500">
+                      <ReactMarkdown className="prose prose-sm max-w-none dark:prose-invert leading-relaxed">{streamText}</ReactMarkdown>
                     </div>
                   </div>
                 </div>

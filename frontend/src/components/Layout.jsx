@@ -2,12 +2,12 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  Home, 
-  Target, 
-  Calendar, 
-  DollarSign, 
-  Heart, 
+import {
+  Home,
+  Target,
+  Calendar,
+  DollarSign,
+  Heart,
   User,
   LogOut,
   Menu,
@@ -65,7 +65,7 @@ const Layout = () => {
     { path: '/journal', label: 'Journal', icon: BookOpen },
     { path: '/assistant', label: 'Assistant', icon: MessageSquare },
     { path: '/profile', label: 'Profile', icon: User },
-  // Animation Demo removed
+    // Animation Demo removed
   ];
 
   // Mini assistant floating widget removed for now
@@ -121,10 +121,10 @@ const Layout = () => {
         /* Keep sidebar visible on large screens by combining the media query state with sidebarOpen */
       }
       <motion.aside
-          // Sidebar is fixed on large screens so it stays pinned to the left
-          className={`z-50 ${collapsed ? 'w-20' : 'w-64'} bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform lg:fixed lg:top-0 lg:left-0 lg:h-full lg:inset-y-0`}
-          role="navigation"
-          aria-label="Main navigation"
+        // Sidebar is fixed on large screens so it stays pinned to the left
+        className={`z-50 ${collapsed ? 'w-20' : 'w-64'} bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-r border-gray-200 dark:border-gray-700 transform lg:fixed lg:top-0 lg:left-0 lg:h-full lg:inset-y-0`}
+        role="navigation"
+        aria-label="Main navigation"
         variants={sidebarVariants}
         initial={sidebarOpen || isLarge ? 'open' : 'closed'}
         animate={sidebarOpen || isLarge ? 'open' : 'closed'}
@@ -147,7 +147,7 @@ const Layout = () => {
               </span>
             )}
           </motion.div>
-          
+
           <div className="flex items-center space-x-2">
             {/* Collapse toggle visible on large screens */}
             <button
@@ -185,7 +185,7 @@ const Layout = () => {
           {/* Assistant setup CTA removed for now */}
         </nav>
 
-    <div className="absolute bottom-6 left-6 right-6">
+        <div className="absolute bottom-6 left-6 right-6">
           <div className="flex items-center justify-between mb-4">
             <ThemeToggle />
             <button
@@ -196,7 +196,7 @@ const Layout = () => {
               <LogOut className="w-5 h-5" />
             </button>
           </div>
-          
+
           {user && (
             <motion.div
               className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
@@ -215,11 +215,11 @@ const Layout = () => {
         </div>
       </motion.aside>
 
-  {/* Main content */}
-  <div className={`${collapsed ? 'lg:pl-20' : 'lg:pl-64'}`}>
+      {/* Main content */}
+      <div className={`${collapsed ? 'lg:pl-20' : 'lg:pl-64'}`}>
         {/* Top bar */}
         <motion.header
-          className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 lg:hidden"
+          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 lg:hidden"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -231,7 +231,7 @@ const Layout = () => {
             >
               <Menu className="w-6 h-6" />
             </button>
-            
+
             <div className="flex items-center space-x-4">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">D</span>
@@ -245,8 +245,8 @@ const Layout = () => {
           <Outlet />
         </main>
       </div>
-      
-  {/* Floating mini assistant removed for now */}
+
+      {/* Floating mini assistant removed for now */}
     </div>
   );
 };

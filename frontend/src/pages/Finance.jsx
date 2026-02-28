@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  DollarSign, 
-  Plus, 
-  Edit3, 
-  Trash2, 
+import {
+  DollarSign,
+  Plus,
+  Edit3,
+  Trash2,
   TrendingUp,
   TrendingDown,
   Target,
@@ -242,13 +242,13 @@ const Finance = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Financial Management</h1>
-                <p className="mt-2 text-gray-600">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Financial Management</h1>
+                <p className="mt-2 text-gray-600 dark:text-gray-300">
                   Track your income, expenses, and financial goals.
                 </p>
               </div>
@@ -277,56 +277,56 @@ const Finance = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Financial Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="glass-card p-6 border-b-4 border-b-green-500">
             <div className="flex items-center">
-              <div className="p-3 bg-green-50 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+              <div className="p-3 bg-green-100 dark:bg-green-900/50 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Income</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Income</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {formatCurrency(totalIncome)}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="glass-card p-6 border-b-4 border-b-red-500">
             <div className="flex items-center">
-              <div className="p-3 bg-red-50 rounded-lg">
-                <TrendingDown className="w-6 h-6 text-red-600" />
+              <div className="p-3 bg-red-100 dark:bg-red-900/50 rounded-lg">
+                <TrendingDown className="w-6 h-6 text-red-600 dark:text-red-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Expenses</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Expenses</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {formatCurrency(totalExpenses)}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="glass-card p-6 border-b-4 border-b-blue-500">
             <div className="flex items-center">
-              <div className="p-3 bg-blue-50 rounded-lg">
-                <Wallet className="w-6 h-6 text-blue-600" />
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+                <Wallet className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Net Income</p>
-                <p className={`text-2xl font-bold ${netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Net Income</p>
+                <p className={`text-2xl font-bold ${netIncome >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                   {formatCurrency(netIncome)}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="glass-card p-6 border-b-4 border-b-purple-500">
             <div className="flex items-center">
-              <div className="p-3 bg-purple-50 rounded-lg">
-                <PiggyBank className="w-6 h-6 text-purple-600" />
+              <div className="p-3 bg-purple-100 dark:bg-purple-900/50 rounded-lg">
+                <PiggyBank className="w-6 h-6 text-purple-600 dark:text-purple-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Savings Rate</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Savings Rate</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {savingsRate.toFixed(1)}%
                 </p>
               </div>
@@ -412,7 +412,7 @@ const Finance = () => {
                     const spent = budget.spent || 0;
                     const remaining = budget.amount - spent;
                     const progress = (spent / budget.amount) * 100;
-                    
+
                     return (
                       <div key={budget.id} className="p-4 bg-gray-50 rounded-lg">
                         <div className="flex items-center justify-between mb-2">
@@ -421,8 +421,8 @@ const Finance = () => {
                             {formatCurrency(spent)} / {formatCurrency(budget.amount)}
                           </span>
                         </div>
-                        <ProgressBar 
-                          progress={progress} 
+                        <ProgressBar
+                          progress={progress}
                           size="sm"
                           color={progress > 80 ? 'red' : progress > 60 ? 'yellow' : 'green'}
                         />
@@ -462,7 +462,7 @@ const Finance = () => {
                 <div className="space-y-4">
                   {goals?.map((goal) => {
                     const progress = (goal.current_amount / goal.target_amount) * 100;
-                    
+
                     return (
                       <div key={goal.id} className="p-4 bg-gray-50 rounded-lg">
                         <div className="flex items-center justify-between mb-2">
@@ -471,8 +471,8 @@ const Finance = () => {
                             {formatCurrency(goal.current_amount)} / {formatCurrency(goal.target_amount)}
                           </span>
                         </div>
-                        <ProgressBar 
-                          progress={progress} 
+                        <ProgressBar
+                          progress={progress}
                           size="sm"
                         />
                         <div className="flex justify-between text-sm text-gray-600 mt-2">
@@ -544,21 +544,21 @@ const Finance = () => {
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button 
+              <button
                 onClick={() => handleCreateNew('expense')}
                 className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-400 hover:bg-primary-50 transition-colors text-center"
               >
                 <Plus className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                 <p className="font-medium text-gray-700">Add Expense</p>
               </button>
-              <button 
+              <button
                 onClick={() => handleCreateNew('income')}
                 className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-400 hover:bg-primary-50 transition-colors text-center"
               >
                 <TrendingUp className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                 <p className="font-medium text-gray-700">Add Income</p>
               </button>
-              <button 
+              <button
                 onClick={() => handleCreateNew('goal')}
                 className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-400 hover:bg-primary-50 transition-colors text-center"
               >
@@ -579,9 +579,9 @@ const Finance = () => {
         }}
         title={
           modalType === 'expense' ? 'Add Expense' :
-          modalType === 'income' ? 'Add Income' :
-          modalType === 'budget' ? 'Create Budget' :
-          'Create Financial Goal'
+            modalType === 'income' ? 'Add Income' :
+              modalType === 'budget' ? 'Create Budget' :
+                'Create Financial Goal'
         }
       >
         <FinanceForm

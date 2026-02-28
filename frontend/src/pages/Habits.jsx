@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Calendar, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  CheckCircle, 
+import {
+  Calendar,
+  Plus,
+  Edit3,
+  Trash2,
+  CheckCircle,
   Clock,
   TrendingUp,
   Target,
@@ -210,14 +210,14 @@ const Habits = () => {
 
   const filteredHabits = React.useMemo(() => {
     if (!habitsData?.today_habits) return [];
-    
+
     return habitsData.today_habits.filter(habit => {
       const matchesStatus = filters.status === 'all' || habit.is_completed === (filters.status === 'completed');
       const matchesCategory = filters.category === 'all' || habit.category === filters.category;
-      const matchesSearch = filters.search === '' || 
+      const matchesSearch = filters.search === '' ||
         habit.name.toLowerCase().includes(filters.search.toLowerCase()) ||
         habit.description?.toLowerCase().includes(filters.search.toLowerCase());
-      
+
       return matchesStatus && matchesCategory && matchesSearch;
     });
   }, [habitsData?.today_habits, filters]);
@@ -230,16 +230,16 @@ const Habits = () => {
   let mainUI = (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Habits & Tasks</h1>
-                <p className="mt-2 text-gray-600">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Habits & Tasks</h1>
+                <p className="mt-2 text-gray-600 dark:text-gray-300">
                   Build positive habits and stay organized with daily tasks.
                 </p>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 font-medium">
                   {todayFormatted}
                 </p>
               </div>
@@ -268,57 +268,57 @@ const Habits = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Progress Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="glass-card p-6 border-b-4 border-b-blue-500">
             <div className="flex items-center">
-              <div className="p-3 bg-blue-50 rounded-lg">
-                <Calendar className="w-6 h-6 text-blue-600" />
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+                <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Habits</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Habits</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {habitsData?.total_habits || 0}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="glass-card p-6 border-b-4 border-b-green-500">
             <div className="flex items-center">
-              <div className="p-3 bg-green-50 rounded-lg">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+              <div className="p-3 bg-green-100 dark:bg-green-900/50 rounded-lg">
+                <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Completed Today</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Completed Today</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {habitsData?.completed_habits_today || 0}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="glass-card p-6 border-b-4 border-b-purple-500">
             <div className="flex items-center">
-              <div className="p-3 bg-purple-50 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-purple-600" />
+              <div className="p-3 bg-purple-100 dark:bg-purple-900/50 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Current Streak</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Current Streak</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {habitsData?.current_streak || 0} days
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="glass-card p-6 border-b-4 border-b-orange-500">
             <div className="flex items-center">
-              <div className="p-3 bg-orange-50 rounded-lg">
-                <Target className="w-6 h-6 text-orange-600" />
+              <div className="p-3 bg-orange-100 dark:bg-orange-900/50 rounded-lg">
+                <Target className="w-6 h-6 text-orange-600 dark:text-orange-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Today's Progress</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {habitsData?.total_habits > 0 
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Today's Progress</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {habitsData?.total_habits > 0
                     ? Math.round((habitsData.completed_habits_today / habitsData.total_habits) * 100)
                     : 0}%
                 </p>
@@ -330,8 +330,8 @@ const Habits = () => {
         {/* Today's Progress */}
         <div className="bg-white p-6 rounded-lg border border-gray-200 mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Today's Progress</h2>
-          <ProgressBar 
-            progress={habitsData?.total_habits > 0 
+          <ProgressBar
+            progress={habitsData?.total_habits > 0
               ? (habitsData.completed_habits_today / habitsData.total_habits) * 100
               : 0
             }
@@ -458,7 +458,7 @@ const Habits = () => {
                         <input
                           type="checkbox"
                           checked={task.status === 'completed'}
-                          onChange={() => {}}
+                          onChange={() => { }}
                           className="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
                         />
                         <div>
@@ -473,11 +473,10 @@ const Habits = () => {
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                          task.priority === 'high' ? 'bg-red-100 text-red-800' :
-                          task.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-green-100 text-green-800'
-                        }`}>
+                        <span className={`px-2 py-1 text-xs rounded-full ${task.priority === 'high' ? 'bg-red-100 text-red-800' :
+                            task.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-green-100 text-green-800'
+                          }`}>
                           {task.priority}
                         </span>
                       </div>
@@ -548,9 +547,9 @@ const Habits = () => {
           setEditingItem(null);
         }}
         title={
-          editingItem 
-            ? 'Edit Habit' 
-            : modalType === 'habit' 
+          editingItem
+            ? 'Edit Habit'
+            : modalType === 'habit'
               ? 'Create Habit'
               : modalType === 'task'
                 ? 'Create Task'

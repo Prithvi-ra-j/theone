@@ -1,8 +1,10 @@
-"""AI router - exposes endpoints for conversation and AI utilities."""
-from typing import Any, Dict, List
-
-from fastapi import APIRouter, HTTPException, status
 import asyncio
+from sqlalchemy.orm import Session
+from app.db.session import get_db
+from app.routers.auth import get_optional_current_user
+from fastapi import APIRouter, HTTPException, status, Depends
+from typing import Any, Dict, List, Optional
+from app.models.user import User
 
 from app.core.config import settings
 
@@ -37,17 +39,18 @@ async def ai_status():
 
 
 @router.post("/conversation")
-async def conversation(payload: Dict[str, Any]):
-    """Proxy conversation requests to the AI service.
+async def conversation(
+    payload: Dict[str, Any],
+    current_user: Optional[User] = Depends(get_optional_current_user),
+    db: Session = Depends(get_db)
+):
+    """Proxy conversation requests to the AI service with context awareness.
 
-    Expects payload: { "messages": [ { "role": "user", "content": "..." }, ... ] }
-    Behavior:
-      - If the shared ai_service is available, call it and return the result.
-      - If the call takes longer than the configured timeout, return 202 Accepted
-        with a message that the request is queued.
-      - If no ai_service is configured, return 503 Service Unavailable.
+    Expects payload: { "messages": [ ... ], "language": "english" }
     """
     messages: List[Dict[str, str]] = payload.get("messages")
+    language: str = payload.get("language", "english")
+    
     if not messages:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="messages required")
 
@@ -60,12 +63,31 @@ async def conversation(payload: Dict[str, Any]):
     if ai_service is None:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="AI service not configured")
 
-    # Run the provider call with a short timeout so the HTTP request doesn't hang
-    # indefinitely. If it times out, respond 202 to indicate work is queued.
+    # Inject language instruction into the first system message or add one
+    lang_instr = ai_service._get_language_instruction(language)
+    has_system = False
+    for msg in messages:
+        if msg.get("role") == "system":
+            msg["content"] = f"{msg.get('content', '')}\n\nLanguage Instruction: {lang_instr}"
+            has_system = True
+            break
+    
+    if not has_system:
+        messages.insert(0, {"role": "system", "content": f"Language Instruction: {lang_instr}"})
+
+    # Run the provider call with a short timeout
     timeout_seconds = 20
+    user_id = current_user.id if current_user else None
     try:
-        result = await asyncio.wait_for(ai_service.conversation(messages), timeout=timeout_seconds)
+        result = await asyncio.wait_for(
+            ai_service.conversation(messages, language=language, user_id=user_id, db=db), 
+            timeout=timeout_seconds
+        )
         return result
+    except asyncio.TimeoutError:
+        return {"status": "accepted", "detail": "Request is being processed (timeout reached)"}
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     except asyncio.TimeoutError:
         return {"status": "accepted", "detail": "Request is being processed (timeout reached)"}
     except Exception as e:
