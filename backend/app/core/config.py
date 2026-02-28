@@ -5,11 +5,19 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import AnyHttpUrl, AnyUrl, field_validator
 from loguru import logger
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     """Application settings."""
+    model_config = SettingsConfigDict(
+        case_sensitive=True,
+        env_file=".env",
+        extra="allow",
+        # Ignore empty environment variables (fixes "line 1 column 1 (char 0)" JSON error on Render)
+        env_ignore_empty=True,
+    )
+
     PROJECT_NAME: str = "Dristhi"
     VERSION: str = "0.1.0"
     DESCRIPTION: str = "AI-Powered Career & Life Improvement Platform"
@@ -44,13 +52,20 @@ class Settings(BaseSettings):
     FRONTEND_URL: Optional[AnyHttpUrl] = None
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
-    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
+    @classmethod
+    def assemble_cors_origins(cls, v: Any) -> Any:
         """Parse CORS origins from string or list."""
+        if v is None:
+            return []
+        
         # Defensive parsing: env var may be provided as a comma-separated string,
         # may include the key name (e.g. "BACKEND_CORS_ORIGINS=..."), or be
         # wrapped in quotes. Normalize these cases to a clean list of origins.
         if isinstance(v, str):
             s = v.strip()
+            if not s:
+                 return []
+            
             # If the string looks like an env assignment, strip the prefix
             if "=" in s and not s.startswith("[") and not s.startswith("http"):
                 # handle cases like 'BACKEND_CORS_ORIGINS=https://a,https://b'
@@ -61,14 +76,20 @@ class Settings(BaseSettings):
             if (s.startswith('"') and s.endswith('"')) or (s.startswith("'") and s.endswith("'")):
                 s = s[1:-1]
             if s.startswith("["):
-                # Let pydantic parse a JSON-style list
-                return s
+                import json
+                try:
+                    return json.loads(s)
+                except Exception as e:
+                    logger.warning(f"Failed to parse BACKEND_CORS_ORIGINS as JSON. s={s}, e={e}")
+                    # Try comma-splitting as fallback if JSON is malformed
+                    s_clean = s.strip("[]")
+                    return [i.strip() for i in s_clean.split(",") if i.strip()]
             # Split on commas and remove empty entries
             return [i.strip() for i in s.split(",") if i.strip()]
         elif isinstance(v, list):
             # Already a list; return as-is
             return v
-        raise ValueError(v)
+        return v # Pydantic will handle other validation
 
     # Database
     # Use AnyUrl to support both Postgres and SQLite URLs
@@ -99,7 +120,7 @@ class Settings(BaseSettings):
     # unimplemented endpoints. Keep this off in production by default.
     ENABLE_COMPATIBILITY_STUBS: bool = False
     
-   
+    
     # LLM API settings - using environment variables for security
     API_LLM_API_KEY: str = os.getenv("API_LLM_API_KEY", "")
     API_LLM_BASE_URL: str = os.getenv("API_LLM_BASE_URL", "https://openrouter.ai/api/v1")
@@ -122,13 +143,6 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     LOG_FORMAT: str = "json"
     LOG_FILE_PATH: str = "./logs/dristhi.log"
-
-    class Config:
-        """Pydantic config."""
-
-        case_sensitive = True
-        env_file = ".env"
-        extra = "allow"   
 
     # Normalize DATABASE_URL: if env var is set but empty, fallback to default SQLite
     @field_validator("DATABASE_URL", mode="before")
