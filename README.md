@@ -6,7 +6,7 @@
 
 ## Recent Premium Upgrades
 
-*   ** Site-Wide Contextual AI:** The AI Assistant is now "conscious" of your entire platform progress. It aggregates data from your habit streaks, financial goals, and career milestones to provide hyper-personalized advice.
+*   ** Site-Wide Contextual AI** The AI Assistant is now "conscious" of your entire platform progress. It aggregates data from your habit streaks, financial goals, and career milestones to provide hyper-personalized advice.
 *   **🇮🇳 Hyper-Localization (Multilingual):** Official support for **English**, **Hindi**, and **Hinglish**. The AI Assistant adapts its tone and culturally relevant cues to match the Indian college experience.
 *   ** State-of-the-Art UI/UX:** A complete frontend overhaul using **Premium Glassmorphism**. Experience a sleek, translucent, and blurred aesthetic with smooth micro-animations.
 *   ** "Slide & Summarize" Memory:** A robust memory system that maintains long-term conversation context without hitting token limits, ensuring the AI never forgets your journey.
