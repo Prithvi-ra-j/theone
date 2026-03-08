@@ -38,10 +38,13 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
 
     # CORS
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
+    # Use Union[List, str] so pydantic-settings does NOT attempt to JSON-decode
+    # the raw env var value before our validator runs (a bare string like
+    # "https://a.com,https://b.com" would cause JSONDecodeError otherwise).
+    BACKEND_CORS_ORIGINS: Union[List[AnyHttpUrl], str] = [
         "http://localhost:5173",
         "http://localhost:8000",
-        "https://dristhi-frontend.vercel.app", # Placeholder for your production URL
+        "https://dristhi-frontend.vercel.app",
     ]
 
     # Optional canonical frontend URL (set per-deployment in environment)
@@ -53,7 +56,7 @@ class Settings(BaseSettings):
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
-    def assemble_cors_origins(cls, v: Any) -> Any:
+    def assemble_cors_origins(cls, v: Union[List[AnyHttpUrl], str, None]) -> Any:
         """Parse CORS origins from string or list."""
         if v is None:
             return []
