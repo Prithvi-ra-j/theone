@@ -142,7 +142,7 @@ const Layout = () => {
             {/* Show title only when not collapsed */}
             {!collapsed && <span className="text-xl font-bold text-gray-900 dark:text-white">Dristhi</span>}
             {!collapsed && (
-              <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${health?.db && health?.ai?.available ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`} title="System health">
+              <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${health?.db && health?.ai?.available ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`} title="h">
                 {health?.ai?.model || 'no-ai'} · {health?.db ? 'db' : 'no-db'}
               </span>
             )}
